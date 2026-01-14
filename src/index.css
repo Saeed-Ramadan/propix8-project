@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --font-cairo: "Cairo", sans-serif;
+}
+input, select, textarea {
+    font-family: 'Inter', sans-serif !important;
+}
+/* تطبيق الخط على المشروع بالكامل */
+body {
+  font-family: var(--font-cairo);
+  
+  direction: rtl;
+}
