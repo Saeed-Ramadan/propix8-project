@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { LogOut, PlusCircle, User, ChevronDown, Menu, X, Search, Loader2, Mail, MapPin } from 'lucide-react';
+import { LogOut, PlusCircle, User, ChevronDown, Menu, X, Search, Loader2, Mail, MapPin, PhoneCall } from 'lucide-react';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -124,7 +124,7 @@ export default function Navbar() {
         <div className="w-full max-w-7xl flex justify-between items-center gap-2">
           
           <div className="flex items-center gap-3">
-            {/* Mobile & Tablet Toggle (Visible below 1024px) */}
+            {/* Mobile & Tablet Toggle */}
             <div className="lg:hidden flex items-center gap-1">
               <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-[#3E5879] hover:bg-gray-100 rounded-lg">
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -138,7 +138,7 @@ export default function Navbar() {
             <Link to="/" className="flex items-center shrink-0">
                 {settings?.site_logo ? (
                   <img 
-                    src={settings?.site_logo ? `https://propix8.com${settings.site_logo}` : null} 
+                    src={settings?.site_logo || null} 
                     alt={settings?.site_name || "Logo"} 
                     className="w-32 md:w-48 h-12 md:h-16 object-contain brightness-0 transition-all"
                   />
@@ -150,15 +150,17 @@ export default function Navbar() {
             </Link>
           </div>
           
-          {/* Desktop Navigation (Visible from 1024px) */}
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-6 text-[#000000] font-bold">
             <NavLink to="/" className={({isActive}) => isActive ? "text-[#3E5879]" : "hover:text-[#3E5879]"}>الرئيسية</NavLink>
             <NavLink to="/units" className={({isActive}) => isActive ? "text-[#3E5879]" : "hover:text-[#3E5879]"}>عقارات</NavLink>
             <NavLink to="/services" className={({isActive}) => isActive ? "text-[#3E5879]" : "hover:text-[#3E5879]"}>خدماتنا</NavLink>
-            <NavLink to="/about" className={({isActive}) => isActive ? "text-[#3E5879]" : "hover:text-[#3E5879]"}>الشركة</NavLink>
+            <NavLink to="/about" className={({isActive}) => isActive ? "text-[#3E5879]" : "hover:text-[#3E5879]"}>عن الشركة</NavLink>
+            {/* الرابط الجديد هنا */}
+            <NavLink to="/contactUs" className={({isActive}) => isActive ? "text-[#3E5879]" : "hover:text-[#3E5879]"}>تواصل معنا</NavLink>
           </div>
 
-          {/* Desktop Search (Visible only from 1024px) */}
+          {/* Desktop Search */}
           <div className="hidden lg:flex relative flex-1 max-w-sm mx-4" ref={searchRef}>
             <div className="relative w-full">
               <input
@@ -198,7 +200,6 @@ export default function Navbar() {
 
                 {isOpen && (
                   <div className="absolute left-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-[999] overflow-hidden">
-                    {/* User Info Header */}
                     <div className="px-4 py-3 bg-gray-50/80 border-b border-gray-100 mb-1">
                       <p className="text-sm font-black text-[#3E5879] truncate mb-1.5">{userData.name || "المستخدم"}</p>
                       <div className="flex items-center gap-2 text-gray-500 mb-1">
@@ -213,7 +214,7 @@ export default function Navbar() {
                       )}
                     </div>
 
-                    <Link to="/user-profile" className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-[#3E5879]/5 transition-colors" onClick={() => setIsOpen(false)}>
+                    <Link to="/profile/user-profile" className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-[#3E5879]/5 transition-colors" onClick={() => setIsOpen(false)}>
                       <User size={18} /> <span className="text-sm">الملف الشخصي</span>
                     </Link>
                     <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-[#dc2626] hover:bg-red-50 border-t border-gray-100 mt-1 font-bold transition-colors">
@@ -230,16 +231,17 @@ export default function Navbar() {
 
         {/* Mobile Slide Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full right-0 w-full bg-white border-b shadow-xl py-4 flex flex-col items-center gap-4 z-[998]" ref={mobileMenuRef}>
-            <NavLink to="/" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-700">الرئيسية</NavLink>
-            <NavLink to="/units" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-700">عقارات</NavLink>
-            <NavLink to="/services" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-700">خدماتنا</NavLink>
-            <NavLink to="/about" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-700">الشركة</NavLink>
+          <div className="lg:hidden absolute top-full right-0 w-full bg-white border-b shadow-xl py-6 flex flex-col items-center gap-5 z-[998] animate-in slide-in-from-top duration-300" ref={mobileMenuRef}>
+            <NavLink to="/" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-700 hover:text-[#3E5879]">الرئيسية</NavLink>
+            <NavLink to="/units" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-700 hover:text-[#3E5879]">عقارات</NavLink>
+            <NavLink to="/services" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-700 hover:text-[#3E5879]">خدماتنا</NavLink>
+            <NavLink to="/about" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-700 hover:text-[#3E5879]">عن الشركة</NavLink>
+            <NavLink to="/contactUs" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-700 hover:text-[#3E5879]">تواصل معنا</NavLink>
           </div>
         )}
       </nav>
 
-      {/* Mobile/Tablet Search Bar (Visible below 1024px when toggled) */}
+      {/* Mobile/Tablet Search Bar */}
       {showMobileSearch && (
         <div className="lg:hidden bg-white px-4 py-3 border-b border-gray-100 animate-in slide-in-from-top duration-300 shadow-inner" ref={mobileSearchRef}>
           <div className="relative max-w-2xl mx-auto">

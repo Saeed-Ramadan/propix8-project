@@ -25,7 +25,7 @@ export default function Footer() {
 
   // روابط احتياطية في حال لم تتوفر البيانات من الـ API
   const siteName = settings?.site_name || "اسم الشركة هنا";
-  const siteLogo = settings?.site_logo ? `https://propix8.com${settings.site_logo}` : null;
+  const siteLogo = settings?.site_logo || null;
 
   return (
     <footer className="bg-[#415a77] text-white pt-12 font-cairo" dir="rtl">
