@@ -56,6 +56,8 @@ function App() {
           <Route path="/developerUnits/:id" element={<DevelopersUnits />} />
           <Route path="/compoundUnits/:id" element={<CompoundsUnits />} />
           <Route path="/contactUs" element={<ContactUs />} />
+          
+
 
           {/* --- مسارات الحساب الشخصي الجديدة --- */}
           <Route path="/profile" element={<ProfileLayout />}>

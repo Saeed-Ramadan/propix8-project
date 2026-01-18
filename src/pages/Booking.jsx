@@ -1,154 +1,227 @@
 import React, { useState } from 'react';
-import { MapPin, BedDouble, Bath, Maximize, Calendar, Clock, User, Phone, Mail, MessageSquare } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Calendar, Clock, User, Phone, Mail, Loader2 } from 'lucide-react';
+// استيراد Toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Booking() {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    phone: '',
-    email: '',
-    visitDate: '',
-    visitTime: '',
-    notes: '',
-    agreed: false
-  });
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 font-cairo" dir="rtl">
-      <div className="max-w-4xl mx-auto">
+    const [submitting, setSubmitting] = useState(false);
 
-        {/* بطاقة تفاصيل الوحدة (الجزء العلوي) */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-8 border border-gray-100 flex flex-col md:flex-row shadow-md">
-          <div className="md:w-1/3 h-48 md:h-auto">
-            <img
-              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop"
-              alt="Property"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="p-6 flex-1 flex flex-col justify-center">
-            <div className="flex items-center gap-2 text-[#415a77] mb-2">
-              <MapPin size={18} />
-              <span className="font-bold text-lg">القاهرة الجديدة - التجمع الخامس</span>
-            </div>
-            <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-gray-500 text-sm mt-4 border-t pt-4">
-              <div className="flex items-center gap-2">
-                <Maximize size={16} className="text-[#415a77]" />
-                <span>520 م²</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <BedDouble size={16} className="text-[#415a77]" />
-                <span>5 غرف</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Bath size={16} className="text-[#415a77]" />
-                <span>4 حمامات</span>
-              </div>
-            </div>
-          </div>
-        </div>
+    const [formData, setFormData] = useState({
+        name: '',
+        phone: '',
+        email: '',
+        date: '',
+        time: '',
+        notes: '',
+        agreed: false
+    });
 
-        {/* نموذج الحجز (الجزء السفلي) */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-gray-100">
-          <h2 className="text-2xl font-bold text-[#415a77] mb-8 text-center">احجز موعد للمعاينة</h2>
+    const today = new Date().toISOString().split('T')[0];
+    const currentTime = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
-          <form className="space-y-6">
-            {/* الاسم بالكامل */}
-            <div>
-              <label className="block text-gray-700 font-bold mb-2 text-sm">الاسم بالكامل</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="أدخل اسمك بالكامل"
-                  className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
-                />
-                <User className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              </div>
-            </div>
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
 
-            {/* رقم الهاتف */}
-            <div>
-              <label className="block text-gray-700 font-bold mb-2 text-sm">رقم الهاتف</label>
-              <div className="relative">
-                <input
-                  type="tel"
-                  placeholder="رقم الهاتف"
-                  className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
-                />
-                <Phone className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              </div>
-            </div>
+        if (name === 'time' && formData.date === today && value < currentTime) {
+            toast.warning("يرجى اختيار وقت مستقبلي");
+            return;
+        }
 
-            {/* البريد الإلكتروني */}
-            <div>
-              <label className="block text-gray-700 font-bold mb-2 text-sm">البريد الإلكتروني</label>
-              <div className="relative">
-                <input
-                  type="email"
-                  placeholder="البريد الإلكتروني"
-                  className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
-                />
-                <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              </div>
-            </div>
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
 
-            {/* التاريخ والوقت */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-700 font-bold mb-2 text-sm">تاريخ الزيارة</label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right text-gray-500"
-                  />
-                  <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!formData.agreed) {
+            toast.error('يرجى الموافقة على الشروط والأحكام');
+            return;
+        }
+
+        setSubmitting(true);
+
+        const token = localStorage.getItem('userToken');
+
+        try {
+            const response = await fetch('https://propix8.com/api/bookings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    unit_id: id,
+                    email: formData.email,
+                    phone: formData.phone,
+                    date: formData.date,
+                    time: formData.time,
+                    notes: formData.notes
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.status) {
+                // رسالة نجاح Toast
+                toast.success(result.message || 'تم حجز الموعد بنجاح!');
+
+                setFormData({ name: '', phone: '', email: '', date: '', time: '', notes: '', agreed: false });
+
+                // الانتقال لصفحة التفاصيل بعد 2.5 ثانية
+                setTimeout(() => {
+                    navigate(`/property-details/${id}`);
+                }, 2500);
+
+            } else {
+                toast.error(result.message || 'فشل في إرسال الطلب');
+            }
+        } catch (error) {
+            toast.error('حدث خطأ في الاتصال بالخادم');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-gray-50 py-12 px-4 font-cairo" dir="rtl">
+            {/* حاوية رسائل التوست */}
+            <ToastContainer position="top-center" rtl={true} autoClose={2000} />
+
+            <div className="max-w-3xl mx-auto">
+                <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-gray-100">
+                    <h2 className="text-2xl font-bold text-[#415a77] mb-8 text-center">احجز موعد للمعاينة</h2>
+
+                    <form onSubmit={handleSubmit} className="space-y-6 text-right">
+                        <div>
+                            <label className="block text-gray-700 font-bold mb-2 text-sm">الاسم بالكامل</label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    name="name"
+                                    required
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    placeholder="أدخل اسمك بالكامل"
+                                    className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
+                                />
+                                <User className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-gray-700 font-bold mb-2 text-sm">رقم الهاتف</label>
+                            <div className="relative">
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    required
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    placeholder="رقم الهاتف"
+                                    className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
+                                />
+                                <Phone className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-gray-700 font-bold mb-2 text-sm">البريد الإلكتروني</label>
+                            <div className="relative">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    required
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="البريد الإلكتروني"
+                                    className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
+                                />
+                                <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-gray-700 font-bold mb-2 text-sm">تاريخ الزيارة</label>
+                                <div className="relative" onClick={(e) => e.currentTarget.querySelector('input').showPicker()}>
+                                    <input
+                                        type="date"
+                                        name="date"
+                                        required
+                                        min={today}
+                                        value={formData.date}
+                                        onChange={handleChange}
+                                        className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right text-gray-400 cursor-pointer"
+                                    />
+                                    <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 font-bold mb-2 text-sm">وقت الزيارة</label>
+                                <div className="relative" onClick={(e) => e.currentTarget.querySelector('input').showPicker()}>
+                                    <input
+                                        type="time"
+                                        name="time"
+                                        required
+                                        value={formData.time}
+                                        onChange={handleChange}
+                                        className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right text-gray-400 cursor-pointer"
+                                    />
+                                    <Clock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-gray-700 font-bold mb-2 text-sm">ملاحظات إضافية</label>
+                            <textarea
+                                name="notes"
+                                rows="4"
+                                value={formData.notes}
+                                onChange={handleChange}
+                                placeholder="أضف أي ملاحظات أو استفسارات حول المعاينة"
+                                className="w-full bg-gray-50 border-none rounded-lg p-3 focus:ring-2 focus:ring-[#415a77] outline-none text-right resize-none placeholder:text-gray-300"
+                            ></textarea>
+                        </div>
+
+                        <div className="flex items-center gap-2 justify-start">
+                            <input
+                                type="checkbox"
+                                name="agreed"
+                                checked={formData.agreed}
+                                onChange={handleChange}
+                                className="w-4 h-4 accent-[#415a77] cursor-pointer"
+                            />
+                            <label className="text-sm text-gray-600 cursor-pointer select-none">
+                                أوافق على
+                                <Link to="/terms" className="text-[#415a77] underline mx-1"> الشروط والأحكام و سياسة الخصوصية</Link>
+                            </label>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="w-full bg-[#415a77] text-white font-bold py-4 rounded-lg hover:bg-[#34495e] transition duration-300 shadow-lg mt-4 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            {submitting ? (
+                                <><Loader2 className="animate-spin" size={20} /> جاري المعالجة...</>
+                            ) : (
+                                'تأكيد الحجز'
+                            )}
+                        </button>
+                    </form>
                 </div>
-              </div>
-              <div>
-                <label className="block text-gray-700 font-bold mb-2 text-sm">وقت الزيارة</label>
-                <div className="relative">
-                  <input
-                    type="time"
-                    className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right text-gray-500"
-                  />
-                  <Clock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                </div>
-              </div>
             </div>
-
-            {/* ملاحظات إضافية */}
-            <div>
-              <label className="block text-gray-700 font-bold mb-2 text-sm">ملاحظات إضافية</label>
-              <div className="relative">
-                <textarea
-                  rows="4"
-                  placeholder="أضف أي ملاحظات أو استفسارات حول المعاينة"
-                  className="w-full bg-gray-50 border-none rounded-lg p-3 focus:ring-2 focus:ring-[#415a77] outline-none text-right resize-none"
-                ></textarea>
-              </div>
-            </div>
-
-            {/* الشروط والأحكام */}
-            <div className="flex items-center gap-2 justify-start">
-            <input
-                type="checkbox"
-                className="w-4 h-4 accent-[#415a77] cursor-pointer"
-              />
-              <label className="text-sm text-gray-600 cursor-pointer select-none">
-                أوافق على <span className="text-[#415a77] underline">الشروط والأحكام</span> و<span className="text-[#415a77] underline">سياسة الخصوصية</span>
-              </label>
-
-            </div>
-
-            {/* زر التأكيد */}
-            <button
-              type="submit"
-              className="w-full bg-[#415a77] text-white font-bold py-4 rounded-lg hover:bg-[#34495e] transition duration-300 shadow-lg mt-4"
-            >
-              تأكيد الحجز
-            </button>
-          </form>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
