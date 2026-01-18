@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Home, Search, Scale, ShieldCheck, Settings, 
-  Megaphone, Wallet, Loader2, MapPin, Maximize, 
-  Bed, Bath, ChevronLeft, ChevronRight 
+import {
+  Home, Search, Scale, ShieldCheck, Settings,
+  Megaphone, Wallet, Loader2, MapPin, Maximize,
+  Bed, Bath, ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 export default function Services() {
@@ -18,10 +18,10 @@ export default function Services() {
   const scroll = (direction) => {
     if (scrollRef.current) {
       const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo = direction === 'left' 
-        ? scrollLeft - clientWidth 
+      const scrollTo = direction === 'left'
+        ? scrollLeft - clientWidth
         : scrollLeft + clientWidth;
-      
+
       scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
   };
@@ -64,7 +64,7 @@ export default function Services() {
 
   return (
     <div className="bg-white min-h-screen font-cairo text-right pb-24" dir="rtl">
-      
+
       {/* 1. Breadcrumbs */}
       <nav className="max-w-7xl mx-auto px-6 pt-8 flex items-center gap-2 text-gray-400 text-sm font-bold">
         <Home size={16} />
@@ -88,10 +88,10 @@ export default function Services() {
         </div>
         <div className="order-1 lg:order-2">
           <div className="relative">
-            <img 
-              src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1000" 
-              className="w-full rounded-[3rem] shadow-2xl border-[12px] border-white relative z-10" 
-              alt="Services Intro" 
+            <img
+              src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1000"
+              className="w-full rounded-[3rem] shadow-2xl border-[12px] border-white relative z-10"
+              alt="Services Intro"
             />
             <div className="absolute -bottom-6 -right-6 w-64 h-64 bg-[#3E5879]/5 rounded-full -z-0"></div>
           </div>
@@ -104,14 +104,14 @@ export default function Services() {
           <div className="h-10 w-2 bg-[#3E5879] rounded-full"></div>
           <h2 className="text-3xl font-black text-[#3E5879]">خدماتنا الاحترافية</h2>
         </div>
-        
+
         {loadingServices ? (
           <div className="flex justify-center py-20"><Loader2 className="animate-spin text-[#3E5879]" size={40} /></div>
         ) : (
           <div className="grid grid-cols-1 gap-6">
             {services.map((service) => (
-              <div 
-                key={service.id} 
+              <div
+                key={service.id}
                 className="bg-[#f8fafc] rounded-[2.5rem] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between group hover:bg-white hover:shadow-2xl hover:shadow-[#3E5879]/10 transition-all duration-500 border border-transparent hover:border-gray-100"
               >
                 <div className="flex-1 ml-6 text-center md:text-right">
@@ -138,16 +138,16 @@ export default function Services() {
             <span className="text-[#3E5879] font-black text-xs uppercase tracking-[0.3em] mb-2 block">أحدث العقارات</span>
             <h2 className="text-3xl font-black text-[#3E5879]">عقارات مميزة أضيفت حديثاً</h2>
           </div>
-          
+
           {/* أزرار التحكم في السلايدر */}
           <div className="flex gap-3">
-            <button 
+            <button
               onClick={() => scroll('right')}
               className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:bg-[#3E5879] hover:text-white transition-all active:scale-90"
             >
               <ChevronRight size={24} />
             </button>
-            <button 
+            <button
               onClick={() => scroll('left')}
               className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:bg-[#3E5879] hover:text-white transition-all active:scale-90"
             >
@@ -159,7 +159,7 @@ export default function Services() {
         {loadingUnits ? (
           <div className="flex justify-center py-20"><Loader2 className="animate-spin text-[#3E5879]" size={40} /></div>
         ) : (
-          <div 
+          <div
             ref={scrollRef}
             className="flex overflow-x-auto gap-8 pb-10 scrollbar-hide snap-x snap-mandatory"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -191,9 +191,9 @@ export default function Services() {
                   <h3 className="font-black text-xl text-[#3E5879] mb-3 line-clamp-1 group-hover:text-blue-900 transition-colors">
                     {item.title}
                   </h3>
-                  
+
                   <div className="text-2xl font-black text-[#3E5879] mb-6 flex items-baseline gap-1">
-                    {Number(item.price).toLocaleString()} 
+                    {Number(item.price).toLocaleString()}
                     <span className="text-sm font-bold opacity-60">ج.م</span>
                   </div>
 

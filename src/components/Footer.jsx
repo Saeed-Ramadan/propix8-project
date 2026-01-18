@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, Youtube, ArrowLeft, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   const [settings, setSettings] = useState(null);
@@ -30,7 +31,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#415a77] text-white pt-12 font-cairo" dir="rtl">
       <div className="max-w-7xl mx-auto px-6 md:px-16 grid grid-cols-1 md:grid-cols-4 gap-10 pb-10">
-        
+
         {/* القسم الأول: عن الشركة والشعار */}
         <div className="space-y-4">
           {siteLogo ? (
@@ -41,21 +42,21 @@ export default function Footer() {
           <p className="text-gray-300 text-sm leading-relaxed">
             نسعى لتقديم تجربة عقارية مميزة تجمع بين الثقة، الجودة، والابتكار في كل مشروع نقدمه.
           </p>
-          <button className="mt-4 bg-white text-[#415a77] px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-gray-100 transition">
+          <Link to="/units" className="mt-4 bg-white text-[#415a77] px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-gray-100 transition w-fit">
             اكتشف وحدتك الآن
             <ArrowLeft size={18} className="bg-[#415a77] text-white rounded-full p-0.5" />
-          </button>
+          </Link>
         </div>
 
         {/* القسم الثاني: روابط سريعة */}
         <div>
           <h3 className="text-xl font-bold mb-6">روابط سريعة</h3>
           <ul className="space-y-3 text-gray-300">
-            <li><a href="#" className="hover:text-white transition">عقارات للبيع</a></li>
+            <li><Link to="/units" className="hover:text-white transition">عقارات للبيع</Link></li>
             <li><a href="#" className="hover:text-white transition">المشاريع الجديدة</a></li>
             <li><a href="#" className="hover:text-white transition">الوحدات المميزة</a></li>
-            <li><a href="#" className="hover:text-white transition">احجز معاينة</a></li>
-            <li><a href="#" className="hover:text-white transition">خدماتنا</a></li>
+            <li><Link to="/units" className="hover:text-white transition">احجز معاينة</Link></li>
+            <li><Link to="/services" className="hover:text-white transition">خدماتنا</Link></li>
           </ul>
         </div>
 
@@ -97,7 +98,7 @@ export default function Footer() {
                 <Twitter />
               </a>
             )}
-            
+
           </div>
         </div>
       </div>

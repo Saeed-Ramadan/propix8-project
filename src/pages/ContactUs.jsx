@@ -57,7 +57,7 @@ export default function ContactUs() {
         },
         body: JSON.stringify({
           ...formData,
-          unit_id: "119", 
+          unit_id: "119",
           seller_id: "18"
         })
       });
@@ -84,11 +84,11 @@ export default function ContactUs() {
 
   return (
     <div className="bg-white min-h-screen font-cairo text-right" dir="rtl">
-      
+
       {/* 1. Breadcrumbs */}
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-start gap-2 text-gray-400 text-sm">
         <Link to="/" className="hover:text-[#3E5879] transition-colors flex items-center gap-1 font-bold">
-           الرئيسية <Home size={14} /> 
+          <Home size={14} /> الرئيسية
         </Link>
         <span className="text-gray-300 font-bold">›</span>
         <span className="text-[#3E5879] font-bold">تواصل معنا</span>
@@ -97,9 +97,9 @@ export default function ContactUs() {
       {/* 2. Hero & Form Section */}
       <section className="relative max-w-7xl mx-auto px-4 md:px-6  ">
         <div className="relative h-[350px] md:h-[450px] w-full rounded-[1rem] overflow-hidden shadow-sm border border-gray-100">
-          <img 
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200" 
-            alt="Property" 
+          <img
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200"
+            alt="Property"
             className="w-full h-full object-cover"
           />
         </div>
@@ -111,44 +111,44 @@ export default function ContactUs() {
             <p className="text-[#3E5879] text-sm mb-8 font-bold opacity-80">يسعدنا تواصلك معنا والإجابة عن جميع استفساراتك.</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input 
+              <input
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
-                type="text" 
-                placeholder="ادخل اسمك هنا" 
+                type="text"
+                placeholder="ادخل اسمك هنا"
                 className="w-full bg-white border-none rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 outline-none focus:ring-1 focus:ring-[#465E7E]"
               />
-              
-              <input 
+
+              <input
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                type="email" 
-                placeholder="بريدك الإلكتروني" 
+                type="email"
+                placeholder="بريدك الإلكتروني"
                 className="w-full bg-white border-none rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 outline-none focus:ring-1 focus:ring-[#465E7E]"
               />
 
-              <input 
+              <input
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
                 required
-                type="text" 
-                placeholder="الموقع (مثلاً: القاهرة)" 
+                type="text"
+                placeholder="الموقع (مثلاً: القاهرة)"
                 className="w-full bg-white border-none rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 outline-none focus:ring-1 focus:ring-[#465E7E]"
               />
 
               <div className="relative">
-                <input 
+                <input
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  type="tel" 
-                  placeholder="رقم التليفون" 
+                  type="tel"
+                  placeholder="رقم التليفون"
                   className="w-full bg-white border-none rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 outline-none focus:ring-1 focus:ring-[#465E7E]"
                 />
                 <div className="absolute inset-y-0 left-3 flex items-center gap-1 border-r border-gray-100 pr-2">
@@ -157,24 +157,24 @@ export default function ContactUs() {
                 </div>
               </div>
 
-              <textarea 
+              <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
                 required
-                placeholder="رسالة" 
+                placeholder="رسالة"
                 rows="3"
                 className="w-full bg-white border-none rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 resize-none outline-none focus:ring-1 focus:ring-[#465E7E]"
               ></textarea>
 
-              <button 
+              <button
                 disabled={loading}
                 type="submit"
                 className="w-full bg-[#465E7E] text-white font-bold py-3.5 rounded-lg hover:bg-[#354862] transition-all shadow-md text-md flex items-center justify-center gap-2 disabled:opacity-70"
               >
                 {loading ? <Loader2 className="animate-spin" size={20} /> : 'أرسل رسالة'}
               </button>
-              
+
               {responseMsg.text && (
                 <div className={`mt-4 p-3 rounded-lg text-xs font-bold flex items-center gap-2 text-right ${
                   responseMsg.isError ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-600 border border-green-100'
@@ -200,9 +200,9 @@ export default function ContactUs() {
       <section className="max-w-7xl mx-auto px-6 py-10 md:py-20 flex justify-end">
         <div className="w-full md:w-1/2 flex flex-col items-end">
           <div className="flex flex-col items-start text-right space-y-8">
-            
+
             <h2 className=" text-3xl font-black text-[#3E5879] mb-2 w-full">اتصل بنا</h2>
-            
+
             {/* العنوان المستمد من API */}
             <div className="flex flex-col items-start w-full group">
               <div className="flex items-center gap-2 text-[#465E7E]">
