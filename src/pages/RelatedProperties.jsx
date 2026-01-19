@@ -27,11 +27,11 @@ export default function RelatedProperties() {
   return (
     <div className="bg-gray-50 min-h-screen font-cairo py-12" dir="rtl">
       <div className="max-w-7xl mx-auto px-6">
-        
+
         {/* Header */}
         <div className="flex items-center gap-4 mb-12">
-          <button 
-            onClick={() => navigate(-1)} 
+          <button
+            onClick={() => navigate(-1)}
             className="p-3 bg-white rounded-2xl shadow-sm hover:bg-gray-100 transition-all text-[#3E5879]"
           >
             <ChevronRight size={24} className="rotate-0" />
@@ -50,17 +50,26 @@ export default function RelatedProperties() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {relatedUnits.map((item) => (
-              <div 
+              <div
                 key={item.id}
                 onClick={() => navigate(`/property-details/${item.id}`)}
                 className="bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 cursor-pointer group"
               >
-                <div className="relative h-64 overflow-hidden">
-                  <img 
-                    src={item.main_image} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                    alt={item.title} 
-                  />
+                <div className="relative h-64 overflow-hidden bg-gray-50 flex items-center justify-center">
+                  {/* التحقق من وجود الصورة */}
+                  {item.main_image && item.main_image !== "" ? (
+                    <img
+                      src={item.main_image}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      alt={item.title}
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-gray-400">
+                      <Maximize size={40} className="opacity-20" />
+                      <span className="text-sm font-bold">لا توجد صورة لهذا العقار</span>
+                    </div>
+                  )}
+
                   <div className="absolute top-5 left-5 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-xl flex items-center gap-2 shadow-sm">
                     <MapPin size={14} className="text-[#3E5879]" />
                     <span className="text-[12px] font-bold text-gray-700">{item.city?.name}</span>

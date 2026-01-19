@@ -109,8 +109,17 @@ function UserFavorites() {
                     onClick={() => navigate(`/property-details/${item.id}`)} // توجيه المستخدم عند الضغط
                     className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 group hover:shadow-md transition-shadow cursor-pointer"
                   >
-                    <div className="relative h-56 overflow-hidden">
-                      <img src={item.main_image} alt={item.title} className="w-full h-full object-cover" />
+                    <div className="relative h-56 overflow-hidden bg-gray-50 flex items-center justify-center">
+                      {/* تعديل منطق عرض الصورة */}
+                      {item.main_image && item.main_image !== "" ? (
+                        <img src={item.main_image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 text-gray-400">
+                          <Square size={30} className="opacity-20" />
+                          <span className="text-[10px] font-bold">لا توجد صورة لهذا العقار</span>
+                        </div>
+                      )}
+
                       <button
                         onClick={(e) => handleToggleFavorite(e, item.id)} // تمرير الـ Event لمنع الـ Bubbling
                         className="absolute top-4 left-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md text-yellow-500 hover:bg-yellow-50 z-10"

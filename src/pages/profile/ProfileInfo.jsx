@@ -155,7 +155,13 @@ export default function ProfileInfo() {
         <h2 className="text-xl font-black text-[#3E5879] mb-8 text-right border-r-4 border-[#3E5879] pr-3">الحساب الشخصي</h2>
 
         <div className="flex justify-center mb-10">
-          <img src={user?.avatar || defaultAvatar} className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg" alt="User" />
+          <div className="w-28 h-28 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+            {user?.avatar ? (
+              <img src={user.avatar} className="w-full h-full object-cover" alt="User" />
+            ) : (
+              <img src={defaultAvatar} className="w-full h-full object-cover" alt="User" />
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -189,7 +195,15 @@ export default function ProfileInfo() {
             <div className="p-3 md:p-8 max-h-[75vh] overflow-y-auto custom-scrollbar">
               <div className="flex justify-center mb-6 relative">
                 <div className="relative">
-                  <img src={selectedFile ? URL.createObjectURL(selectedFile) : (user?.avatar || defaultAvatar)} className="w-20 h-20 rounded-full border-2 border-white shadow-md object-cover" alt="User" />
+                  <div className="w-20 h-20 rounded-full border-2 border-white shadow-md overflow-hidden bg-gray-50 flex items-center justify-center">
+                    {selectedFile ? (
+                      <img src={URL.createObjectURL(selectedFile)} className="w-full h-full object-cover" alt="User" />
+                    ) : user?.avatar ? (
+                      <img src={user.avatar} className="w-full h-full object-cover" alt="User" />
+                    ) : (
+                      <img src={defaultAvatar} className="w-full h-full object-cover" alt="User" />
+                    )}
+                  </div>
                   <label className="absolute bottom-0 right-0 bg-[#3E5879] p-1.5 rounded-full text-white cursor-pointer hover:scale-110 transition-transform shadow-sm">
                     <Camera size={14} />
                     <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
