@@ -9,20 +9,23 @@ import {
 export default function Services() {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
+  const amenitiesRef = useRef(null); // Ref لقسم الخدمات الجديد
   const [services, setServices] = useState([]);
   const [recommendedUnits, setRecommendedUnits] = useState([]);
+  const [amenities, setAmenities] = useState([]); // State للخدمات المضافة
   const [loadingServices, setLoadingServices] = useState(true);
   const [loadingUnits, setLoadingUnits] = useState(true);
+  const [loadingAmenities, setLoadingAmenities] = useState(true);
 
   // دالة تحريك السلايدر
-  const scroll = (direction) => {
-    if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
+  const scroll = (direction, ref) => {
+    if (ref.current) {
+      const { scrollLeft, clientWidth } = ref.current;
       const scrollTo = direction === 'left'
         ? scrollLeft - clientWidth
         : scrollLeft + clientWidth;
 
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+      ref.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
   };
 
@@ -50,7 +53,7 @@ export default function Services() {
       })
       .catch(() => setLoadingServices(false));
 
-    // 2. جلب أحدث الوحدات من الـ API الجديد
+    // 2. جلب أحدث الوحدات
     fetch('https://propix8.com/api/units/latest')
       .then(res => res.json())
       .then(result => {
@@ -60,6 +63,15 @@ export default function Services() {
         setLoadingUnits(false);
       })
       .catch(() => setLoadingUnits(false));
+
+    // 3. جلب الـ Amenities (خدمات التشغيل المنزلي)
+    fetch('https://propix8.com/api/amenities')
+      .then(res => res.json())
+      .then(result => {
+        if (result.status) setAmenities(result.data);
+        setLoadingAmenities(false);
+      })
+      .catch(() => setLoadingAmenities(false));
   }, []);
 
   return (
@@ -96,6 +108,56 @@ export default function Services() {
             <div className="absolute -bottom-6 -right-6 w-64 h-64 bg-[#3E5879]/5 rounded-full -z-0"></div>
           </div>
         </div>
+      </section>
+
+      {/* 2.5 New Section: Amenities Slider (خدمات التشغيل المنزلي) */}
+      <section className="max-w-7xl mx-auto px-6 mt-24 relative">
+        <div className="flex justify-between items-center mb-10">
+          <h2 className="text-3xl font-black text-[#3E5879]">خدمات اضافية </h2>
+          <div className="flex gap-2">
+            <button
+              onClick={() => scroll('right', amenitiesRef)}
+              className="p-3 rounded-full bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
+            >
+              <ChevronRight size={20} />
+            </button>
+            <button
+              onClick={() => scroll('left', amenitiesRef)}
+              className="p-3 rounded-full bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
+            >
+              <ChevronLeft size={20} />
+            </button>
+          </div>
+        </div>
+
+        {loadingAmenities ? (
+          <div className="flex justify-center py-10"><Loader2 className="animate-spin text-[#3E5879]" /></div>
+        ) : (
+          <div
+            ref={amenitiesRef}
+            className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide snap-x"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {amenities.map((item) => (
+              <div
+                key={item.id}
+                className="min-w-[280px] md:min-w-[320px] bg-white rounded-3xl border border-gray-100 p-4 shadow-sm hover:shadow-xl transition-all duration-300 snap-start text-center group"
+              >
+                <div className="h-48 overflow-hidden rounded-2xl mb-5">
+                  <img
+                    src={item.icon}
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <h3 className="font-black text-xl text-gray-800 mb-6">{item.name}</h3>
+                {/* <button className="w-full py-3 bg-[#3E5879] text-white rounded-xl font-bold hover:bg-blue-900 transition-colors shadow-md shadow-[#3E5879]/20">
+                  أحجز الآن
+                </button> */}
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* 3. Services Section */}
@@ -139,16 +201,15 @@ export default function Services() {
             <h2 className="text-3xl font-black text-[#3E5879]">عقارات مميزة أضيفت حديثاً</h2>
           </div>
 
-          {/* أزرار التحكم في السلايدر */}
           <div className="flex gap-3">
             <button
-              onClick={() => scroll('right')}
+              onClick={() => scroll('right', scrollRef)}
               className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:bg-[#3E5879] hover:text-white transition-all active:scale-90"
             >
               <ChevronRight size={24} />
             </button>
             <button
-              onClick={() => scroll('left')}
+              onClick={() => scroll('left', scrollRef)}
               className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:bg-[#3E5879] hover:text-white transition-all active:scale-90"
             >
               <ChevronLeft size={24} />
@@ -170,7 +231,6 @@ export default function Services() {
                 onClick={() => navigate(`/property-details/${item.id}`)}
                 className="min-w-[calc(100%-1rem)] md:min-w-[calc(50%-1.5rem)] lg:min-w-[calc(33.333%-1.5rem)] snap-start bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 cursor-pointer group"
               >
-                {/* Image Header */}
                 <div className="relative h-72 overflow-hidden">
                   <img
                     src={item.main_image || "https://via.placeholder.com/800x600"}
@@ -186,18 +246,14 @@ export default function Services() {
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="p-8">
                   <h3 className="font-black text-xl text-[#3E5879] mb-3 line-clamp-1 group-hover:text-blue-900 transition-colors">
                     {item.title}
                   </h3>
-
                   <div className="text-2xl font-black text-[#3E5879] mb-6 flex items-baseline gap-1">
                     {Number(item.price).toLocaleString()}
                     <span className="text-sm font-bold opacity-60">ج.م</span>
                   </div>
-
-                  {/* Features Grid */}
                   <div className="flex items-center justify-between pt-6 border-t border-gray-50">
                     <div className="flex flex-col items-center gap-1">
                       <Maximize size={18} className="text-gray-300" />

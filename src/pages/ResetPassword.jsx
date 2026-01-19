@@ -14,7 +14,7 @@ export default function ResetPassword() {
 
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     token: token || "",
     email: emailFromUrl,
@@ -61,7 +61,7 @@ export default function ResetPassword() {
   return (
     <div className="h-screen w-full flex bg-[#ECEFF3] font-cairo overflow-hidden" dir="rtl">
       <ToastContainer />
-      
+
       <div className="hidden lg:block lg:w-1/2 h-full p-4">
         <div className="relative h-full w-full">
           <img src={signupImg} className="w-full h-full object-cover rounded-[2.5rem]" alt="reset" />
@@ -81,8 +81,8 @@ export default function ResetPassword() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="relative">
-              <input 
-                name="password" type={showPass ? "text" : "password"} required placeholder="كلمة المرور الجديدة" 
+              <input
+                name="password" type={showPass ? "text" : "password"} required placeholder="كلمة المرور الجديدة"
                 onChange={handleChange}
                 className="w-full bg-white border-none px-4 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-left" dir="ltr"
               />
@@ -92,15 +92,15 @@ export default function ResetPassword() {
             </div>
 
             <div className="relative">
-              <input 
-                name="password_confirmation" type={showPass ? "text" : "password"} required placeholder="تأكيد كلمة المرور" 
+              <input
+                name="password_confirmation" type={showPass ? "text" : "password"} required placeholder="تأكيد كلمة المرور"
                 onChange={handleChange}
                 className="w-full bg-white border-none px-4 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-left" dir="ltr"
               />
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
             </div>
 
-            <button 
+            <button
               type="submit" disabled={loading}
               className="w-full bg-[#3E5879] text-white py-4 rounded-xl font-bold text-xl hover:bg-[#2d415a] transition-all shadow-lg flex justify-center items-center gap-2"
             >

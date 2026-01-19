@@ -38,11 +38,11 @@ export default function ForgotPassword() {
 
         // التوجيه لصفحة الـ Reset Password بعد ثانية واحدة لإعطاء فرصة لرؤية الرسالة
         setTimeout(() => {
-          navigate('/reset-password', { 
-            state: { 
-              token: result.token, 
-              email: email 
-            } 
+          navigate('/reset-password', {
+            state: {
+              token: result.token,
+              email: email
+            }
           });
         }, 1500);
 
@@ -63,7 +63,7 @@ export default function ForgotPassword() {
   return (
     <div className="h-screen w-full flex bg-[#ECEFF3] font-cairo overflow-hidden" dir="rtl">
       {/* حاوية التنبيهات */}
-      <ToastContainer /> 
+      <ToastContainer />
 
       <div className="hidden lg:block lg:w-1/2 h-full p-4">
         <div className="relative h-full w-full">
@@ -80,14 +80,14 @@ export default function ForgotPassword() {
           <p className="text-gray-500 font-bold mb-10 text-lg">أدخل بريدك الإلكتروني للحصول على رابط الاستعادة</p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <input 
-              type="email" required placeholder="بريدك الإلكتروني" 
+            <input
+              type="email" required placeholder="بريدك الإلكتروني"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-white border-none px-4 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-left" dir="ltr"
             />
 
-            <button 
+            <button
               type="submit" disabled={loading}
               className="w-full bg-[#3E5879] text-white py-4 rounded-xl font-bold text-xl hover:bg-[#2d415a] transition-all shadow-lg flex justify-center items-center"
             >

@@ -1,0 +1,107 @@
+
+
+
+    <!--
+    Copyright wittystore - May 2023 - @wittystore_com
+    Author: E.Mulas
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Convert any image to SVG file online with this free simple app">
+    <meta name="keywords" content="online-image-to-svg, convert-image-to -svg, free-online-svg-converter, svg-converter, image-to-SVG
+SVG converter,convert image to SVG,wittystore-online-image-svg-converter,convert-in-vector-graphics, wittystore-image-to-svg-conversion-tool, raster-to-vector, online SVG creator, wittystore-SVG-conversion-service, image-format-conversion">
+    <title>Image to SVG Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .form-group input[type="submit"] {
+            width: 100%;
+            padding: 8px;
+            background-color: #23a1d1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .form-group input[type="submit"]:hover {
+            background-color: #1c7fa5;
+        }
+        
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <div class="container">
+        <a href="https://www.wittystore.com"><img border="0" alt="wittystore" src="wittystore_logo_title.png"></a>
+        <h1>Image to SVG Converter</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="image">Select an image:</label>
+                <input type="file" name="image" id="image" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Convert to SVG">
+            </div>
+        </form>
+                                                                                
+        
+        <p>Our user-friendly interface makes it easy for anyone to convert images to SVG. Upload your JPEG, PNG, GIF, or other common image formats, and our tool will handle the conversion process reliably.</p>
+        <p>Convert images to SVG in three simple steps:</p>
+        <ol>
+            <li>Choose your image file.</li>
+            <li>Our converter will quickly analyze and convert it to SVG.</li>
+            <li>Download the converted SVG file.</li>
+        </ol>
+        <p>Our Image to SVG Converter preserves key details, colors, and shapes. Ideal for graphic design projects, web development, and more.</p>
+        <p>Unlock the potential of SVG files - edit, resize, and customize without losing quality. Perfect for responsive web design.</p>
+        <p>Your privacy and security are important to us. We don't store uploaded images on our servers.</p>
+        
+    </div>
+<!-- Wittystore_Ad -->
+<script data-ad-client="ca-pub-3440342300483082" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</body>
+</html>
+    
+</body>
+</html>

@@ -122,8 +122,8 @@ export default function Footer() {
                 className="h-10 w-auto object-contain brightness-110 group-hover:contrast-125 transition-all"
               />
               <div className="flex flex-col">
-                <span className="text-xs font-black text-white/90 group-hover:text-white transition-colors">Fourth Pyramid</span>
-                <span className="text-[9px] text-gray-400 tracking-tighter">Digital Agency</span>
+                <span className=" text-xs font-black text-white/90 group-hover:text-white transition-colors">Fourth Pyramid</span>
+                <span className=" text-[9px] text-gray-400 tracking-tighter">Digital Agency</span>
               </div>
             </a>
           </div>

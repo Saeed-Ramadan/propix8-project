@@ -70,7 +70,12 @@ export default function SignIn() {
             className="w-full h-full object-cover rounded-[2.5rem] shadow-sm"
           />
           <div className="absolute inset-0 flex items-start justify-center pt-12">
-            <img src={logo} alt="Logo" className="w-44 drop-shadow-md" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="w-44 h-auto drop-shadow-md block"
+              style={{ minHeight: '50px' }} // احتياطاً لو الـ svg مضغوط
+            />
           </div>
         </div>
       </div>
