@@ -269,14 +269,19 @@ function UserBookingMessage() {
                   </button>
 
                   {(booking.status === "reschedule_admin" ||
-                    booking.status === "pending") && (
+                    booking.status === "pending" ||
+                    booking.status === "accepted") && (
                     <>
-                      <button
-                        onClick={() => handleOpenReschedule(booking)}
-                        className="bg-gray-100 text-[#3E5879] px-8 py-3 rounded-[0.5rem] text-sm font-black hover:bg-gray-200 transition-all"
-                      >
-                        اقتراح موعد آخر
-                      </button>
+                      {(booking.status === "reschedule_admin" ||
+                        booking.status === "pending" ||
+                        booking.status === "accepted") && (
+                        <button
+                          onClick={() => handleOpenReschedule(booking)}
+                          className="bg-gray-100 text-[#3E5879] px-8 py-3 rounded-[0.5rem] text-sm font-black hover:bg-gray-200 transition-all"
+                        >
+                          اقتراح موعد آخر
+                        </button>
+                      )}
                       <button
                         onClick={() => handleCancelBooking(booking.id)}
                         className="bg-red-50 text-red-500 px-8 py-3 rounded-[0.5rem] text-sm font-black hover:bg-red-100 transition-all"
