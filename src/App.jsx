@@ -14,7 +14,7 @@ import ResetPassword from "./pages/ResetPassword";
 import PropertyDetails from "./pages/PropertyDetails";
 import RelatedProperties from "./pages/RelatedProperties";
 
-import ProfileFromOther from "./pages/ProfileFromOther";
+
 import Terms from "./pages/Terms";
 import Booking from "./pages/Booking";
 import AboutUs from "./pages/AboutUs";
@@ -48,7 +48,7 @@ function App() {
             element={<RelatedProperties />}
           />
 
-          <Route path="/profileFromOther/:id" element={<ProfileFromOther />} />
+
           <Route path="/terms" element={<Terms />} />
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/about" element={<AboutUs />} />
@@ -56,7 +56,7 @@ function App() {
           <Route path="/developerUnits/:id" element={<DevelopersUnits />} />
           <Route path="/compoundUnits/:id" element={<CompoundsUnits />} />
           <Route path="/contactUs" element={<ContactUs />} />
-          
+
 
 
           {/* --- مسارات الحساب الشخصي الجديدة --- */}
