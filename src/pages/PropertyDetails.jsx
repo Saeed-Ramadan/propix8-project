@@ -909,7 +909,7 @@ export default function PropertyDetails() {
                 <div
                   onClick={() =>
                     unit.developer?.id &&
-                    navigate(`/compoundUnits/${unit.developer.id}`)
+                    navigate(`/developerUnits/${unit.developer.id}`)
                   }
                   className={`flex flex-col items-center gap-3 group transition-all p-4 rounded-3xl ${unit.developer?.id ? "cursor-pointer hover:bg-gray-50 hover:scale-105 active:scale-95" : ""}`}
                 >
