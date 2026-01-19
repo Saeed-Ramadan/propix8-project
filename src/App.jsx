@@ -27,6 +27,7 @@ import ProfileLayout from "./pages/profile/ProfileLayout";
 
 import UserFavorites from "./pages/profile/UserFavorites";
 import UserReviews from "./pages/profile/UserReviews";
+import UserBookingMessage from "./pages/profile/UserBookingMessage";
 
 function App() {
   return (
@@ -64,7 +65,7 @@ function App() {
             {/* تحويل تلقائي من /profile إلى /profile/info */}
             <Route index element={<Navigate to="user-profile" replace />} />
             <Route path="user-profile" element={<ProfileInfo />} />
-
+            <Route path="user-booking" element={<UserBookingMessage />} />
             <Route path="favorites" element={<UserFavorites />} />
             <Route path="reviews" element={<UserReviews />} />
           </Route>

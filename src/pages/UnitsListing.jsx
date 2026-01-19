@@ -461,7 +461,7 @@ function UnitsListing() {
                     <div
                       key={unit.id}
                       onClick={() => navigate(`/property-details/${unit.id}`)}
-                      className="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-50 flex flex-col md:flex-row group hover:shadow-md transition-all cursor-pointer relative"
+                      className="bg-white rounded-[0.5rem] overflow-hidden shadow-sm border border-gray-50 flex flex-col md:flex-row group hover:shadow-md transition-all cursor-pointer relative"
                     >
                       <div className="w-full md:w-2/5 relative h-52 md:h-56 overflow-hidden">
                         <img
@@ -472,7 +472,7 @@ function UnitsListing() {
                           alt={unit.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         />
-                        <div className="absolute top-4 right-4 bg-[#3E5879] text-white text-[10px] px-4 py-1.5 rounded-full font-bold shadow-lg">
+                        <div className="absolute top-4 right-4 bg-[#3E5879] text-white text-[10px] px-4 py-1.5 rounded-xl font-bold shadow-lg">
                           {unit.offer_type === "sale" ? "للبيع" : "للإيجار"}
                         </div>
                         <button className="absolute top-4 left-4 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
@@ -522,7 +522,7 @@ function UnitsListing() {
                               </span>
                             )}
                           </div>
-                          <button className="bg-[#3E5879] text-white px-8 py-2.5 rounded-2xl text-xs font-black hover:bg-[#2C405A] hover:shadow-lg transition-all active:scale-95">
+                          <button className="bg-[#3E5879] text-white px-8 py-2.5 rounded-[0.5rem] text-xs font-black hover:bg-[#2C405A] hover:shadow-lg transition-all active:scale-95">
                             التفاصيل
                           </button>
                         </div>

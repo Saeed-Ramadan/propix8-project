@@ -341,9 +341,9 @@ export default function Home() {
                 وحدات
               </div>
             </div>
-            <div className="flex flex-col md:flex-row items-center justify-end gap-6 mb-8">
+            <div className="flex flex-col md:flex-row items-center justify-start gap-6 mb-8">
               <span className="font-black text-lg">حالة العقار</span>
-              <div className="flex bg-gray-200/50 p-1.5 rounded-2xl border border-gray-300">
+              <div className="flex bg-gray-200/50 p-1.5 rounded-xl border border-gray-300">
                 {["all", "sale", "rent"].map((type) => (
                   <button
                     key={type}
@@ -362,7 +362,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 text-right">
               <div className="space-y-2">
                 <label className="font-black pr-2">نوع العقار</label>
-                <div className="relative">
+                <div className="relative mt-1.5">
                   <select
                     className="w-full p-3.5 rounded-xl border border-gray-500 text-right appearance-none focus:ring-2 ring-[#3E5879]/20 outline-none cursor-pointer"
                     onChange={(e) =>
@@ -384,7 +384,7 @@ export default function Home() {
               </div>
               <div className="space-y-2">
                 <label className="font-black pr-2">المساحة (م2)</label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2 mt-1.5">
                   <input
                     type="number"
                     placeholder="الأعلى"
@@ -411,7 +411,7 @@ export default function Home() {
               </div>
               <div className="space-y-2">
                 <label className="font-black pr-2">الموقع</label>
-                <div className="relative">
+                <div className="relative mt-1.5">
                   <select
                     className="w-full p-3.5 rounded-xl border border-gray-500 text-right appearance-none focus:ring-2 ring-[#3E5879]/20 outline-none cursor-pointer"
                     onChange={(e) =>
@@ -433,7 +433,7 @@ export default function Home() {
               </div>
               <div className="space-y-2">
                 <label className="font-black pr-2">نطاق السعر</label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2 mt-1.5">
                   <input
                     type="number"
                     placeholder="الأعلى"
@@ -552,7 +552,7 @@ export default function Home() {
               <div
                 key={compound.id}
                 onClick={() => navigate(`/compoundUnits/${compound.id}`)}
-                className="min-w-[280px] md:min-w-[320px] bg-[#3E5879] p-8 rounded-[2rem] border border-[#3E5879] shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer group snap-center text-center"
+                className="min-w-[280px] md:min-w-[320px] bg-[#3E5879] p-8 rounded-[1rem] border border-[#3E5879] shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer group snap-center text-center"
               >
                 <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm group-hover:bg-[#EEF2F6] transition-colors duration-300">
                   <Building2 size={35} className="text-[#3E5879]" />
@@ -606,10 +606,10 @@ export default function Home() {
               <div
                 key={dev.id}
                 onClick={() => navigate(`/developerUnits/${dev.id}`)}
-                className="min-w-[340px] md:min-w-[400px] bg-white rounded-[2.5rem] overflow-hidden shadow-lg border border-white hover:shadow-2xl transition-all group snap-center relative cursor-pointer"
+                className="min-w-[340px] md:min-w-[400px] bg-white rounded-[1rem] overflow-hidden shadow-lg border border-white hover:shadow-2xl transition-all group snap-center relative cursor-pointer"
               >
                 <div className="h-24 bg-[#3E5879] relative">
-                  <div className="absolute -bottom-10 right-8 w-24 h-24 bg-white rounded-3xl p-2 shadow-xl border-4 border-white group-hover:scale-110 transition-transform duration-500">
+                  <div className="absolute -bottom-10 right-8 w-24 h-24 bg-white rounded-xl p-2 shadow-xl border-4 border-white group-hover:scale-110 transition-transform duration-500">
                     <img
                       src={dev.logo}
                       className="w-full h-full object-contain"
@@ -645,7 +645,7 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <button className="w-full mt-6 py-3 rounded-2xl bg-gray-100 text-[#3E5879] font-black group-hover:bg-[#3E5879] group-hover:text-white transition-all shadow-inner">
+                  <button className="w-full mt-6 py-3 rounded-xl bg-gray-100 text-[#3E5879] font-black group-hover:bg-[#3E5879] group-hover:text-white transition-all shadow-inner">
                     عرض جميع المشاريع
                   </button>
                 </div>
@@ -718,7 +718,7 @@ export default function Home() {
           <div className="flex flex-wrap justify-center gap-3 mb-12">
             <button
               onClick={() => setActiveTab("all")}
-              className={`px-8 py-2.5 rounded-xl font-bold transition-all border ${activeTab === "all" ? "bg-[#3E5879] text-white border-[#3E5879]" : "bg-white text-gray-600 border-gray-200 hover:border-[#3E5879]"}`}
+              className={`px-8 py-2.5 rounded-md font-bold transition-all border ${activeTab === "all" ? "bg-[#3E5879] text-white border-[#3E5879]" : "bg-white text-gray-600 border-gray-200 hover:border-[#3E5879]"}`}
             >
               {" "}
               جميع الأنواع{" "}
@@ -727,7 +727,7 @@ export default function Home() {
               <button
                 key={type.id}
                 onClick={() => setActiveTab(type.id)}
-                className={`px-8 py-2.5 rounded-xl font-bold transition-all border ${activeTab === type.id ? "bg-[#3E5879] text-white border-[#3E5879]" : "bg-white text-gray-600 border-gray-200 hover:border-[#3E5879]"}`}
+                className={`px-8 py-2.5 rounded-md font-bold transition-all border ${activeTab === type.id ? "bg-[#3E5879] text-white border-[#3E5879]" : "bg-white text-gray-600 border-gray-200 hover:border-[#3E5879]"}`}
               >
                 {" "}
                 {type.name}{" "}
@@ -740,7 +740,7 @@ export default function Home() {
                 <div
                   key={unit.id}
                   onClick={() => navigate(`/property-details/${unit.id}`)}
-                  className="bg-white rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer group"
+                  className="bg-white rounded-[0.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer group"
                 >
                   <div className="h-64 relative overflow-hidden bg-gray-50 flex items-center justify-center">
                     {/* تعديل منطق الصورة هنا */}
@@ -758,16 +758,17 @@ export default function Home() {
                     )}
                   </div>
                   <div className="p-6 text-right">
-                    <div className="flex items-center justify-end gap-2 text-gray-400 text-sm mb-2">
+                    <div className="flex items-center justify-start gap-2 text-gray-400 text-sm mb-2">
+                    <MapPin size={16} className="text-[#3E5879]" />
                       <span className="font-bold text-[#3E5879] text-base">
                         {unit.city?.name} - {unit.address?.split("،")[0]}
                       </span>
-                      <MapPin size={16} className="text-[#3E5879]" />
+
                     </div>
-                    <h3 className="text-xl font-black text-[#3E5879] mb-3">
+                    <h3 className="text-xl font-black text-[#000] mb-3">
                       {unit.unit_type?.name} فاخرة بتشطيب سوبر لوكس
                     </h3>
-                    <div className="text-[#3E5879] text-xl font-black mb-4">
+                    <div className="text-[#3E5879] text-xl font-black mb-4 flex justify-end">
                       {parseFloat(unit.price).toLocaleString()} ج.م
                     </div>
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100 text-gray-500 font-bold text-sm">

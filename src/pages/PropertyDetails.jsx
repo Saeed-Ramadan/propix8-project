@@ -414,7 +414,7 @@ export default function PropertyDetails() {
                   src={
                     img || "https://via.placeholder.com/400x300?text=No+Image"
                   }
-                  className="w-full h-72 object-cover rounded-3xl cursor-pointer hover:opacity-90 transition-all"
+                  className="w-full h-72 object-cover rounded-[0.5rem] cursor-pointer hover:opacity-90 transition-all"
                   onClick={() => {
                     setActiveImage(img);
                     setShowAllPhotos(false);
@@ -462,7 +462,7 @@ export default function PropertyDetails() {
               </div>
             </div>
 
-            <div className="text-right md:text-left bg-[#3E5879]/5 p-6 rounded-[2rem] border border-[#3E5879]/10">
+            <div className="text-right md:text-left bg-[#3E5879]/5 p-6 rounded-[0.5rem] border border-[#3E5879]/10">
               <div className="text-4xl font-black text-[#3E5879]">
                 {Number(unit.price).toLocaleString()}{" "}
                 <span className="text-lg">ج.م</span>
@@ -483,7 +483,7 @@ export default function PropertyDetails() {
               >
                 <img
                   src={activeImage || displayImages[0]}
-                  className="w-full h-[250px] md:h-[350px] lg:h-[580px] object-cover rounded-[2.5rem] shadow-xl border-4 border-white transition-all duration-500"
+                  className="w-full h-[250px] md:h-[350px] lg:h-[580px] object-cover rounded-[0.5rem] shadow-xl border-4 border-white transition-all duration-500"
                   alt="Active View"
                 />
               </div>
@@ -494,7 +494,7 @@ export default function PropertyDetails() {
                       onClick={() =>
                         setActiveImage(displayImages[1] || displayImages[0])
                       }
-                      className="relative h-[150px] md:h-[200px] lg:h-[280px] overflow-hidden rounded-[2rem] group border-2 border-transparent hover:border-[#3E5879] transition-all"
+                      className="relative h-[150px] md:h-[200px] lg:h-[280px] overflow-hidden rounded-[0.5rem] group border-2 border-transparent hover:border-[#3E5879] transition-all"
                     >
                       <img
                         src={displayImages[1] || displayImages[0]}
@@ -506,7 +506,7 @@ export default function PropertyDetails() {
                       onClick={() =>
                         setActiveImage(displayImages[2] || displayImages[0])
                       }
-                      className="relative h-[150px] md:h-[200px] lg:h-[280px] overflow-hidden rounded-[2rem] group border-2 border-transparent hover:border-[#3E5879] transition-all"
+                      className="relative h-[150px] md:h-[200px] lg:h-[280px] overflow-hidden rounded-[0.5rem] group border-2 border-transparent hover:border-[#3E5879] transition-all"
                     >
                       <img
                         src={displayImages[2] || displayImages[0]}
@@ -521,7 +521,7 @@ export default function PropertyDetails() {
                       onClick={() =>
                         setActiveImage(displayImages[3] || displayImages[0])
                       }
-                      className="relative h-[150px] md:h-[200px] lg:h-[280px] overflow-hidden rounded-[2rem] group border-2 border-transparent hover:border-[#3E5879] transition-all"
+                      className="relative h-[150px] md:h-[200px] lg:h-[280px] overflow-hidden rounded-[0.5rem] group border-2 border-transparent hover:border-[#3E5879] transition-all"
                     >
                       <img
                         src={displayImages[3] || displayImages[0]}
@@ -535,7 +535,7 @@ export default function PropertyDetails() {
                           ? setShowAllPhotos(true)
                           : setActiveImage(displayImages[4] || displayImages[0])
                       }
-                      className="relative h-[150px] md:h-[200px] lg:h-[280px] overflow-hidden rounded-[2rem] group border-2 border-transparent hover:border-[#3E5879] transition-all"
+                      className="relative h-[150px] md:h-[200px] lg:h-[280px] overflow-hidden rounded-[0.5rem] group border-2 border-transparent hover:border-[#3E5879] transition-all"
                     >
                       <img
                         src={displayImages[4] || displayImages[0]}
@@ -557,7 +557,7 @@ export default function PropertyDetails() {
             </div>
           ) : (
             // الرسالة التي تظهر في حال عدم وجود صور
-            <div className="w-full h-[400px] bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-4">
+            <div className="w-full h-[400px] bg-gray-50 rounded-[0.5rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-4">
               <div className="p-6 bg-white rounded-full shadow-sm">
                 <Maximize size={48} className="text-gray-300" />
               </div>

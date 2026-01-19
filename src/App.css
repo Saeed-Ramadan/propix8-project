@@ -40,3 +40,24 @@
 .read-the-docs {
   color: #888;
 }
+
+
+
+/* تخصيص الـ Scrollbar للمودال */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px; /* عرض السكرول */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1; /* لون الخلفية */
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #3E5879; /* لون السكرول نفسه - نفس لون العناوين عندك */
+    border-radius: 10px; /* جعل السكرول دائري */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #2c3f58; /* لون أغمق عند التمرير بالماوس */
+}

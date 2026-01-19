@@ -73,7 +73,7 @@ function CompoundsUnits() {
                         <h1 className="text-4xl md:text-7xl font-black text-white mb-6 drop-shadow-2xl tracking-tight">
                             {compoundData.name}
                         </h1>
-                        <div className="max-w-2xl bg-white/10 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/10 shadow-xl">
+                        <div className="max-w-2xl bg-white/10 backdrop-blur-md p-6 rounded-[1.5rem] border border-white/10 shadow-xl">
                             <div className="flex items-center gap-2 mb-2 justify-center text-blue-200">
                                 <Info size={18} />
                                 <span className="font-bold text-sm uppercase tracking-widest">نبذة عن المشروع</span>
@@ -88,7 +88,7 @@ function CompoundsUnits() {
 
             <div id="units-section" className="container mx-auto px-4 -mt-16 relative z-20">
                 {/* Stats bar */}
-                <div className="bg-white rounded-[2.5rem] shadow-2xl p-6 md:p-8 mb-12 flex flex-col md:flex-row items-center justify-between gap-6 border border-gray-100">
+                <div className="bg-white rounded-[1rem] shadow-2xl p-6 md:p-8 mb-12 flex flex-col md:flex-row items-center justify-between gap-6 border border-gray-100">
                     <div>
                         <h2 className="text-2xl md:text-3xl font-black text-[#3E5879] flex items-center gap-3">
                             <Tag className="text-[#3E5879]" size={32} />
@@ -96,7 +96,7 @@ function CompoundsUnits() {
                         </h2>
                         <p className="text-gray-400 font-bold mt-1 mr-11">استكشف خيارات السكن المتنوعة في {compoundData.name}</p>
                     </div>
-                    <div className="bg-[#3E5879] text-white px-8 py-3 rounded-2xl text-lg font-black shadow-lg shadow-[#3E5879]/30">
+                    <div className="bg-[#3E5879] text-white px-8 py-3 rounded-[1rem] text-lg font-black shadow-lg shadow-[#3E5879]/30">
                         {compoundData.units.length} وحدة معروضة
                     </div>
                 </div>
@@ -107,7 +107,7 @@ function CompoundsUnits() {
                         <div
                             key={unit.id}
                             onClick={() => navigate(`/property-details/${unit.id}`)}
-                            className="group bg-white rounded-[3rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col cursor-pointer hover:-translate-y-2"
+                            className="group bg-white rounded-[0.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col cursor-pointer hover:-translate-y-2"
                         >
                             {/* Image Section */}
                             <div className="relative h-72 bg-gray-200 overflow-hidden">

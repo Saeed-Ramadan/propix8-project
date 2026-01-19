@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Heart, Star, ChevronLeft, Loader2, AlertTriangle } from 'lucide-react';
+import { User, Heart, Star, ChevronLeft, Loader2, AlertTriangle, BookUser } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,6 +12,7 @@ export default function ProfileLayout() {
     { name: 'الحساب الشخصي', path: 'user-profile', icon: <User size={20} /> },
     { name: 'المفضلة', path: 'favorites', icon: <Heart size={20} /> },
     { name: 'الآراء', path: 'reviews', icon: <Star size={20} /> },
+    { name: 'طلبات المعاينة', path: 'user-booking', icon: <BookUser size={20} /> },
   ];
 
   // دالة المسح الشامل للبيانات
