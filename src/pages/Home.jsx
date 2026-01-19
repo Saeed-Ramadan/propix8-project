@@ -331,8 +331,8 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/40"></div>
         <div className="relative z-10 w-full max-w-6xl px-6">
           <div className="text-center text-white mb-10">
-            <h1 className="text-4xl md:text-5xl font-black mb-4 drop-shadow-lg italic">
-              "استثمار آمن وخطط سداد مرنة تناسب احتياجاتك"
+            <h1 className="text-4xl md:text-4xl font-black mb-4 drop-shadow-lg italic">
+              " تصفح أفضل العقارات المتاحة للإيجار في مكان واحد "
             </h1>
           </div>
           <div className="bg-white/80 p-8 rounded-[2.5rem] shadow-2xl border border-white/30 text-[#3E5879]">

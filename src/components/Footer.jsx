@@ -107,26 +107,22 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* لوجو Fourth Pyramid Agency بشكل احترافي */}
-          <div className="pt-6 border-t border-white/10">
-            <p className="text-[10px] uppercase flex justify-end  tracking-widest text-gray-400 mb-3 font-bold">Tech Partner</p>
-            <a
-              href="https://fourthpyramidagcy.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center gap-3 bg-white/5 p-3 rounded-2xl hover:bg-white/10 transition-all border border-white/5 hover:border-white/20"
-            >
-              <img
-                src="http://fourthpyramidagcy.com/wp-content/uploads/2025/06/Screenshot-2025-06-01-194050-1.png"
-                alt="Fourth Pyramid Agency"
-                className="h-10 w-auto object-contain brightness-110 group-hover:contrast-125 transition-all"
-              />
-              <div className="flex flex-col">
-                <span className=" text-xs font-black text-white/90 group-hover:text-white transition-colors">Fourth Pyramid</span>
-                <span className=" text-[9px] text-gray-400 tracking-tighter">Digital Agency</span>
-              </div>
-            </a>
-          </div>
+          {/* Developed By Section */}
+<div className="pt-6 border-t border-white/10 flex flex-col items-end">
+
+  <div className="flex items-center gap-1 text-sm font-medium">
+
+    <a
+      href="https://fourthpyramidagcy.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-white hover:text-[#000] transition-colors font-black underline-offset-4 hover:underline"
+    >
+      Fourth Pyramid Agency
+    </a>
+     <span className="text-gray-400">Developed by</span>
+  </div>
+</div>
         </div>
       </div>
 

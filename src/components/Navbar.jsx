@@ -8,7 +8,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [settings, setSettings] = useState(null);
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -67,7 +67,7 @@ export default function Navbar() {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsOpen(false);
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) setIsMobileMenuOpen(false);
-      if (searchRef.current && !searchRef.current.contains(event.target) && 
+      if (searchRef.current && !searchRef.current.contains(event.target) &&
           mobileSearchRef.current && !mobileSearchRef.current.contains(event.target)) {
         setShowSearchResults(false);
       }
@@ -122,7 +122,7 @@ export default function Navbar() {
     <div className="flex flex-col w-full sticky top-0 z-[1000]">
       <nav className="bg-[#f8f9fa] py-4 px-4 md:px-16 shadow-sm flex justify-center font-cairo" dir="rtl">
         <div className="w-full max-w-7xl flex justify-between items-center gap-2">
-          
+
           <div className="flex items-center gap-3">
             {/* Mobile & Tablet Toggle */}
             <div className="lg:hidden flex items-center gap-1">
@@ -137,19 +137,19 @@ export default function Navbar() {
             {/* Logo Section */}
             <Link to="/" className="flex items-center shrink-0">
                 {settings?.site_logo ? (
-                  <img 
-                    src={settings?.site_logo || null} 
-                    alt={settings?.site_name || "Logo"} 
+                  <img
+                    src={settings?.site_logo || null}
+                    alt={settings?.site_name || "Logo"}
                     className="w-32 md:w-48 h-12 md:h-16 object-contain brightness-0 transition-all"
                   />
                 ) : (
                   <span className="text-xl md:text-2xl font-black bg-gradient-to-l from-[#3E5879] to-[#213547] bg-clip-text text-transparent">
-                    {settings?.site_name || "برو بيكس"}
+                    {settings?.site_name || "Propix 8"}
                   </span>
                 )}
             </Link>
           </div>
-          
+
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-6 text-[#000000] font-bold">
             <NavLink to="/" className={({isActive}) => isActive ? "text-[#3E5879]" : "hover:text-[#3E5879]"}>الرئيسية</NavLink>
@@ -179,12 +179,12 @@ export default function Navbar() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            {userToken && userData?.role === 'seller' && (
+            {/* {userToken && userData?.role === 'seller' && (
               <Link to="/add-property" className="bg-[#3E5879] text-white p-2 md:px-5 md:py-2 rounded-xl shadow-md font-bold flex items-center gap-2 hover:bg-[#2c3846] transition-all">
                 <PlusCircle size={18} />
                 <span className="hidden sm:inline text-sm">أضف عقار</span>
               </Link>
-            )}
+            )} */}
 
             {userToken ? (
               <div className="relative" ref={dropdownRef}>
