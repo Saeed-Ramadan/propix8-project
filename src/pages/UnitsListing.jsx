@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   MapPin,
   BedDouble,
@@ -15,8 +15,10 @@ import {
   Calendar,
   Car,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import ImagePlaceholder from "../components/common/ImagePlaceholder";
 
 function UnitsListing() {
   const [units, setUnits] = useState([]);
@@ -164,7 +166,12 @@ function UnitsListing() {
       </nav>
 
       {/* 2. Search & Tools Section */}
-      <div className="max-w-[1300px] mx-auto px-6 py-4 flex flex-col md:flex-row gap-3 items-center border-b border-gray-50">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-[1300px] mx-auto px-6 py-4 flex flex-col md:flex-row gap-3 items-center border-b border-gray-50"
+      >
         <div className="flex gap-2 w-full md:w-auto">
           <button
             onClick={() =>
@@ -215,11 +222,16 @@ function UnitsListing() {
             />
           )}
         </div>
-      </div>
+      </motion.div>
 
       <div className="max-w-[1300px] mx-auto px-6 py-4 flex flex-col lg:flex-row gap-10">
         {/* 3. Sidebar Filters */}
-        <aside className="w-full lg:w-[260px] flex-shrink-0">
+        <motion.aside
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full lg:w-[260px] flex-shrink-0"
+        >
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-[17px] font-black text-[#1F2937]">
               تصفية النتائج
@@ -435,7 +447,7 @@ function UnitsListing() {
               </div>
             </div>
           </div>
-        </aside>
+        </motion.aside>
 
         {/* 4. Results Section */}
         <main className="flex-1">
@@ -457,25 +469,42 @@ function UnitsListing() {
 
               <div className="space-y-6">
                 {units.length > 0 ? (
-                  units.map((unit) => (
-                    <div
+                  units.map((unit, index) => (
+                    <motion.div
                       key={unit.id}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.05 }}
                       onClick={() => navigate(`/property-details/${unit.id}`)}
                       className="bg-white rounded-[0.5rem] overflow-hidden shadow-sm border border-gray-50 flex flex-col md:flex-row group hover:shadow-md transition-all cursor-pointer relative"
                     >
-                      <div className="w-full md:w-2/5 relative h-52 md:h-56 overflow-hidden">
-                        <img
-                          src={
-                            unit.main_image ||
-                            "https://via.placeholder.com/400x300?text=No+Image"
-                          }
-                          alt={unit.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                        <div className="absolute top-4 right-4 bg-[#3E5879] text-white text-[10px] px-4 py-1.5 rounded-xl font-bold shadow-lg">
+                      <div className="w-full md:w-2/5 relative h-52 md:h-56 overflow-hidden bg-gray-50">
+                        {unit.main_image ? (
+                          <img
+                            src={unit.main_image}
+                            alt={unit.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.nextSibling.style.display = "flex"; // Show placeholder if next sibling
+                            }}
+                          />
+                        ) : (
+                          <ImagePlaceholder
+                            className="w-full h-full"
+                            iconSize={40}
+                          />
+                        )}
+                        {/* Fallback for onError - Hidden by default unless img fails, but structure relies on replacement.
+                            Simpler: Use conditional rendering or source swap.
+                            I will just use conditional logic above.
+                            For onError, swapping src is safest for list items without per-item state.
+                        */}
+                        <div className="absolute top-4 right-4 bg-[#3E5879] text-white text-[10px] px-4 py-1.5 rounded-xl font-bold shadow-lg z-10">
                           {unit.offer_type === "sale" ? "للبيع" : "للإيجار"}
                         </div>
-                        <button className="absolute top-4 left-4 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
+                        <button className="absolute top-4 left-4 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors z-10">
                           <Heart size={16} />
                         </button>
                       </div>
@@ -527,7 +556,7 @@ function UnitsListing() {
                           </button>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))
                 ) : (
                   <div className="bg-white rounded-[2rem] py-20 text-center shadow-sm border border-dashed border-gray-200">

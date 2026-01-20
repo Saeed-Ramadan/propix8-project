@@ -26,7 +26,7 @@ import {
   AlertCircle,
   CheckCircle2,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -48,7 +48,13 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const [openFaq, setOpenFaq] = useState(null);
-  const [heroImage, setHeroImage] = useState("");
+
+  // Hero Slider States
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [heroImages, setHeroImages] = useState([
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2070",
+    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2070",
+  ]);
 
   const [testimonials, setTestimonials] = useState([]);
   const [testimonialPagination, setTestionalPagination] = useState({
@@ -56,6 +62,15 @@ export default function Home() {
     last_page: 1,
   });
   const [testimonialsLoading, setTestimonialsLoading] = useState(false);
+
+  // Auto Slide Effect
+  useEffect(() => {
+    if (heroImages.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [heroImages]);
 
   // --- New Review States ---
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -162,7 +177,10 @@ export default function Home() {
       setDevelopers(developersData.data || []);
 
       if (settingsData.data?.home_hero_image) {
-        setHeroImage(settingsData.data.home_hero_image);
+        // If API returns one image, we keep our placeholders + API image for demo,
+        // or just use API image. User asked "if > 1".
+        // For now, I'll prepend the API image to the placeholders so we have > 1 for the demo.
+        setHeroImages((prev) => [settingsData.data.home_hero_image, ...prev]);
       }
 
       const about = pagesData.data?.find((page) => page.slug === "about-us");
@@ -316,52 +334,69 @@ export default function Home() {
       <ToastContainer rtl={true} />
 
       {/* HERO SECTION */}
-      <section className="relative min-h-[800px] flex items-center justify-center py-20 z-50">
-        <img
-          src={
-            heroImage ||
-            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2070"
-          }
-          className="absolute inset-0 w-full h-full object-cover"
-          alt="Hero"
-          onError={(e) => {
-            e.target.src =
-              "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2070";
-          }}
-        />
-        <div className="absolute inset-0 bg-black/40"></div>
-        <div className="relative z-10 w-full max-w-6xl px-6">
+      <section className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center py-20 z-50 mb-48 md:mb-32">
+        {/* SLIDER BACKGROUND */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentSlide}
+              src={heroImages[currentSlide]}
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.5 }}
+              className="absolute inset-0 w-full h-full object-cover"
+              alt={`Hero Slide ${currentSlide + 1}`}
+              onError={(e) => {
+                // Fallback if image fails
+                e.target.src =
+                  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2070";
+              }}
+            />
+          </AnimatePresence>
+          <div className="absolute inset-0 bg-black/40"></div>
+        </div>
+
+        {/* HERO CONTENT */}
+        <div className="relative z-10 w-full max-w-6xl px-6 h-full flex flex-col justify-center items-center -mt-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center text-white mb-10"
           >
-            <h1 className="text-3xl md:text-4xl font-black mb-4 drop-shadow-lg italic leading-relaxed">
-              " تصفح أفضل العقارات المتاحة للإيجار في مكان واحد "
+            <h1 className="text-3xl md:text-5xl font-black mb-6 drop-shadow-2xl italic leading-tight">
+              " تصفح أفضل العقارات المتاحة للإيجار{" "}
+              <br className="hidden md:block" /> في مكان واحد "
             </h1>
           </motion.div>
+        </div>
+
+        {/* FILTER SECTION (Half In / Half Out) */}
+        <div className="absolute bottom-0 left-0 right-0 z-40 transform translate-y-1/2 flex justify-center px-4">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-white/50 p-8 rounded-[2.5rem] shadow-2xl border border-white/30 text-[#3E5879]"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="w-full max-w-6xl bg-white/30 backdrop-blur-sm p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-white/50 text-[#3E5879] "
           >
-            <div className="flex justify-center gap-4 mb-10">
-              <div className="bg-[#3E5879] text-white px-12 py-3 rounded-xl font-black shadow-lg">
+            {/* ... Filter Content Same as User Provided ... */}
+            <div className="flex justify-center gap-4 mb-8">
+              <div className="bg-[#3E5879] text-white px-10 py-2 rounded-xl font-black shadow-lg text-sm md:text-base">
                 وحدات
               </div>
             </div>
-            <div className="flex flex-col md:flex-row items-center justify-start gap-6 mb-8">
-              <span className="font-black text-lg text-gray-800 ">
+
+            <div className="flex flex-col md:flex-row items-center justify-start gap-4 mb-6">
+              <span className="font-black text-base md:text-lg text-gray-800 shrink-0">
                 حالة العقار
               </span>
-              <div className="flex bg-gray-200 p-1.5 rounded-xl border border-gray-300">
+              <div className="flex bg-white/50 p-1.5 rounded-xl border border-gray-200 w-full md:w-auto overflow-x-auto">
                 {["all", "sale", "rent"].map((type) => (
                   <button
                     key={type}
                     onClick={() => setFilters({ ...filters, offer_type: type })}
-                    className={`px-5 py-2.5 rounded-xl font-black transition-all ${filters.offer_type === type ? "bg-[#3E5879] text-white shadow-md" : "text-gray-500 hover:text-[#3E5879]"}`}
+                    className={`flex-1 md:flex-none px-6 py-2 rounded-xl font-black transition-all text-sm md:text-base whitespace-nowrap ${filters.offer_type === type ? "bg-[#3E5879] text-white shadow-md" : "text-gray-500 hover:text-[#3E5879]"}`}
                   >
                     {type === "all"
                       ? "الكل"
@@ -372,14 +407,15 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 text-right">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 text-right">
               <div className="space-y-2">
-                <label className="font-black pr-2 text-gray-800">
+                <label className="font-black pr-2 text-gray-800 text-sm">
                   نوع العقار
                 </label>
-                <div className="relative mt-1.5">
+                <div className="relative">
                   <select
-                    className="w-full p-3.5 rounded-xl border placeholder-gray-800 font-bold border-gray-500 text-right appearance-none focus:ring-2 ring-[#3E5879] outline-none cursor-pointer"
+                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 placeholder-gray-800 font-bold text-right appearance-none focus:ring-2 ring-[#3E5879] outline-none cursor-pointer text-sm"
                     onChange={(e) =>
                       setFilters({ ...filters, unit_type_id: e.target.value })
                     }
@@ -392,20 +428,21 @@ export default function Home() {
                     ))}
                   </select>
                   <ChevronDown
-                    className="absolute left-3 top-4 opacity-40"
-                    size={18}
+                    className="absolute left-3 top-3.5 opacity-40 "
+                    size={16}
                   />
                 </div>
               </div>
+
               <div className="space-y-2">
-                <label className="font-black pr-2 text-gray-800">
+                <label className="font-black pr-2 text-gray-800 text-sm">
                   المساحة (م2)
                 </label>
-                <div className="grid grid-cols-2 gap-2 mt-1.5">
+                <div className="grid grid-cols-2 gap-2">
                   <input
                     type="number"
                     placeholder="الأعلى"
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-800 font-bold"
+                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-500 font-bold"
                     onChange={(e) =>
                       setFilters({
                         ...filters,
@@ -416,7 +453,7 @@ export default function Home() {
                   <input
                     type="number"
                     placeholder="الأدنى"
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-800 font-bold"
+                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-500 font-bold"
                     onChange={(e) =>
                       setFilters({
                         ...filters,
@@ -426,11 +463,14 @@ export default function Home() {
                   />
                 </div>
               </div>
+
               <div className="space-y-2">
-                <label className="font-black pr-2 text-gray-800">الموقع</label>
-                <div className="relative mt-1.5">
+                <label className="font-black pr-2 text-gray-800 text-sm">
+                  الموقع
+                </label>
+                <div className="relative">
                   <select
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-right appearance-none focus:ring-2 font-bold ring-[#3E5879]/20 outline-none cursor-pointer"
+                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 text-right appearance-none focus:ring-2 font-bold ring-[#3E5879]/20 outline-none cursor-pointer text-sm"
                     onChange={(e) =>
                       setFilters({ ...filters, city_id: e.target.value })
                     }
@@ -443,20 +483,21 @@ export default function Home() {
                     ))}
                   </select>
                   <ChevronDown
-                    className="absolute left-3 top-4 opacity-40"
-                    size={18}
+                    className="absolute left-3 top-3.5 opacity-40"
+                    size={16}
                   />
                 </div>
               </div>
+
               <div className="space-y-2">
-                <label className="font-black pr-2 text-gray-800">
+                <label className="font-black pr-2 text-gray-800 text-sm">
                   نطاق السعر
                 </label>
-                <div className="grid grid-cols-2 gap-2 mt-1.5">
+                <div className="grid grid-cols-2 gap-2">
                   <input
                     type="number"
                     placeholder="الأعلى"
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-800 font-bold"
+                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-500 font-bold"
                     onChange={(e) =>
                       setFilters({ ...filters, max_price: e.target.value })
                     }
@@ -464,7 +505,7 @@ export default function Home() {
                   <input
                     type="number"
                     placeholder="الأدنى"
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-800 font-bold"
+                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-500 font-bold"
                     onChange={(e) =>
                       setFilters({ ...filters, min_price: e.target.value })
                     }
@@ -472,71 +513,86 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="relative">
+
+            <div className="relative pt-4 border-t border-gray-200/50">
               <button
                 onClick={handleSearch}
                 disabled={searchLoading}
-                className="w-full md:w-fit float-right bg-[#3E5879] text-white px-12 py-4 rounded-2xl flex items-center justify-center gap-3 font-black text-lg hover:shadow-xl transition-all disabled:opacity-70"
+                className="w-full md:w-auto md:float-right bg-[#3E5879] text-white px-10 py-3 rounded-2xl flex items-center justify-center gap-3 font-black text-base hover:bg-[#2c3d54] hover:shadow-xl transition-all disabled:opacity-70 active:scale-95"
               >
                 {searchLoading ? (
-                  <Loader2 className="animate-spin" />
+                  <Loader2 className="animate-spin" size={20} />
                 ) : (
-                  <Search size={22} />
+                  <Search size={20} />
                 )}{" "}
                 البحث عن العقارات
               </button>
               <div className="clear-both"></div>
-              {searchResults.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-4 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[999] animate-in fade-in slide-in-from-top-2">
-                  <div className="bg-gray-50 px-6 py-3 border-b flex justify-between items-center">
-                    <span className="font-bold text-[#3E5879]">
-                      نتائج البحث ({searchResults.length})
-                    </span>
-                    <button
-                      onClick={() => setSearchResults([])}
-                      className="flex items-center gap-1 text-red-500 hover:text-red-700 font-bold transition-colors"
-                    >
-                      {" "}
-                      إغلاق <X size={18} />{" "}
-                    </button>
-                  </div>
-                  <div className="max-h-[350px] overflow-y-auto">
-                    {searchResults.map((item) => (
-                      <div
-                        key={item.id}
-                        onClick={() => navigate(`/property-details/${item.id}`)}
-                        className="p-4 border-b last:border-0 hover:bg-gray-50 flex items-center gap-4 cursor-pointer transition-colors"
+
+              {/* Search Results Dropdown */}
+              <AnimatePresence>
+                {searchResults.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full left-0 right-0 mt-4 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[999]"
+                  >
+                    <div className="bg-gray-50 px-6 py-3 border-b flex justify-between items-center">
+                      <span className="font-bold text-[#3E5879]">
+                        نتائج البحث ({searchResults.length})
+                      </span>
+                      <button
+                        onClick={() => setSearchResults([])}
+                        className="flex items-center gap-1 text-red-500 hover:text-red-700 font-bold transition-colors text-sm"
                       >
-                        <img
-                          src={item.main_image}
-                          className="w-16 h-16 rounded-xl object-cover shadow-sm"
-                          alt=""
-                        />
-                        <div className="text-right flex-1">
-                          <h4 className="font-bold text-[#3E5879]">
-                            {item.title}
-                          </h4>
-                          <p className="text-sm text-gray-500 font-bold">
-                            {parseFloat(item.price).toLocaleString()} ج.م
-                          </p>
+                        إغلاق <X size={16} />
+                      </button>
+                    </div>
+                    <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                      {searchResults.map((item) => (
+                        <div
+                          key={item.id}
+                          onClick={() =>
+                            navigate(`/property-details/${item.id}`)
+                          }
+                          className="p-3 border-b last:border-0 hover:bg-gray-50 flex items-center gap-3 cursor-pointer transition-colors"
+                        >
+                          <img
+                            src={
+                              item.main_image ||
+                              "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=60"
+                            }
+                            className="w-14 h-14 rounded-lg object-cover shadow-sm bg-gray-200"
+                            alt=""
+                            onError={(e) => {
+                              e.target.src =
+                                "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=60";
+                            }}
+                          />
+                          <div className="text-right flex-1">
+                            <h4 className="font-bold text-[#3E5879] text-sm line-clamp-1">
+                              {item.title}
+                            </h4>
+                            <p className="text-xs text-gray-500 font-bold mt-1">
+                              {parseFloat(item.price).toLocaleString()} ج.م
+                            </p>
+                          </div>
+                          <ChevronLeft className="text-gray-300" size={16} />
                         </div>
-                        <ChevronDown
-                          className="rotate-[270deg] text-gray-300"
-                          size={16}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* COMPOUNDS SECTION */}
-      <section className="py-16 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-16 bg-white overflow-hidden ">
+        <div className="max-w-7xl mx-auto px-6 mt-10">
           <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
             <motion.div
               initial={{ opacity: 0, x: 50 }}

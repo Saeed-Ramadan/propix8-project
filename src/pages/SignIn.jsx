@@ -1,17 +1,18 @@
-import { useState } from 'react';
-import { EyeOff, Eye, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import signupImg from '../assets/main/signup.png';
-import logo from '../assets/logo/main-logo.png';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useState } from "react";
+import { EyeOff, Eye, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import signupImg from "../assets/main/signup.png";
+import logo from "../assets/logo/main-logo.png";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -23,15 +24,15 @@ export default function SignIn() {
     setLoading(true);
 
     const data = new FormData();
-    data.append('email', formData.email);
-    data.append('password', formData.password);
+    data.append("email", formData.email);
+    data.append("password", formData.password);
 
     try {
-      const response = await fetch('https://propix8.com/api/login', {
-        method: 'POST',
+      const response = await fetch("https://propix8.com/api/login", {
+        method: "POST",
         body: data,
         headers: {
-          'Accept': 'application/json',
+          Accept: "application/json",
         },
       });
 
@@ -39,15 +40,17 @@ export default function SignIn() {
 
       if (response.ok && result.data) {
         toast.success("تم تسجيل الدخول بنجاح!");
-        localStorage.setItem('userToken', result.data.access_token);
+        localStorage.setItem("userToken", result.data.access_token);
         // تأكد إنك بتعمل stringify قبل الحفظ
-        localStorage.setItem('userData', JSON.stringify(result.data.user));
+        localStorage.setItem("userData", JSON.stringify(result.data.user));
 
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = "/";
         }, 1500);
       } else {
-        toast.error(result.message || "البريد الإلكتروني أو كلمة المرور غير صحيحة");
+        toast.error(
+          result.message || "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+        );
       }
     } catch (error) {
       console.error("📡 Network Error:", error);
@@ -58,11 +61,29 @@ export default function SignIn() {
   };
 
   return (
-    <div className="h-screen w-full flex bg-[#ECEFF3] font-cairo overflow-hidden" dir="rtl">
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={true} pauseOnFocusLoss draggable pauseOnHover />
+    <div
+      className="h-screen w-full flex bg-[#ECEFF3] font-cairo overflow-hidden"
+      dir="rtl"
+    >
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={true}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
 
       {/* القسم الأيمن: الصورة واللوجو */}
-      <div className="hidden lg:block lg:w-1/2 h-full p-4">
+      <motion.div
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        className="hidden lg:block lg:w-1/2 h-full p-4"
+      >
         <div className="relative h-full w-full">
           <img
             src={signupImg}
@@ -74,18 +95,27 @@ export default function SignIn() {
               src={logo}
               alt="Logo"
               className="w-44 h-auto drop-shadow-md block"
-              style={{ minHeight: '50px' }} // احتياطاً لو الـ svg مضغوط
+              style={{ minHeight: "50px" }} // احتياطاً لو الـ svg مضغوط
             />
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* القسم الأيسر: فورم تسجيل الدخول */}
-      <div className="w-full lg:w-1/2 h-full flex flex-col justify-center px-8 md:px-24" >
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        className="w-full lg:w-1/2 h-full flex flex-col justify-center px-8 md:px-24"
+      >
         <div className="max-w-md w-full mx-auto">
           <div className="mb-10 text-center lg:text-right">
-            <h2 className="text-[#3E5879] text-3xl font-black mb-2">تسجيل الدخول</h2>
-            <p className="text-gray-500 font-bold">مرحباً بك مجدداً في برو بيكس</p>
+            <h2 className="text-[#3E5879] text-3xl font-black mb-2">
+              تسجيل الدخول
+            </h2>
+            <p className="text-gray-500 font-bold">
+              مرحباً بك مجدداً في برو بيكس
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -146,11 +176,16 @@ export default function SignIn() {
           <div className="text-center mt-10">
             <p className="text-gray-600 font-bold">
               ليس لديك حساب؟
-              <Link to="/signup" className="text-[#3E5879] mr-2 hover:underline">سجل الآن</Link>
+              <Link
+                to="/signup"
+                className="text-[#3E5879] mr-2 hover:underline"
+              >
+                سجل الآن
+              </Link>
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

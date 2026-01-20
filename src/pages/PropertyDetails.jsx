@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   MapPin,
@@ -20,9 +20,16 @@ import {
   MessageSquareMore,
   CalendarCheck,
   ChevronLeft,
+  MessageSquare,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ImagePlaceholder from "../components/common/ImagePlaceholder";
+import MapPlaceholder from "../components/common/MapPlaceholder";
+
+// ... [Skipping unchanged lines for brevity if possible, but replace tool needs context]
+// I will split this into chunks to be safe.
 
 export default function PropertyDetails() {
   const { id } = useParams();
@@ -37,7 +44,7 @@ export default function PropertyDetails() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   // حالة الـ Popup والنموذج
-  const [showContactModal, setShowContactModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Changed from showContactModal
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -188,7 +195,7 @@ export default function PropertyDetails() {
           theme: "colored",
           style: { fontFamily: "Cairo", borderRadius: "15px" },
         });
-        setShowContactModal(false);
+        setIsModalOpen(false); // Changed from setShowContactModal
         setFormData({
           name: "",
           email: "",
@@ -282,155 +289,187 @@ export default function PropertyDetails() {
       <ToastContainer />
 
       {/* Contact Modal  */}
-      {showContactModal && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 bg-black/40 backdrop-blur-sm transition-all">
-          <div className="bg-white rounded-xl w-full max-w-2xl max-h-[95vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in duration-300">
-            <div className="bg-[#F8F9FA] px-5 py-3 flex justify-between items-center border-b border-gray-100 sticky top-0 z-10">
-              <h3 className="text-lg font-bold text-gray-800">أرسل رسالة</h3>
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl relative"
+            >
               <button
-                onClick={() => setShowContactModal(false)}
-                className="text-gray-400 hover:text-red-500 transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="p-5">
-              <div className="flex flex-row justify-between items-center mb-4 gap-3 bg-gray-50 p-3 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={
-                      unit.owner?.avatar || "https://via.placeholder.com/100"
-                    }
-                    className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
-                    alt="owner"
-                  />
-                  <div>
-                    <h4 className="text-sm font-bold text-gray-800">
-                      {unit.owner?.name}
-                    </h4>
-                    <div className="flex items-center gap-2 text-gray-500 mt-0.5">
-                      <span className="text-xs font-medium">
-                        {unit.owner?.phone || "010000000"}
-                      </span>
-                      <Phone
-                        size={12}
-                        className="text-[#3E5879] rotate-[270deg]"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <button className="text-[#3E5879] font-bold text-xs hover:underline">
-                  التفاصيل
-                </button>
-              </div>
-
-              {/* Form Section */}
-              <form onSubmit={handleSendMessage} className="space-y-4">
-                <p className="font-bold text-gray-700 text-sm mb-1">معلوماتك</p>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <input
-                    required
-                    type="text"
-                    placeholder="الاسم بالكامل"
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all text-xs text-right"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                  />
-                  <input
-                    required
-                    type="email"
-                    placeholder="البريد الإلكتروني"
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all text-xs text-right"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                  />
-                  <input
-                    required
-                    type="tel"
-                    placeholder="رقم الهاتف"
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all text-xs text-right"
-                    value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="relative">
-                  <textarea
-                    required
-                    placeholder="اكتب رسالتك هنا..."
-                    rows="3"
-                    className="w-full p-3 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all resize-none text-xs text-right"
-                    value={formData.message}
-                    onChange={(e) =>
-                      setFormData({ ...formData, message: e.target.value })
-                    }
-                  ></textarea>
-                </div>
-
-                <button
-                  disabled={submitting}
-                  type="submit"
-                  className="w-full bg-[#465E7D] text-white py-3 rounded-lg font-bold text-base hover:bg-[#3E5879] transition-all disabled:opacity-50 shadow-md"
-                >
-                  {submitting ? (
-                    <Loader2 className="animate-spin mx-auto" size={20} />
-                  ) : (
-                    "إرسال الرسالة"
-                  )}
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* نافذة عرض كل الصور */}
-      {showAllPhotos && (
-        <div className="fixed inset-0 z-[100] bg-white overflow-y-auto p-4 md:p-10">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex justify-between items-center mb-10 sticky top-0 bg-white py-4 z-20 border-b">
-              <h2 className="text-2xl font-black text-[#3E5879]">
-                صور العقار ({images.length})
-              </h2>
-              <button
-                onClick={() => setShowAllPhotos(false)}
-                className="p-3 bg-gray-100 rounded-full hover:bg-red-50 hover:text-red-500 transition-all"
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-4 left-4 text-gray-400 hover:text-red-500 transition-colors z-[120]"
               >
                 <X size={24} />
               </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {images.map((img, idx) => (
-                <img
-                  key={idx}
-                  src={
-                    img || "https://via.placeholder.com/400x300?text=No+Image"
-                  }
-                  className="w-full h-72 object-cover rounded-[0.5rem] cursor-pointer hover:opacity-90 transition-all"
-                  onClick={() => {
-                    setActiveImage(img);
-                    setShowAllPhotos(false);
-                  }}
-                  alt={`Gallery ${idx}`}
-                />
-              ))}
-            </div>
+              {/* Image Header */}
+              <div className="h-32 bg-[#3E5879] relative overflow-hidden flex items-center justify-center">
+                <div className="absolute inset-0 opacity-10 pattern-dots"></div>
+                <h3 className="text-2xl font-black text-white relative z-10">
+                  تواصل مع المالك
+                </h3>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 md:p-8">
+                {/* Owner Info */}
+                <div className="flex flex-row justify-between items-center mb-4 gap-3 bg-gray-50 p-3 rounded-lg">
+                  {/* ... same owner info ... */}
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={
+                        unit.owner?.avatar || "https://via.placeholder.com/100"
+                      }
+                      className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
+                      alt="owner"
+                    />
+                    <div>
+                      <h4 className="text-sm font-bold text-gray-800">
+                        {unit.owner?.name}
+                      </h4>
+                      <div className="flex items-center gap-2 text-gray-500 mt-0.5">
+                        <span className="text-xs font-medium">
+                          {unit.owner?.phone || "010000000"}
+                        </span>
+                        <Phone
+                          size={12}
+                          className="text-[#3E5879] rotate-[270deg]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <button className="text-[#3E5879] font-bold text-xs hover:underline">
+                    التفاصيل
+                  </button>
+                </div>
+
+                {/* Form Section */}
+                <form onSubmit={handleSendMessage} className="space-y-4">
+                  {/* ... same form inputs ... */}
+                  <p className="font-bold text-gray-700 text-sm mb-1">
+                    معلوماتك
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input
+                      required
+                      type="text"
+                      placeholder="الاسم بالكامل"
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all text-xs text-right"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                    />
+                    <input
+                      required
+                      type="email"
+                      placeholder="البريد الإلكتروني"
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all text-xs text-right"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                    />
+                    <input
+                      required
+                      type="tel"
+                      placeholder="رقم الهاتف"
+                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all text-xs text-right"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <textarea
+                      required
+                      placeholder="اكتب رسالتك هنا..."
+                      rows="3"
+                      className="w-full p-3 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all resize-none text-xs text-right"
+                      value={formData.message}
+                      onChange={(e) =>
+                        setFormData({ ...formData, message: e.target.value })
+                      }
+                    ></textarea>
+                  </div>
+
+                  <button
+                    disabled={submitting}
+                    type="submit"
+                    className="w-full bg-[#465E7D] text-white py-3 rounded-lg font-bold text-base hover:bg-[#3E5879] transition-all disabled:opacity-50 shadow-md"
+                  >
+                    {submitting ? (
+                      <Loader2 className="animate-spin mx-auto" size={20} />
+                    ) : (
+                      "إرسال الرسالة"
+                    )}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
+
+      {/* نافذة عرض كل الصور */}
+      <AnimatePresence>
+        {showAllPhotos && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-white overflow-y-auto p-4 md:p-10"
+          >
+            <div className="max-w-6xl mx-auto">
+              <div className="flex justify-between items-center mb-10 sticky top-0 bg-white py-4 z-20 border-b">
+                <h2 className="text-3xl font-black text-[#3E5879]">
+                  معرض الصور ({images.length})
+                </h2>
+                <button
+                  onClick={() => setShowAllPhotos(false)}
+                  className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {images.map((img, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.1 + (index + 1) * 0.05 }}
+                    className="aspect-video rounded-3xl overflow-hidden shadow-sm"
+                  >
+                    <img
+                      src={img}
+                      alt={`${unit.title} - ${index}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* قسم العنوان ومعرض الصور الرئيسي */}
       <section className="bg-white pt-8 pb-12 shadow-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-wrap justify-between items-start mb-8 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-wrap justify-between items-start mb-8 gap-6"
+          >
             <div className="flex-1 min-w-[300px]">
               <div className="flex items-center gap-3 mb-3">
                 <span className="bg-[#3E5879] text-white px-4 py-1 rounded-lg text-sm font-bold shadow-sm">
@@ -471,11 +510,13 @@ export default function PropertyDetails() {
                 {Number(unit.price_per_m2).toLocaleString()} ج.م / م²
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {hasImages ? (
-            // هذا هو الكود الحالي بتاعك (المعرض)
-            <div
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
               className={`grid grid-cols-1 ${images.length > 1 ? "lg:grid-cols-4" : ""} gap-4 lg:h-[550px]`}
             >
               <div
@@ -483,8 +524,12 @@ export default function PropertyDetails() {
               >
                 <img
                   src={activeImage || displayImages[0]}
-                  className="w-full h-[250px] md:h-[350px] lg:h-[580px] object-cover rounded-[0.5rem] shadow-xl border-4 border-white transition-all duration-500"
+                  className="w-full h-full object-cover rounded-[0.5rem] shadow-xl border-4 border-white transition-all duration-500"
                   alt="Active View"
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2070";
+                  }}
                 />
               </div>
               {displayImages.length > 1 && (
@@ -498,8 +543,11 @@ export default function PropertyDetails() {
                     >
                       <img
                         src={displayImages[1] || displayImages[0]}
-                        className="w-full h-[150px] md:h-[200px] lg:h-[280px] object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         alt="Sub 1"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
                       />
                     </button>
                     <button
@@ -510,8 +558,11 @@ export default function PropertyDetails() {
                     >
                       <img
                         src={displayImages[2] || displayImages[0]}
-                        className="w-full h-[150px] md:h-[200px] lg:h-[280px] object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         alt="Sub 2"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
                       />
                     </button>
                   </div>
@@ -525,8 +576,11 @@ export default function PropertyDetails() {
                     >
                       <img
                         src={displayImages[3] || displayImages[0]}
-                        className="w-full h-[150px] md:h-[200px] lg:h-[280px] object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         alt="Sub 3"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
                       />
                     </button>
                     <button
@@ -539,8 +593,11 @@ export default function PropertyDetails() {
                     >
                       <img
                         src={displayImages[4] || displayImages[0]}
-                        className={`w-full h-[150px] md:h-[200px] lg:h-[280px] object-cover ${images.length > 4 ? "brightness-50" : ""} group-hover:scale-110 transition-all duration-500`}
+                        className={`w-full h-full object-cover ${images.length > 4 ? "brightness-50" : ""} group-hover:scale-110 transition-all duration-500`}
                         alt="More"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
                       />
                       {images.length > 4 && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-white font-bold">
@@ -554,18 +611,15 @@ export default function PropertyDetails() {
                   </div>
                 </>
               )}
-            </div>
+            </motion.div>
           ) : (
             // الرسالة التي تظهر في حال عدم وجود صور
-            <div className="w-full h-[400px] bg-gray-50 rounded-[0.5rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-4">
-              <div className="p-6 bg-white rounded-full shadow-sm">
-                <Maximize size={48} className="text-gray-300" />
-              </div>
-              <div className="text-center">
-                <h3 className="text-xl font-bold text-gray-500">
-                  لا توجد صور متاحة لهذا العقار
-                </h3>
-              </div>
+            <div className="w-full h-[400px]">
+              <ImagePlaceholder
+                className="w-full h-full rounded-[0.5rem]"
+                iconSize={64}
+                text="لا توجد صور متاحة لهذا العقار"
+              />
             </div>
           )}
         </div>
@@ -574,7 +628,12 @@ export default function PropertyDetails() {
       {/* قسم التفاصيل والجانب الجانبي */}
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-10 mt-12">
         <div className="lg:col-span-2 space-y-10">
-          <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100"
+          >
             <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
               نظرة عامة على العقار
             </h3>
@@ -623,9 +682,14 @@ export default function PropertyDetails() {
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100"
+          >
             <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
               تفاصيل الوحدة والوصف
             </h3>
@@ -680,7 +744,7 @@ export default function PropertyDetails() {
                 {unit.description}
               </p>
             </div>
-          </div>
+          </motion.div>
 
           <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
             <h3 className="text-xl font-bold text-[#3E5879] mb-6 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
@@ -849,12 +913,10 @@ export default function PropertyDetails() {
                   marginWidth="0"
                   title="Property Location"
                   src={`https://maps.google.com/maps?q=${unit.latitude},${unit.longitude}&z=15&output=embed`}
+                  className="w-full h-full"
                 ></iframe>
               ) : (
-                <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                  <MapPin size={48} className="mb-2 opacity-20" />
-                  <p className="font-bold">الموقع الجغرافي غير متوفر حالياً</p>
-                </div>
+                <MapPlaceholder className="w-full h-full bg-gray-50 content-center" />
               )}
             </div>
           </div>
@@ -863,14 +925,28 @@ export default function PropertyDetails() {
         <div className="space-y-8">
           <div className="bg-white p-8 rounded-[3rem] shadow-xl border border-gray-50 sticky top-24">
             <div className="flex items-center gap-5 mb-8">
-              <div
-                className="relative group"
-              >
-                <img
-                  src={unit.owner?.avatar || "https://via.placeholder.com/100"}
-                  className="w-20 h-20 rounded-[1.5rem] object-cover border-4 border-gray-50 shadow-sm transition-all"
-                  alt={unit.owner?.name}
-                />
+              <div className="relative group">
+                {unit.owner?.avatar ? (
+                  <img
+                    src={unit.owner.avatar}
+                    className="w-20 h-20 rounded-[1.5rem] object-cover border-4 border-gray-50 shadow-sm transition-all"
+                    alt={unit.owner?.name}
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      // Sibling placeholder logic needed or just replace with placeholder component
+                      // Since we can't easily swap to component in onError, we swap src to a local placeholder or just hide.
+                      // Better: render component conditional on error state, but inline is easier:
+                      e.target.parentNode.innerHTML =
+                        '<div class="w-20 h-20 rounded-[1.5rem] bg-gray-100 flex items-center justify-center border-4 border-gray-50"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>';
+                    }}
+                  />
+                ) : (
+                  <ImagePlaceholder
+                    className="w-20 h-20 rounded-[1.5rem]"
+                    iconSize={24}
+                    text=""
+                  />
+                )}
                 <div className="absolute -bottom-2 -right-2 bg-green-500 w-6 h-6 rounded-full border-4 border-white shadow-sm"></div>
               </div>
               <div>
@@ -894,7 +970,7 @@ export default function PropertyDetails() {
               </button>
 
               <button
-                onClick={() => setShowContactModal(true)}
+                onClick={() => setIsModalOpen(true)}
                 className="w-full border-2 border-[#3E5879] text-[#3E5879] py-5 rounded-2xl font-black hover:bg-gray-50 transition-all flex items-center justify-center gap-3 active:scale-95"
               >
                 <MessageSquareMore /> أرسل رسالة للمعلن

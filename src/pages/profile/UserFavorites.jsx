@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Star, MapPin, BedDouble, Bath, Square, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // استيراد الهوك الخاص بالتنقل
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -33,7 +34,7 @@ function UserFavorites() {
 
       if (result.status) {
         const filteredData = result.data.filter(
-          (fav) => !deletedIds.current.has(fav.unit.id)
+          (fav) => !deletedIds.current.has(fav.unit.id),
         );
         setFavorites(filteredData);
         setPagination(result.pagination);
@@ -86,7 +87,10 @@ function UserFavorites() {
   };
 
   return (
-    <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-gray-100 font-cairo" dir="rtl">
+    <div
+      className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-gray-100 font-cairo"
+      dir="rtl"
+    >
       <ToastContainer position="top-right" autoClose={2000} rtl={true} />
 
       <h2 className="text-xl font-black text-[#3E5879] mb-8 text-right border-r-4 border-[#3E5879] pr-3">
@@ -101,22 +105,31 @@ function UserFavorites() {
         <>
           {favorites.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-              {favorites.map((fav) => {
+              {favorites.map((fav, index) => {
                 const item = fav.unit;
                 return (
-                  <div
+                  <motion.div
                     key={fav.id}
-                    onClick={() => navigate(`/property-details/${item.id}`)} // توجيه المستخدم عند الضغط
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    onClick={() => navigate(`/property-details/${item.id}`)}
                     className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 group hover:shadow-md transition-shadow cursor-pointer"
                   >
                     <div className="relative h-56 overflow-hidden bg-gray-50 flex items-center justify-center">
                       {/* تعديل منطق عرض الصورة */}
                       {item.main_image && item.main_image !== "" ? (
-                        <img src={item.main_image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img
+                          src={item.main_image}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
                       ) : (
                         <div className="flex flex-col items-center gap-2 text-gray-400">
                           <Square size={30} className="opacity-20" />
-                          <span className="text-[10px] font-bold">لا توجد صورة لهذا العقار</span>
+                          <span className="text-[10px] font-bold">
+                            لا توجد صورة لهذا العقار
+                          </span>
                         </div>
                       )}
 
@@ -134,11 +147,17 @@ function UserFavorites() {
                     <div className="p-5 space-y-3 text-right">
                       <div className="flex items-center gap-1 text-gray-400 text-[10px] font-bold">
                         <MapPin size={12} />
-                        <span>{item.city?.name} - {item.address}</span>
+                        <span>
+                          {item.city?.name} - {item.address}
+                        </span>
                       </div>
-                      <h3 className="font-black text-[#3E5879] text-sm leading-tight h-10 line-clamp-2">{item.title}</h3>
+                      <h3 className="font-black text-[#3E5879] text-sm leading-tight h-10 line-clamp-2">
+                        {item.title}
+                      </h3>
                       <div className="flex justify-between items-center py-1">
-                        <span className="text-[#3E5879] font-black text-base">{formatPrice(item.price)}</span>
+                        <span className="text-[#3E5879] font-black text-base">
+                          {formatPrice(item.price)}
+                        </span>
                       </div>
                       <div className="flex items-center justify-between pt-3 border-t border-gray-50 text-gray-500">
                         <div className="flex items-center gap-1.5 text-[11px] font-bold">
@@ -155,7 +174,7 @@ function UserFavorites() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>

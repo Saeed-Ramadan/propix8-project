@@ -14,6 +14,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
+import { motion, AnimatePresence } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
 
 function UserBookingMessage() {
@@ -205,8 +206,11 @@ function UserBookingMessage() {
           bookings.map((booking) => {
             const status = getStatusDetails(booking.status);
             return (
-              <div
+              <motion.div
                 key={booking.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
                 className="bg-white border border-gray-100 rounded-[0.5rem] p-6 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-center mb-4">
@@ -298,7 +302,7 @@ function UserBookingMessage() {
                     </div>
                   )}
                 </div>
-              </div>
+              </motion.div>
             );
           })
         ) : (
@@ -311,185 +315,202 @@ function UserBookingMessage() {
       </div>
 
       {/* Modal: Reschedule */}
-      {isRescheduleModalOpen && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md rounded-[1rem] shadow-2xl overflow-hidden">
-            <div className="flex justify-between items-center p-6 border-b border-gray-50">
-              <button
-                onClick={handleCloseModals}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X size={24} />
-              </button>
-              <h2 className="text-lg font-black text-[#3E5879]">
-                اقتراح موعد بديل
-              </h2>
-            </div>
-            <div className="p-6 space-y-5 text-right">
-              <div>
-                <label className="block text-sm font-black text-gray-700 mb-2">
-                  اختار تاريخ جديد
-                </label>
-                <input
-                  type="date"
-                  min={today}
-                  className="w-full bg-[#F3F4F6] border-none rounded-[0.5rem] p-3 text-sm font-bold text-gray-600 focus:ring-2 focus:ring-[#3E5879] outline-none"
-                  value={formData.date}
-                  onChange={(e) =>
-                    setFormData({ ...formData, date: e.target.value })
-                  }
-                />
+      <AnimatePresence>
+        {isRescheduleModalOpen && (
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white w-full max-w-md rounded-[1rem] shadow-2xl overflow-hidden"
+            >
+              <div className="flex justify-between items-center p-6 border-b border-gray-50">
+                <button
+                  onClick={handleCloseModals}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+                <h2 className="text-lg font-black text-[#3E5879]">
+                  اقتراح موعد بديل
+                </h2>
               </div>
-              <div>
-                <label className="block text-sm font-black text-gray-700 mb-2">
-                  اختار الوقت
-                </label>
-                <input
-                  type="time"
-                  className="w-full bg-[#F3F4F6] border-none rounded-[0.5rem] p-3 text-sm font-bold text-gray-600 focus:ring-2 focus:ring-[#3E5879] outline-none"
-                  value={formData.time}
-                  onChange={(e) =>
-                    setFormData({ ...formData, time: e.target.value })
-                  }
-                />
+              <div className="p-6 space-y-5 text-right">
+                {/* ... fields ... */}
+                <div>
+                  <label className="block text-sm font-black text-gray-700 mb-2">
+                    اختار تاريخ جديد
+                  </label>
+                  <input
+                    type="date"
+                    min={today}
+                    className="w-full bg-[#F3F4F6] border-none rounded-[0.5rem] p-3 text-sm font-bold text-gray-600 focus:ring-2 focus:ring-[#3E5879] outline-none"
+                    value={formData.date}
+                    onChange={(e) =>
+                      setFormData({ ...formData, date: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-black text-gray-700 mb-2">
+                    اختار الوقت
+                  </label>
+                  <input
+                    type="time"
+                    className="w-full bg-[#F3F4F6] border-none rounded-[0.5rem] p-3 text-sm font-bold text-gray-600 focus:ring-2 focus:ring-[#3E5879] outline-none"
+                    value={formData.time}
+                    onChange={(e) =>
+                      setFormData({ ...formData, time: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-black text-gray-700 mb-2">
+                    رسالتك للإدارة
+                  </label>
+                  <textarea
+                    rows="3"
+                    className="w-full bg-[#F3F4F6] border-none rounded-[0.5rem] p-3 text-sm font-bold text-gray-600 focus:ring-2 focus:ring-[#3E5879] outline-none resize-none"
+                    value={formData.user_message}
+                    onChange={(e) =>
+                      setFormData({ ...formData, user_message: e.target.value })
+                    }
+                  ></textarea>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-black text-gray-700 mb-2">
-                  رسالتك للإدارة
-                </label>
-                <textarea
-                  rows="3"
-                  className="w-full bg-[#F3F4F6] border-none rounded-[0.5rem] p-3 text-sm font-bold text-gray-600 focus:ring-2 focus:ring-[#3E5879] outline-none resize-none"
-                  value={formData.user_message}
-                  onChange={(e) =>
-                    setFormData({ ...formData, user_message: e.target.value })
-                  }
-                ></textarea>
+              <div className="p-6 flex gap-3 border-t border-gray-50 bg-gray-50/50">
+                <button
+                  onClick={handleCloseModals}
+                  className="flex-1 bg-white border border-gray-200 text-gray-500 py-3 rounded-[0.5rem] text-sm font-black hover:bg-gray-100 transition-all"
+                >
+                  تراجع
+                </button>
+                <button
+                  onClick={handleSubmitReschedule}
+                  disabled={submitting}
+                  className="flex-1 bg-[#3E5879] text-white py-3 rounded-[0.5rem] text-sm font-black hover:bg-[#2C3E50] transition-all disabled:opacity-50"
+                >
+                  {submitting ? "جاري الإرسال..." : "تحديث الموعد"}
+                </button>
               </div>
-            </div>
-            <div className="p-6 flex gap-3 border-t border-gray-50 bg-gray-50/50">
-              <button
-                onClick={handleCloseModals}
-                className="flex-1 bg-white border border-gray-200 text-gray-500 py-3 rounded-[0.5rem] text-sm font-black hover:bg-gray-100 transition-all"
-              >
-                تراجع
-              </button>
-              <button
-                onClick={handleSubmitReschedule}
-                disabled={submitting}
-                className="flex-1 bg-[#3E5879] text-white py-3 rounded-[0.5rem] text-sm font-black hover:bg-[#2C3E50] transition-all disabled:opacity-50"
-              >
-                {submitting ? "جاري الإرسال..." : "تحديث الموعد"}
-              </button>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       {/* Modal: View Details */}
-      {isDetailsModalOpen && selectedBooking && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center p-2 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-lg rounded-[0.5rem] shadow-2xl mt-24 overflow-hidden max-h-[80vh] overflow-y-auto custom-scrollbar">
-            <div className="sticky top-0 bg-white p-6 border-b border-gray-50 z-10">
-              <button
-                onClick={handleCloseModals}
-                className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X size={24} />
-              </button>
+      <AnimatePresence>
+        {isDetailsModalOpen && selectedBooking && (
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-2 bg-black/40 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white w-full max-w-lg rounded-[0.5rem] shadow-2xl mt-24 overflow-hidden max-h-[80vh] overflow-y-auto custom-scrollbar"
+            >
+              <div className="sticky top-0 bg-white p-6 border-b border-gray-50 z-10">
+                <button
+                  onClick={handleCloseModals}
+                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
 
-              <h2 className="text-lg font-black text-[#3E5879] text-center">
-                تفاصيل طلب المعاينة
-              </h2>
-            </div>
-
-            <div className="p-6 space-y-6 text-right">
-              {/* Unit Info */}
-              <div className="bg-gray-50 p-4 rounded-[0.5rem]">
-                <h4 className="font-black text-[#3E5879] mb-2">
-                  {selectedBooking.unit?.title}
-                </h4>
-                <div className="flex items-center gap-2 text-gray-500 text-sm font-bold">
-                  <MapPin size={14} />
-                  <span>{selectedBooking.unit?.address}</span>
-                </div>
+                <h2 className="text-lg font-black text-[#3E5879] text-center">
+                  تفاصيل طلب المعاينة
+                </h2>
               </div>
 
-              {/* User Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-black text-gray-400 flex items-center gap-1">
-                    <User size={12} /> الاسم بالكامل
-                  </label>
-                  <p className="text-sm font-bold text-gray-700">
-                    {selectedBooking.name}
-                  </p>
+              <div className="p-6 space-y-6 text-right">
+                {/* Unit Info */}
+                <div className="bg-gray-50 p-4 rounded-[0.5rem]">
+                  <h4 className="font-black text-[#3E5879] mb-2">
+                    {selectedBooking.unit?.title}
+                  </h4>
+                  <div className="flex items-center gap-2 text-gray-500 text-sm font-bold">
+                    <MapPin size={14} />
+                    <span>{selectedBooking.unit?.address}</span>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-black text-gray-400 flex items-center gap-1">
-                    <Phone size={12} /> رقم الهاتف
-                  </label>
-                  <p className="text-sm font-bold text-gray-700" dir="ltr">
-                    {selectedBooking.phone}
-                  </p>
-                </div>
-                <div className="space-y-1 col-span-full">
-                  <label className="text-xs font-black text-gray-400 flex items-center gap-1">
-                    <Mail size={12} /> البريد الإلكتروني
-                  </label>
-                  <p className="text-sm font-bold text-gray-700">
-                    {selectedBooking.email}
-                  </p>
-                </div>
-              </div>
 
-              <div className="h-[1px] bg-gray-100"></div>
-
-              {/* Messages */}
-              <div className="space-y-4">
-                <div>
-                  <label className="text-xs font-black text-[#3E5879] flex items-center gap-1 mb-2">
-                    <FileText size={14} /> ملاحظاتك عند الحجز
-                  </label>
-                  <div className="bg-blue-50/30 p-3 rounded-[0.5rem] border border-blue-100">
-                    <p className="text-sm font-bold text-gray-600">
-                      {selectedBooking.notes || "لا توجد ملاحظات"}
+                {/* User Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-black text-gray-400 flex items-center gap-1">
+                      <User size={12} /> الاسم بالكامل
+                    </label>
+                    <p className="text-sm font-bold text-gray-700">
+                      {selectedBooking.name}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-black text-gray-400 flex items-center gap-1">
+                      <Phone size={12} /> رقم الهاتف
+                    </label>
+                    <p className="text-sm font-bold text-gray-700" dir="ltr">
+                      {selectedBooking.phone}
+                    </p>
+                  </div>
+                  <div className="space-y-1 col-span-full">
+                    <label className="text-xs font-black text-gray-400 flex items-center gap-1">
+                      <Mail size={12} /> البريد الإلكتروني
+                    </label>
+                    <p className="text-sm font-bold text-gray-700">
+                      {selectedBooking.email}
                     </p>
                   </div>
                 </div>
 
-                {selectedBooking.user_message && (
+                <div className="h-[1px] bg-gray-100"></div>
+
+                {/* Messages */}
+                <div className="space-y-4">
                   <div>
                     <label className="text-xs font-black text-[#3E5879] flex items-center gap-1 mb-2">
-                      <MessageSquare size={14} /> رسالة التعديل الأخيرة
+                      <FileText size={14} /> ملاحظاتك عند الحجز
                     </label>
-                    <div className="bg-gray-50 p-3 rounded-[0.5rem]">
+                    <div className="bg-blue-50/30 p-3 rounded-[0.5rem] border border-blue-100">
                       <p className="text-sm font-bold text-gray-600">
-                        {selectedBooking.user_message}
+                        {selectedBooking.notes || "لا توجد ملاحظات"}
                       </p>
                     </div>
                   </div>
-                )}
+
+                  {selectedBooking.user_message && (
+                    <div>
+                      <label className="text-xs font-black text-[#3E5879] flex items-center gap-1 mb-2">
+                        <MessageSquare size={14} /> رسالة التعديل الأخيرة
+                      </label>
+                      <div className="bg-gray-50 p-3 rounded-[0.5rem]">
+                        <p className="text-sm font-bold text-gray-600">
+                          {selectedBooking.user_message}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Timestamps */}
+                <div className="flex justify-between items-center pt-4 text-[10px] text-gray-400 font-bold border-t border-gray-50">
+                  <span>تاريخ الطلب: {selectedBooking.created_at}</span>
+                  <span>آخر تحديث: {selectedBooking.updated_at}</span>
+                </div>
               </div>
 
-              {/* Timestamps */}
-              <div className="flex justify-between items-center pt-4 text-[10px] text-gray-400 font-bold border-t border-gray-50">
-                <span>تاريخ الطلب: {selectedBooking.created_at}</span>
-                <span>آخر تحديث: {selectedBooking.updated_at}</span>
+              <div className="p-4 bg-gray-50 text-center">
+                <button
+                  onClick={handleCloseModals}
+                  className="w-full bg-white border border-gray-200 text-gray-600 py-2.5 rounded-[0.5rem] text-sm font-black hover:bg-gray-100 transition-all"
+                >
+                  إغلاق
+                </button>
               </div>
-            </div>
-
-            <div className="p-4 bg-gray-50 text-center">
-              <button
-                onClick={handleCloseModals}
-                className="w-full bg-white border border-gray-200 text-gray-600 py-2.5 rounded-[0.5rem] text-sm font-black hover:bg-gray-100 transition-all"
-              >
-                إغلاق
-              </button>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }

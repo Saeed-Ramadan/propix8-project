@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { motion } from "framer-motion";
 import {
-  MapPin, Phone, Mail, Building2,
-  BedDouble, Bath, Maximize,
-  ArrowLeft, Loader2, Info
-} from 'lucide-react';
+  MapPin,
+  Phone,
+  Mail,
+  Building2,
+  BedDouble,
+  Bath,
+  Maximize,
+  ArrowLeft,
+  Loader2,
+  Info,
+} from "lucide-react";
 
 function DevelopersUnits() {
   // سحب الـ ID من الـ URL (مثلاً: /developer/2)
@@ -14,20 +22,21 @@ function DevelopersUnits() {
 
   const [developer, setDeveloper] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     // التأكد من وجود ID قبل طلب البيانات
     if (id) {
       setLoading(true);
-      axios.get(`https://propix8.com/api/developers/${id}`)
-        .then(response => {
+      axios
+        .get(`https://propix8.com/api/developers/${id}`)
+        .then((response) => {
           if (response.data.status) {
             setDeveloper(response.data.data);
           }
           setLoading(false);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("Error fetching developer data:", err);
           setLoading(false);
         });
@@ -50,13 +59,12 @@ function DevelopersUnits() {
     );
   }
 
-  const filteredUnits = developer.units.filter(unit =>
-    filter === 'all' ? true : unit.offer_type === filter
+  const filteredUnits = developer.units.filter((unit) =>
+    filter === "all" ? true : unit.offer_type === filter,
   );
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans text-right" dir="rtl">
-
       {/* --- Hero Section --- */}
       <div className="relative h-[500px] flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -102,7 +110,10 @@ function DevelopersUnits() {
                   <span className="truncate">{developer.email}</span>
                 </div>
                 <div className="flex items-center gap-3 bg-white/10 p-4 rounded-[0.5rem] backdrop-blur-lg border border-white/10">
-                  <Building2 size={22} className="text-blue-300 flex-shrink-0" />
+                  <Building2
+                    size={22}
+                    className="text-blue-300 flex-shrink-0"
+                  />
                   <span>{developer.units.length} وحدة متاحة</span>
                 </div>
               </div>
@@ -113,7 +124,6 @@ function DevelopersUnits() {
 
       {/* --- Floating Header & Content --- */}
       <div className="container mx-auto px-6 pb-24">
-
         {/* Floating Bar - تم ضبط الـ Z-Index والـ Margin */}
         <div className="relative -mt-16 z-[110] bg-white rounded-[0.5rem] shadow-2xl p-6 mb-16 border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-5">
@@ -121,39 +131,47 @@ function DevelopersUnits() {
               <Info className="text-[#3E5879]" size={32} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-800">قائمة العقارات</h2>
-              <p className="text-sm text-gray-500">مشاريع المطور {developer.name}</p>
+              <h2 className="text-2xl font-bold text-gray-800">
+                قائمة العقارات
+              </h2>
+              <p className="text-sm text-gray-500">
+                مشاريع المطور {developer.name}
+              </p>
             </div>
           </div>
 
           {/* Filter Buttons */}
           <div className="flex gap-2 p-1.5 bg-gray-50 rounded-[0.5rem] border border-gray-100">
-             <button
-              onClick={() => setFilter('all')}
-              className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'all' ? 'bg-[#3E5879] text-white shadow-lg' : 'text-gray-400 hover:text-gray-600'}`}
-             >
-               الكل
-             </button>
-             <button
-              onClick={() => setFilter('sale')}
-              className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'sale' ? 'bg-[#3E5879] text-white shadow-lg' : 'text-gray-400 hover:text-gray-600'}`}
-             >
-               بيع
-             </button>
-             <button
-              onClick={() => setFilter('rent')}
-              className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === 'rent' ? 'bg-[#3E5879] text-white shadow-lg' : 'text-gray-400 hover:text-gray-600'}`}
-             >
-               إيجار
-             </button>
+            <button
+              onClick={() => setFilter("all")}
+              className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === "all" ? "bg-[#3E5879] text-white shadow-lg" : "text-gray-400 hover:text-gray-600"}`}
+            >
+              الكل
+            </button>
+            <button
+              onClick={() => setFilter("sale")}
+              className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === "sale" ? "bg-[#3E5879] text-white shadow-lg" : "text-gray-400 hover:text-gray-600"}`}
+            >
+              بيع
+            </button>
+            <button
+              onClick={() => setFilter("rent")}
+              className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all ${filter === "rent" ? "bg-[#3E5879] text-white shadow-lg" : "text-gray-400 hover:text-gray-600"}`}
+            >
+              إيجار
+            </button>
           </div>
         </div>
 
         {/* Units Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {filteredUnits.map((unit) => (
-            <div
+          {filteredUnits.map((unit, index) => (
+            <motion.div
               key={unit.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
               onClick={() => navigate(`/property-details/${unit.id}`)}
               className="group bg-white rounded-[0.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 cursor-pointer flex flex-col h-full"
             >
@@ -164,14 +182,22 @@ function DevelopersUnits() {
                   alt="Pattern"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-40" />
-                <div className={`absolute top-6 right-6 px-5 py-2 rounded-full text-xs font-black shadow-xl backdrop-blur-md ${
-                  unit.offer_type === 'rent' ? 'bg-orange-500 text-white' : 'bg-[#3E5879] text-white'
-                }`}>
-                  {unit.offer_type === 'rent' ? 'للإيجار' : 'للبيع'}
+                <div
+                  className={`absolute top-6 right-6 px-5 py-2 rounded-full text-xs font-black shadow-xl backdrop-blur-md ${
+                    unit.offer_type === "rent"
+                      ? "bg-orange-500 text-white"
+                      : "bg-[#3E5879] text-white"
+                  }`}
+                >
+                  {unit.offer_type === "rent" ? "للإيجار" : "للبيع"}
                 </div>
                 <div className="absolute bottom-6 right-6 left-6 text-white">
-                  <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-80">{unit.unit_type.name}</p>
-                  <h3 className="text-xl font-bold line-clamp-1">{unit.title}</h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-80">
+                    {unit.unit_type.name}
+                  </p>
+                  <h3 className="text-xl font-bold line-clamp-1">
+                    {unit.title}
+                  </h3>
                 </div>
               </div>
 
@@ -183,20 +209,28 @@ function DevelopersUnits() {
                 <div className="grid grid-cols-3 gap-3 mb-8">
                   <div className="flex flex-col items-center p-4 bg-[#3E5879]/5 rounded-[0.5rem] border border-transparent group-hover:border-[#3E5879]/20 transition-all">
                     <BedDouble size={20} className="text-[#3E5879] mb-1.5" />
-                    <span className="text-sm font-black text-gray-800">{unit.rooms}</span>
+                    <span className="text-sm font-black text-gray-800">
+                      {unit.rooms}
+                    </span>
                   </div>
                   <div className="flex flex-col items-center p-4 bg-[#3E5879]/5 rounded-[0.5rem] border border-transparent group-hover:border-[#3E5879]/20 transition-all">
                     <Bath size={20} className="text-[#3E5879] mb-1.5" />
-                    <span className="text-sm font-black text-gray-800">{unit.bathrooms}</span>
+                    <span className="text-sm font-black text-gray-800">
+                      {unit.bathrooms}
+                    </span>
                   </div>
                   <div className="flex flex-col items-center p-4 bg-[#3E5879]/5 rounded-0.5rem border border-transparent group-hover:border-[#3E5879]/20 transition-all">
                     <Maximize size={20} className="text-[#3E5879] mb-1.5" />
-                    <span className="text-sm font-black text-gray-800">{Math.round(unit.area)} م²</span>
+                    <span className="text-sm font-black text-gray-800">
+                      {Math.round(unit.area)} م²
+                    </span>
                   </div>
                 </div>
                 <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between">
                   <div>
-                    <p className="text-[10px] text-gray-400 font-black uppercase mb-1">السعر</p>
+                    <p className="text-[10px] text-gray-400 font-black uppercase mb-1">
+                      السعر
+                    </p>
                     <p className="text-2xl font-black text-[#3E5879]">
                       {Number(unit.price).toLocaleString()}
                       <span className="text-xs font-bold mr-1">ج.م</span>
@@ -207,7 +241,7 @@ function DevelopersUnits() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

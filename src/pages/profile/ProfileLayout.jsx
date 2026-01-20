@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
-import { User, Heart, Star, ChevronLeft, Loader2, AlertTriangle, BookUser } from 'lucide-react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {
+  User,
+  Heart,
+  Star,
+  ChevronLeft,
+  Loader2,
+  AlertTriangle,
+  BookUser,
+} from "lucide-react";
+import React, { useState } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ProfileLayout() {
   const navigate = useNavigate();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const menuItems = [
-    { name: 'الحساب الشخصي', path: 'user-profile', icon: <User size={20} /> },
-    { name: 'المفضلة', path: 'favorites', icon: <Heart size={20} /> },
-    { name: 'الآراء', path: 'reviews', icon: <Star size={20} /> },
-    { name: 'طلبات المعاينة', path: 'user-booking', icon: <BookUser size={20} /> },
+    { name: "الحساب الشخصي", path: "user-profile", icon: <User size={20} /> },
+    { name: "المفضلة", path: "favorites", icon: <Heart size={20} /> },
+    { name: "الآراء", path: "reviews", icon: <Star size={20} /> },
+    {
+      name: "طلبات المعاينة",
+      path: "user-booking",
+      icon: <BookUser size={20} />,
+    },
   ];
 
   // دالة المسح الشامل للبيانات
@@ -34,14 +47,14 @@ export default function ProfileLayout() {
     setIsDeleting(true);
 
     try {
-      const token = localStorage.getItem('userToken');
-      const response = await fetch('https://propix8.com/api/profile', {
-        method: 'DELETE',
+      const token = localStorage.getItem("userToken");
+      const response = await fetch("https://propix8.com/api/profile", {
+        method: "DELETE",
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
       });
 
       const result = await response.json();
@@ -50,7 +63,7 @@ export default function ProfileLayout() {
         toast.success("تم حذف الحساب بنجاح، جاري الخروج...");
         clearAllUserData();
         setTimeout(() => {
-          navigate('/signin');
+          navigate("/signin");
           window.location.reload();
         }, 2000);
       } else {
@@ -72,7 +85,9 @@ export default function ProfileLayout() {
             <AlertTriangle size={20} />
             <span className="font-bold">تأكيد حذف الحساب</span>
           </div>
-          <p className="text-xs text-gray-600 mb-4">هل أنت متأكد؟ سيتم مسح بياناتك نهائياً ولا يمكن استرجاعها.</p>
+          <p className="text-xs text-gray-600 mb-4">
+            هل أنت متأكد؟ سيتم مسح بياناتك نهائياً ولا يمكن استرجاعها.
+          </p>
           <div className="flex gap-2 justify-end">
             <button
               onClick={() => proceedWithDelete(null)} // نمرر null لأن التنبيه سيغلق تلقائياً أو عبر الـ ID
@@ -94,13 +109,16 @@ export default function ProfileLayout() {
         autoClose: false, // لا يغلق تلقائياً ليختار المستخدم
         closeOnClick: false,
         draggable: false,
-        icon: false
-      }
+        icon: false,
+      },
     );
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] py-8 md:py-12 px-4 font-cairo" dir="rtl">
+    <div
+      className="min-h-screen bg-[#F8F9FA] py-8 md:py-12 px-4 font-cairo"
+      dir="rtl"
+    >
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -112,7 +130,12 @@ export default function ProfileLayout() {
 
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6">
         {/* Sidebar */}
-        <aside className="w-full md:w-80 shrink-0">
+        <motion.aside
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="w-full md:w-80 shrink-0"
+        >
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
             <div className="flex flex-col">
               {menuItems.map((item, index) => (
@@ -122,8 +145,8 @@ export default function ProfileLayout() {
                   className={({ isActive }) =>
                     `flex items-center justify-between px-6 py-5 transition-all border-r-4 ${
                       isActive
-                      ? 'bg-[#3E5879] text-white border-[#3E5879]'
-                      : 'text-gray-500 border-transparent hover:bg-gray-50'
+                        ? "bg-[#3E5879] text-white border-[#3E5879]"
+                        : "text-gray-500 border-transparent hover:bg-gray-50"
                     }`
                   }
                 >
@@ -151,7 +174,7 @@ export default function ProfileLayout() {
               </button>
             </div>
           </div>
-        </aside>
+        </motion.aside>
 
         {/* Dynamic Content Area */}
         <main className="flex-1">
