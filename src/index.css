@@ -7,9 +7,14 @@ input, select, textarea {
     font-family: 'Inter', sans-serif !important;
 }
 /* تطبيق الخط على المشروع بالكامل */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
 body {
   font-family: var(--font-cairo);
-  
   direction: rtl;
 }
 

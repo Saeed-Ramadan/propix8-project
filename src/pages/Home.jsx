@@ -330,11 +330,11 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full bg-[#f8f9fa] font-cairo" dir="rtl">
+    <div className="w-full bg-[#f8f9fa] font-cairo overflow-x-hidden" dir="rtl">
       <ToastContainer rtl={true} />
 
       {/* HERO SECTION */}
-      <section className="relative h-[75vh] min-h-[500px] w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[75vh] min-h-[500px] w-full flex items-center justify-center overflow-x-hidden">
         {/* SLIDER BACKGROUND */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           <AnimatePresence mode="wait">
@@ -358,7 +358,7 @@ export default function Home() {
         </div>
 
         {/* HERO CONTENT */}
-        <div className="relative z-10 w-full max-w-6xl px-6 h-full flex flex-col justify-center items-center -mt-20">
+        <div className="relative z-10 w-full max-w-6xl px-6 h-full flex flex-col justify-center items-center -mt-20 overflow-x-hidden">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -374,7 +374,7 @@ export default function Home() {
       </section>
 
       {/* FILTER SECTION */}
-      <div className="relative z-50 -mt-24 flex justify-center px-4 mb-20">
+      <div className="relative z-50 -mt-24 flex justify-center px-4 mb-20 overflow-x-hidden">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
