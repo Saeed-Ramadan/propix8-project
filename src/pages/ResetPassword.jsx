@@ -99,9 +99,9 @@ export default function ResetPassword() {
                 placeholder="البريد الإلكتروني"
                 value={formData.email}
                 onChange={handleChange}
-                readOnly={!!emailFromUrl}
+                readOnly={emailFromUrl}
                 className={`w-full border-none px-10 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-left ${
-                  !!emailFromUrl
+                  emailFromUrl
                     ? "bg-gray-100 text-gray-500 cursor-not-allowed"
                     : "bg-white"
                 }`}

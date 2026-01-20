@@ -334,7 +334,7 @@ export default function Home() {
       <ToastContainer rtl={true} />
 
       {/* HERO SECTION */}
-      <section className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center py-20 z-50 mb-96 md:mb-64">
+      <section className="relative h-[75vh] min-h-[500px] w-full flex items-center justify-center overflow-hidden">
         {/* SLIDER BACKGROUND */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           <AnimatePresence mode="wait">
@@ -371,224 +371,218 @@ export default function Home() {
             </h1>
           </motion.div>
         </div>
-
-        {/* FILTER SECTION (Half In / Half Out) */}
-        <div className="absolute bottom-0 left-0 right-0 z-40 transform translate-y-1/2 flex justify-center px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="w-full max-w-6xl bg-white/30 backdrop-blur-sm p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-white/50 text-[#3E5879] "
-          >
-            {/* ... Filter Content Same as User Provided ... */}
-            <div className="flex justify-center gap-4 mb-8">
-              <div className="bg-[#3E5879] text-white px-10 py-2 rounded-xl font-black shadow-lg text-sm md:text-base">
-                وحدات
-              </div>
-            </div>
-
-            <div className="flex flex-col md:flex-row items-center justify-start gap-4 mb-6">
-              <span className="font-black text-base md:text-lg text-gray-800 shrink-0">
-                حالة العقار
-              </span>
-              <div className="flex bg-white/50 p-1.5 rounded-xl border border-gray-200 w-full md:w-auto overflow-x-auto">
-                {["all", "sale", "rent"].map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => setFilters({ ...filters, offer_type: type })}
-                    className={`flex-1 md:flex-none px-6 py-2 rounded-xl font-black transition-all text-sm md:text-base whitespace-nowrap ${filters.offer_type === type ? "bg-[#3E5879] text-white shadow-md" : "text-gray-500 hover:text-[#3E5879]"}`}
-                  >
-                    {type === "all"
-                      ? "الكل"
-                      : type === "sale"
-                        ? "بيع"
-                        : "إيجار"}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 text-right">
-              <div className="space-y-2">
-                <label className="font-black pr-2 text-gray-800 text-sm">
-                  نوع العقار
-                </label>
-                <div className="relative">
-                  <select
-                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 placeholder-gray-800 font-bold text-right appearance-none focus:ring-2 ring-[#3E5879] outline-none cursor-pointer text-sm"
-                    onChange={(e) =>
-                      setFilters({ ...filters, unit_type_id: e.target.value })
-                    }
-                  >
-                    <option value="">جميع الأنواع</option>
-                    {unitTypes.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="absolute left-3 top-3.5 opacity-40 "
-                    size={16}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="font-black pr-2 text-gray-800 text-sm">
-                  المساحة (م2)
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <input
-                    type="number"
-                    placeholder="الأعلى"
-                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-500 font-bold"
-                    onChange={(e) =>
-                      setFilters({
-                        ...filters,
-                        max_internal_area: e.target.value,
-                      })
-                    }
-                  />
-                  <input
-                    type="number"
-                    placeholder="الأدنى"
-                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-500 font-bold"
-                    onChange={(e) =>
-                      setFilters({
-                        ...filters,
-                        min_internal_area: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="font-black pr-2 text-gray-800 text-sm">
-                  الموقع
-                </label>
-                <div className="relative">
-                  <select
-                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 text-right appearance-none focus:ring-2 font-bold ring-[#3E5879]/20 outline-none cursor-pointer text-sm"
-                    onChange={(e) =>
-                      setFilters({ ...filters, city_id: e.target.value })
-                    }
-                  >
-                    <option value="">المدينة أو المنطقة</option>
-                    {cities.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="absolute left-3 top-3.5 opacity-40"
-                    size={16}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="font-black pr-2 text-gray-800 text-sm">
-                  نطاق السعر
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <input
-                    type="number"
-                    placeholder="الأعلى"
-                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-500 font-bold"
-                    onChange={(e) =>
-                      setFilters({ ...filters, max_price: e.target.value })
-                    }
-                  />
-                  <input
-                    type="number"
-                    placeholder="الأدنى"
-                    className="w-full p-3 bg-white/80 rounded-xl border border-gray-300 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-500 font-bold"
-                    onChange={(e) =>
-                      setFilters({ ...filters, min_price: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="relative pt-4 border-t border-gray-200/50">
-              <button
-                onClick={handleSearch}
-                disabled={searchLoading}
-                className="w-full md:w-auto md:float-right bg-[#3E5879] text-white px-10 py-3 rounded-2xl flex items-center justify-center gap-3 font-black text-base hover:bg-[#2c3d54] hover:shadow-xl transition-all disabled:opacity-70 active:scale-95"
-              >
-                {searchLoading ? (
-                  <Loader2 className="animate-spin" size={20} />
-                ) : (
-                  <Search size={20} />
-                )}{" "}
-                البحث عن العقارات
-              </button>
-              <div className="clear-both"></div>
-
-              {/* Search Results Dropdown */}
-              <AnimatePresence>
-                {searchResults.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 right-0 mt-4 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[999]"
-                  >
-                    <div className="bg-gray-50 px-6 py-3 border-b flex justify-between items-center">
-                      <span className="font-bold text-[#3E5879]">
-                        نتائج البحث ({searchResults.length})
-                      </span>
-                      <button
-                        onClick={() => setSearchResults([])}
-                        className="flex items-center gap-1 text-red-500 hover:text-red-700 font-bold transition-colors text-sm"
-                      >
-                        إغلاق <X size={16} />
-                      </button>
-                    </div>
-                    <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
-                      {searchResults.map((item) => (
-                        <div
-                          key={item.id}
-                          onClick={() =>
-                            navigate(`/property-details/${item.id}`)
-                          }
-                          className="p-3 border-b last:border-0 hover:bg-gray-50 flex items-center gap-3 cursor-pointer transition-colors"
-                        >
-                          <img
-                            src={
-                              item.main_image ||
-                              "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=60"
-                            }
-                            className="w-14 h-14 rounded-lg object-cover shadow-sm bg-gray-200"
-                            alt=""
-                            onError={(e) => {
-                              e.target.src =
-                                "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=60";
-                            }}
-                          />
-                          <div className="text-right flex-1">
-                            <h4 className="font-bold text-[#3E5879] text-sm line-clamp-1">
-                              {item.title}
-                            </h4>
-                            <p className="text-xs text-gray-500 font-bold mt-1">
-                              {parseFloat(item.price).toLocaleString()} ج.م
-                            </p>
-                          </div>
-                          <ChevronLeft className="text-gray-300" size={16} />
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        </div>
       </section>
+
+      {/* FILTER SECTION */}
+      <div className="relative z-50 -mt-24 flex justify-center px-4 mb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          whileHover={{ scale: 1.01 }}
+          className="w-full max-w-6xl bg-white/40 backdrop-blur-md p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-white/60 text-[#3E5879] transition-all duration-300"
+        >
+          <div className="flex justify-center gap-4 mb-8">
+            <div className="bg-[#3E5879] text-white px-10 py-2 rounded-xl font-black shadow-lg text-sm md:text-base">
+              وحدات
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-start gap-4 mb-6">
+            <span className="font-black text-base md:text-lg text-gray-800 shrink-0">
+              حالة العقار
+            </span>
+            <div className="flex bg-white/50 p-1.5 rounded-xl border border-gray-200 w-full md:w-auto overflow-x-auto">
+              {["all", "sale", "rent"].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setFilters({ ...filters, offer_type: type })}
+                  className={`flex-1 md:flex-none px-6 py-2 rounded-xl font-black transition-all text-sm md:text-base whitespace-nowrap ${filters.offer_type === type ? "bg-[#3E5879] text-white shadow-md" : "text-gray-500 hover:text-[#3E5879]"}`}
+                >
+                  {type === "all" ? "الكل" : type === "sale" ? "بيع" : "إيجار"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 text-right">
+            <div className="space-y-2">
+              <label className="font-black pr-2 text-gray-800 text-sm ">
+                نوع العقار
+              </label>
+              <div className="relative mt-2">
+                <select
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 placeholder-gray-800 font-bold text-right appearance-none focus:ring-2 ring-[#3E5879] outline-none cursor-pointer text-sm shadow-sm hover:bg-white transition-all "
+                  onChange={(e) =>
+                    setFilters({ ...filters, unit_type_id: e.target.value })
+                  }
+                >
+                  <option value="">جميع الأنواع</option>
+                  {unitTypes.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="absolute left-3 top-3.5 opacity-40 "
+                  size={16}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="font-black pr-2 text-gray-800 text-sm">
+                المساحة (م2)
+              </label>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <input
+                  type="number"
+                  placeholder="الأعلى"
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-500 font-bold shadow-sm hover:bg-white transition-all"
+                  onChange={(e) =>
+                    setFilters({
+                      ...filters,
+                      max_internal_area: e.target.value,
+                    })
+                  }
+                />
+                <input
+                  type="number"
+                  placeholder="الأدنى"
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-500 font-bold shadow-sm hover:bg-white transition-all"
+                  onChange={(e) =>
+                    setFilters({
+                      ...filters,
+                      min_internal_area: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="font-black pr-2 text-gray-800 text-sm">
+                الموقع
+              </label>
+              <div className="relative mt-2">
+                <select
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-right appearance-none focus:ring-2 font-bold ring-[#3E5879] outline-none cursor-pointer text-sm shadow-sm hover:bg-white transition-all"
+                  onChange={(e) =>
+                    setFilters({ ...filters, city_id: e.target.value })
+                  }
+                >
+                  <option value="">المدينة أو المنطقة</option>
+                  {cities.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="absolute left-3 top-3.5 opacity-40"
+                  size={16}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="font-black pr-2 text-gray-800 text-sm">
+                نطاق السعر
+              </label>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <input
+                  type="number"
+                  placeholder="الأعلى"
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-500 font-bold shadow-sm hover:bg-white transition-all"
+                  onChange={(e) =>
+                    setFilters({ ...filters, max_price: e.target.value })
+                  }
+                />
+                <input
+                  type="number"
+                  placeholder="الأدنى"
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-500 font-bold shadow-sm hover:bg-white transition-all"
+                  onChange={(e) =>
+                    setFilters({ ...filters, min_price: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="relative pt-4 border-t border-gray-200/50">
+            <button
+              onClick={handleSearch}
+              disabled={searchLoading}
+              className="w-full md:w-auto md:float-right bg-[#3E5879] text-white px-10 py-3 rounded-2xl flex items-center justify-center gap-3 font-black text-base hover:bg-[#2c3d54] hover:shadow-xl transition-all disabled:opacity-70 active:scale-95"
+            >
+              {searchLoading ? (
+                <Loader2 className="animate-spin" size={20} />
+              ) : (
+                <Search size={20} />
+              )}{" "}
+              البحث عن العقارات
+            </button>
+            <div className="clear-both"></div>
+
+            {/* Search Results Dropdown */}
+            <AnimatePresence>
+              {searchResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full left-0 right-0 mt-4 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[999]"
+                >
+                  <div className="bg-gray-50 px-6 py-3 border-b flex justify-between items-center">
+                    <span className="font-bold text-[#3E5879]">
+                      نتائج البحث ({searchResults.length})
+                    </span>
+                    <button
+                      onClick={() => setSearchResults([])}
+                      className="flex items-center gap-1 text-red-500 hover:text-red-700 font-bold transition-colors text-sm"
+                    >
+                      إغلاق <X size={16} />
+                    </button>
+                  </div>
+                  <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                    {searchResults.map((item) => (
+                      <div
+                        key={item.id}
+                        onClick={() => navigate(`/property-details/${item.id}`)}
+                        className="p-3 border-b last:border-0 hover:bg-gray-50 flex items-center gap-3 cursor-pointer transition-colors"
+                      >
+                        <img
+                          src={
+                            item.main_image ||
+                            "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=60"
+                          }
+                          className="w-14 h-14 rounded-lg object-cover shadow-sm bg-gray-200"
+                          alt=""
+                          onError={(e) => {
+                            e.target.src =
+                              "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=60";
+                          }}
+                        />
+                        <div className="text-right flex-1">
+                          <h4 className="font-bold text-[#3E5879] text-sm line-clamp-1">
+                            {item.title}
+                          </h4>
+                          <p className="text-xs text-gray-500 font-bold mt-1">
+                            {parseFloat(item.price).toLocaleString()} ج.م
+                          </p>
+                        </div>
+                        <ChevronLeft className="text-gray-300" size={16} />
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      </div>
 
       {/* COMPOUNDS SECTION */}
       <section className="py-16 bg-white overflow-hidden ">
@@ -645,7 +639,7 @@ export default function Home() {
                 <h3 className="text-xl font-black text-white mb-6">
                   {compound.name}
                 </h3>
-                <div className="inline-flex items-center gap-2 text-[#3E5879] font-black text-sm bg-white px-6 py-2.5 rounded-xl shadow-md group-hover:bg-[#EEF2F6] transition-all duration-300">
+                <div className=" cursor-pointer inline-flex items-center gap-2 text-[#3E5879] font-black text-sm bg-white px-6 py-2.5 rounded-xl shadow-md group-hover:bg-[#EEF2F6] transition-all duration-300">
                   عرض الوحدات <ChevronLeft size={16} />
                 </div>
               </motion.div>
@@ -740,7 +734,7 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <button className="w-full mt-6 py-3 rounded-xl bg-gray-100 text-[#3E5879] font-black group-hover:bg-[#3E5879] group-hover:text-white transition-all shadow-inner">
+                  <button className="cursor-pointer w-full mt-6 py-3 rounded-xl bg-gray-100 text-[#3E5879] font-black group-hover:bg-[#3E5879] group-hover:text-white transition-all shadow-inner">
                     عرض جميع المشاريع
                   </button>
                 </div>
@@ -1007,7 +1001,7 @@ export default function Home() {
             <div className="flex justify-end pt-2">
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="flex items-center gap-2 bg-[#3E5879] text-white px-6 py-3 rounded-full font-black hover:bg-[#2c3e56] transition-all shadow-lg text-sm"
+                className="cursor-pointer flex items-center gap-2 bg-[#3E5879] text-white px-6 py-3 rounded-full font-black hover:bg-[#2c3e56] transition-all shadow-lg text-sm"
               >
                 <MessageSquare size={18} />
                 أضف تقييمك الآن
@@ -1023,11 +1017,11 @@ export default function Home() {
                   testimonialPagination.current_page === 1 ||
                   testimonialsLoading
                 }
-                className="p-3 rounded-full bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
+                className="cursor-pointer p-3 rounded-full bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
               >
                 <ChevronRight size={24} />
               </button>
-              <div className="flex items-center gap-2 font-black text-[#3E5879]">
+              <div className=" cursor-pointerflex items-center gap-2 font-black text-[#3E5879]">
                 {" "}
                 <span>
                   صفحة {testimonialPagination.current_page} من{" "}
@@ -1042,7 +1036,7 @@ export default function Home() {
                   testimonialPagination.current_page ===
                     testimonialPagination.last_page || testimonialsLoading
                 }
-                className="p-3 rounded-full bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
+                className="cursor-pointer p-3 rounded-full bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
               >
                 <ChevronLeft size={24} />
               </button>
@@ -1130,7 +1124,7 @@ export default function Home() {
           <div className="relative bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-6 left-6 text-gray-400 hover:text-red-500 transition-colors"
+              className="cursor-pointer absolute top-6 left-6 text-gray-400 hover:text-red-500 transition-colors"
             >
               <X size={24} />
             </button>
@@ -1177,7 +1171,7 @@ export default function Home() {
                 <button
                   disabled={reviewLoading}
                   type="submit"
-                  className="w-full bg-[#3E5879] text-white font-black py-4 rounded-2xl hover:bg-[#2c3e56] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg"
+                  className="cursor-pointer w-full bg-[#3E5879] text-white font-black py-4 rounded-2xl hover:bg-[#2c3e56] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg"
                 >
                   {reviewLoading ? (
                     <Loader2 className="animate-spin" size={20} />
