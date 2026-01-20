@@ -26,6 +26,7 @@ import {
   AlertCircle,
   CheckCircle2,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -330,20 +331,32 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-black/40"></div>
         <div className="relative z-10 w-full max-w-6xl px-6">
-          <div className="text-center text-white mb-10">
-            <h1 className="text-4xl md:text-4xl font-black mb-4 drop-shadow-lg italic">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center text-white mb-10"
+          >
+            <h1 className="text-3xl md:text-4xl font-black mb-4 drop-shadow-lg italic leading-relaxed">
               " تصفح أفضل العقارات المتاحة للإيجار في مكان واحد "
             </h1>
-          </div>
-          <div className="bg-white/80 p-8 rounded-[2.5rem] shadow-2xl border border-white/30 text-[#3E5879]">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="bg-white/50 p-8 rounded-[2.5rem] shadow-2xl border border-white/30 text-[#3E5879]"
+          >
             <div className="flex justify-center gap-4 mb-10">
               <div className="bg-[#3E5879] text-white px-12 py-3 rounded-xl font-black shadow-lg">
                 وحدات
               </div>
             </div>
             <div className="flex flex-col md:flex-row items-center justify-start gap-6 mb-8">
-              <span className="font-black text-lg">حالة العقار</span>
-              <div className="flex bg-gray-200/50 p-1.5 rounded-xl border border-gray-300">
+              <span className="font-black text-lg text-gray-800 ">
+                حالة العقار
+              </span>
+              <div className="flex bg-gray-200 p-1.5 rounded-xl border border-gray-300">
                 {["all", "sale", "rent"].map((type) => (
                   <button
                     key={type}
@@ -361,10 +374,12 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 text-right">
               <div className="space-y-2">
-                <label className="font-black pr-2">نوع العقار</label>
+                <label className="font-black pr-2 text-gray-800">
+                  نوع العقار
+                </label>
                 <div className="relative mt-1.5">
                   <select
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-right appearance-none focus:ring-2 ring-[#3E5879]/20 outline-none cursor-pointer"
+                    className="w-full p-3.5 rounded-xl border placeholder-gray-800 font-bold border-gray-500 text-right appearance-none focus:ring-2 ring-[#3E5879] outline-none cursor-pointer"
                     onChange={(e) =>
                       setFilters({ ...filters, unit_type_id: e.target.value })
                     }
@@ -383,12 +398,14 @@ export default function Home() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="font-black pr-2">المساحة (م2)</label>
+                <label className="font-black pr-2 text-gray-800">
+                  المساحة (م2)
+                </label>
                 <div className="grid grid-cols-2 gap-2 mt-1.5">
                   <input
                     type="number"
                     placeholder="الأعلى"
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-500"
+                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-800 font-bold"
                     onChange={(e) =>
                       setFilters({
                         ...filters,
@@ -399,7 +416,7 @@ export default function Home() {
                   <input
                     type="number"
                     placeholder="الأدنى"
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-500"
+                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-800 font-bold"
                     onChange={(e) =>
                       setFilters({
                         ...filters,
@@ -410,10 +427,10 @@ export default function Home() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="font-black pr-2">الموقع</label>
+                <label className="font-black pr-2 text-gray-800">الموقع</label>
                 <div className="relative mt-1.5">
                   <select
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-right appearance-none focus:ring-2 ring-[#3E5879]/20 outline-none cursor-pointer"
+                    className="w-full p-3.5 rounded-xl border border-gray-500 text-right appearance-none focus:ring-2 font-bold ring-[#3E5879]/20 outline-none cursor-pointer"
                     onChange={(e) =>
                       setFilters({ ...filters, city_id: e.target.value })
                     }
@@ -432,12 +449,14 @@ export default function Home() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="font-black pr-2">نطاق السعر</label>
+                <label className="font-black pr-2 text-gray-800">
+                  نطاق السعر
+                </label>
                 <div className="grid grid-cols-2 gap-2 mt-1.5">
                   <input
                     type="number"
                     placeholder="الأعلى"
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-500"
+                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-800 font-bold"
                     onChange={(e) =>
                       setFilters({ ...filters, max_price: e.target.value })
                     }
@@ -445,7 +464,7 @@ export default function Home() {
                   <input
                     type="number"
                     placeholder="الأدنى"
-                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-500"
+                    className="w-full p-3.5 rounded-xl border border-gray-500 text-center text-sm focus:ring-2 ring-[#3E5879]/20 outline-none placeholder-gray-800 font-bold"
                     onChange={(e) =>
                       setFilters({ ...filters, min_price: e.target.value })
                     }
@@ -511,7 +530,7 @@ export default function Home() {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -519,14 +538,20 @@ export default function Home() {
       <section className="py-16 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
-            <div className="text-right border-r-4 border-[#3E5879] pr-5">
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-right border-r-4 border-[#3E5879] pr-5"
+            >
               <h2 className="text-[#3E5879] text-3xl md:text-4xl font-black mb-2">
                 أبرز المجمعات السكنية
               </h2>
               <p className="text-gray-500 font-bold">
                 تصفح الوحدات حسب الكمبوند
               </p>
-            </div>
+            </motion.div>
             <div className="flex gap-3">
               <button
                 onClick={() => scroll(scrollRef, "right")}
@@ -548,9 +573,13 @@ export default function Home() {
             className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide snap-x"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {compounds.map((compound) => (
-              <div
+            {compounds.map((compound, index) => (
+              <motion.div
                 key={compound.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
                 onClick={() => navigate(`/compoundUnits/${compound.id}`)}
                 className="min-w-[280px] md:min-w-[320px] bg-[#3E5879] p-8 rounded-[1rem] border border-[#3E5879] shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer group snap-center text-center"
               >
@@ -563,7 +592,7 @@ export default function Home() {
                 <div className="inline-flex items-center gap-2 text-[#3E5879] font-black text-sm bg-white px-6 py-2.5 rounded-xl shadow-md group-hover:bg-[#EEF2F6] transition-all duration-300">
                   عرض الوحدات <ChevronLeft size={16} />
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -573,14 +602,20 @@ export default function Home() {
       <section className="py-20 bg-[#f0f2f5] overflow-hidden">
         <div className="max-w-6xl mx-auto px-3">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4 border-r-4 border-[#3E5879] pr-6">
-            <div className="text-right">
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-right"
+            >
               <h2 className="text-[#3E5879] text-3xl md:text-4xl font-black mb-2">
                 شركاء النجاح
               </h2>
               <p className="text-gray-500 font-bold">
                 أكبر المطورين العقاريين في مصر
               </p>
-            </div>
+            </motion.div>
             <div className="flex gap-3">
               <button
                 onClick={() => scroll(devScrollRef, "right")}
@@ -602,9 +637,13 @@ export default function Home() {
             className="flex gap-8 overflow-x-auto pb-10 scrollbar-hide snap-x"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {developers.map((dev) => (
-              <div
+            {developers.map((dev, index) => (
+              <motion.div
                 key={dev.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
                 onClick={() => navigate(`/developerUnits/${dev.id}`)}
                 className="min-w-[340px] md:min-w-[400px] bg-white rounded-[1rem] overflow-hidden shadow-lg border border-white hover:shadow-2xl transition-all group snap-center relative cursor-pointer"
               >
@@ -649,7 +688,7 @@ export default function Home() {
                     عرض جميع المشاريع
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -658,29 +697,46 @@ export default function Home() {
       {/* STATS SECTION */}
       <section className="py-24 px-6 bg-[#f8f9fa] relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
             <h2 className="text-[#3E5879] text-3xl md:text-5xl font-black mb-6">
               احصل علي أسلوب حياة راق يليق بك
             </h2>
             <p className="text-gray-500 text-lg md:text-xl font-medium max-w-2xl mx-auto">
               استثمار آمن وخطط سداد مرنة تناسب احتياجاتك
             </p>
-          </div>
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-            <div className="rounded-[3rem] overflow-hidden shadow-2xl transform -rotate-1 hover:rotate-0 transition-transform duration-500 border-4 border-white">
+            <motion.div
+              initial={{ opacity: 0, x: 100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="rounded-[3rem] overflow-hidden shadow-2xl transform -rotate-1 hover:rotate-0 transition-transform duration-500 border-4 border-white"
+            >
               <img
                 src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=1000"
                 className="w-full h-[450px] object-cover"
                 alt="Luxury"
               />
-            </div>
-            <div className="rounded-[3rem] overflow-hidden shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500 border-[6px] border-[#3E5879]/10">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="rounded-[3rem] overflow-hidden shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500 border-[6px] border-[#3E5879]/10"
+            >
               <img
                 src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&q=80&w=1200"
                 className="w-full h-[450px] object-cover"
                 alt="Modern"
               />
-            </div>
+            </motion.div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10 border-t border-gray-100 pt-16">
             {stats.map((stat, index) => (
@@ -706,7 +762,12 @@ export default function Home() {
       {/* UNITS LIST SECTION */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
             <h2 className="text-[#3E5879] text-4xl font-black mb-4">
               "استكشف ما نقدمه"
             </h2>
@@ -714,7 +775,7 @@ export default function Home() {
               نقدم حلولاً عقارية متكاملة تناسب جميع احتياجاتك، من السكني إلى
               التجاري والاستثماري
             </p>
-          </div>
+          </motion.div>
           <div className="flex flex-wrap justify-center gap-3 mb-12">
             <button
               onClick={() => setActiveTab("all")}
@@ -736,9 +797,13 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {filteredUnits.length > 0 ? (
-              filteredUnits.map((unit) => (
-                <div
+              filteredUnits.map((unit, index) => (
+                <motion.div
                   key={unit.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
                   onClick={() => navigate(`/property-details/${unit.id}`)}
                   className="bg-white rounded-[0.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer group"
                 >
@@ -753,17 +818,18 @@ export default function Home() {
                     ) : (
                       <div className="flex flex-col items-center gap-2 text-gray-400">
                         <Square size={40} className="opacity-20" />
-                        <span className="text-sm font-bold">لا توجد صورة لهذا العقار</span>
+                        <span className="text-sm font-bold">
+                          لا توجد صورة لهذا العقار
+                        </span>
                       </div>
                     )}
                   </div>
                   <div className="p-6 text-right">
                     <div className="flex items-center justify-start gap-2 text-gray-400 text-sm mb-2">
-                    <MapPin size={16} className="text-[#3E5879]" />
+                      <MapPin size={16} className="text-[#3E5879]" />
                       <span className="font-bold text-[#3E5879] text-base">
                         {unit.city?.name} - {unit.address?.split("،")[0]}
                       </span>
-
                     </div>
                     <h3 className="text-xl font-black text-[#000] mb-3">
                       {unit.unit_type?.name} فاخرة بتشطيب سوبر لوكس
@@ -789,7 +855,7 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))
             ) : (
               <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white rounded-[3rem] shadow-sm border border-dashed border-gray-300">
@@ -812,51 +878,61 @@ export default function Home() {
       {/* ABOUT US SECTION */}
       <section className="py-24 bg-[#f8f9fa]">
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <div className="inline-block bg-[#3E5879] text-white px-8 py-2 rounded-xl font-bold mb-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-block bg-[#3E5879] text-white px-8 py-2 rounded-xl font-bold mb-6"
+          >
             {aboutData?.title || "من نحن"}
-          </div>
-          <h2 className="text-3xl md:text-4xl font-black text-[#3E5879] mb-6">
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-black text-[#3E5879] mb-6"
+          >
             علامة بارزة في عالم العقارات الفاخرة
-          </h2>
-          <p className="text-gray-500 text-lg leading-relaxed max-w-5xl mx-auto font-medium mb-16">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-gray-500 text-lg leading-relaxed max-w-5xl mx-auto font-medium mb-16"
+          >
             {aboutData?.content ||
               "نحن شركة تطوير عقاري رائدة نضع بصمتنا في عالم الفخامة والتميز."}
-          </p>
+          </motion.p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-10 rounded-3xl group hover:shadow-xl transition-all duration-300">
-              <div className="bg-[#3E5879] w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                {" "}
-                <ShieldCheck className="text-white" size={30} />{" "}
-              </div>
-              <h4 className="text-2xl font-black text-[#3E5879] mb-4">الثقة</h4>
-              <p className="text-gray-500 font-bold leading-relaxed">
-                أساس كل نجاح.
-              </p>
-            </div>
-            <div className="bg-white p-10 rounded-3xl group hover:shadow-xl transition-all duration-300">
-              <div className="bg-[#3E5879] w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                {" "}
-                <Award className="text-white" size={30} />{" "}
-              </div>
-              <h4 className="text-2xl font-black text-[#3E5879] mb-4">
-                الجودة
-              </h4>
-              <p className="text-gray-500 font-bold leading-relaxed">
-                معايير تفوق التوقعات.
-              </p>
-            </div>
-            <div className="bg-white p-10 rounded-3xl group hover:shadow-xl transition-all duration-300">
-              <div className="bg-[#3E5879] w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                {" "}
-                <Lightbulb className="text-white" size={30} />{" "}
-              </div>
-              <h4 className="text-2xl font-black text-[#3E5879] mb-4">
-                الابتكار
-              </h4>
-              <p className="text-gray-500 font-bold leading-relaxed">
-                مفاهيم سكنية عصرية.
-              </p>
-            </div>
+            {[
+              { icon: ShieldCheck, title: "الثقة", desc: "أساس كل نجاح." },
+              { icon: Award, title: "الجودة", desc: "معايير تفوق التوقعات." },
+              {
+                icon: Lightbulb,
+                title: "الابتكار",
+                desc: "مفاهيم سكنية عصرية.",
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+                className="bg-white p-10 rounded-3xl group hover:shadow-xl transition-all duration-300"
+              >
+                <div className="bg-[#3E5879] w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <item.icon className="text-white" size={30} />
+                </div>
+                <h4 className="text-2xl font-black text-[#3E5879] mb-4">
+                  {item.title}
+                </h4>
+                <p className="text-gray-500 font-bold leading-relaxed">
+                  {item.desc}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -920,9 +996,13 @@ export default function Home() {
             {testimonialsLoading ? (
               <Loader2 className="animate-spin text-[#3E5879] mx-auto" />
             ) : (
-              testimonials.map((testi) => (
-                <div
+              testimonials.map((testi, index) => (
+                <motion.div
                   key={testi.id}
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2 }}
                   className="bg-[#f8f9fa] p-8 rounded-[2rem] border-r-8 border-[#3E5879] flex gap-6 shadow-sm"
                 >
                   <img
@@ -939,7 +1019,7 @@ export default function Home() {
                       "{testi.content}"
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))
             )}
           </div>
@@ -953,9 +1033,13 @@ export default function Home() {
             الأسئلة الشائعة
           </h2>
           <div className="space-y-4">
-            {faqs.map((faq) => (
-              <div
+            {faqs.map((faq, index) => (
+              <motion.div
                 key={faq.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
                 className="bg-white rounded-2xl overflow-hidden shadow-sm"
               >
                 <button
@@ -974,7 +1058,7 @@ export default function Home() {
                     {faq.answer}
                   </div>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -982,7 +1066,7 @@ export default function Home() {
 
       {/* MODAL / POPUP FOR REVIEWS */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setIsModalOpen(false)}
