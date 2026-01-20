@@ -91,6 +91,8 @@ export default function PropertyDetails() {
     window.scrollTo(0, 0);
 
     const token = localStorage.getItem("userToken");
+    const validToken =
+      token && token !== "null" && token !== "undefined" ? token : null;
 
     fetch("https://propix8.com/api/settings")
       .then((res) => res.json())
@@ -100,7 +102,7 @@ export default function PropertyDetails() {
 
     fetch(`https://propix8.com/api/units/${id}`, {
       headers: {
-        Authorization: token ? `Bearer ${token}` : "",
+        Authorization: validToken ? `Bearer ${validToken}` : "",
         Accept: "application/json",
       },
     })
@@ -137,36 +139,46 @@ export default function PropertyDetails() {
 
   const toggleFavorite = async () => {
     const token = localStorage.getItem("userToken");
-    if (!token) {
+    const validToken =
+      token && token !== "null" && token !== "undefined" ? token : null;
+
+    if (!validToken) {
       toast.warning("يرجى تسجيل الدخول أولاً لاستخدام المفضلة", {
         position: "top-center",
       });
       return;
     }
+
+    // Optimistic Update
     setIsFavorite((prev) => !prev);
+
     try {
       const response = await fetch("https://propix8.com/api/favorites/toggle", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${validToken}`,
         },
-        body: JSON.stringify({ unit_id: id }),
+        body: JSON.stringify({ unit_id: parseInt(id) }),
       });
+
       const result = await response.json();
-      if (response.ok && result.status) {
+
+      if (!response.ok || !result.status) {
+        // Rollback on failure
+        setIsFavorite((prev) => !prev);
+        toast.error(result.message || "حدث خطأ، حاول مرة أخرى");
+      } else {
         toast.success(result.message, {
           position: "top-center",
           autoClose: 1500,
           theme: "colored",
           style: { fontFamily: "Cairo", borderRadius: "15px" },
         });
-      } else {
-        setIsFavorite((prev) => !prev);
-        toast.error(result.message || "حدث خطأ، حاول مرة أخرى");
       }
     } catch (error) {
+      // Rollback on error
       setIsFavorite((prev) => !prev);
       console.error("Favorite Toggle Error:", error);
       toast.error("خطأ في الاتصال بالسيرفر");

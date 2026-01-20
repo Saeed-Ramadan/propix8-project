@@ -125,7 +125,9 @@ export default function Booking() {
           <form onSubmit={handleSubmit} className="space-y-6 text-right">
             {/* الحقول المعتادة */}
             <div>
-              <label className="block text-gray-700 font-bold mb-2 text-sm">الاسم بالكامل</label>
+              <label className="block text-gray-700 font-bold mb-2 text-sm">
+                الاسم بالكامل
+              </label>
               <div className="relative">
                 <input
                   type="text"
@@ -136,12 +138,17 @@ export default function Booking() {
                   placeholder="أدخل اسمك بالكامل"
                   className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
                 />
-                <User className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <User
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
               </div>
             </div>
 
             <div>
-              <label className="block text-gray-700 font-bold mb-2 text-sm">رقم الهاتف</label>
+              <label className="block text-gray-700 font-bold mb-2 text-sm">
+                رقم الهاتف
+              </label>
               <div className="relative">
                 <input
                   type="tel"
@@ -152,12 +159,17 @@ export default function Booking() {
                   placeholder="رقم الهاتف"
                   className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
                 />
-                <Phone className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <Phone
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
               </div>
             </div>
 
             <div>
-              <label className="block text-gray-700 font-bold mb-2 text-sm">البريد الإلكتروني</label>
+              <label className="block text-gray-700 font-bold mb-2 text-sm">
+                البريد الإلكتروني
+              </label>
               <div className="relative">
                 <input
                   type="email"
@@ -168,14 +180,24 @@ export default function Booking() {
                   placeholder="البريد الإلكتروني"
                   className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
                 />
-                <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <Mail
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700 font-bold mb-2 text-sm">تاريخ الزيارة</label>
-                <div className="relative" onClick={(e) => e.currentTarget.querySelector("input").showPicker()}>
+                <label className="block text-gray-700 font-bold mb-2 text-sm">
+                  تاريخ الزيارة
+                </label>
+                <div
+                  className="relative"
+                  onClick={(e) =>
+                    e.currentTarget.querySelector("input").showPicker()
+                  }
+                >
                   <input
                     type="date"
                     name="date"
@@ -185,12 +207,22 @@ export default function Booking() {
                     onChange={handleChange}
                     className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right text-gray-400 cursor-pointer"
                   />
-                  <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+                  <Calendar
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                    size={18}
+                  />
                 </div>
               </div>
               <div>
-                <label className="block text-gray-700 font-bold mb-2 text-sm">وقت الزيارة</label>
-                <div className="relative" onClick={(e) => e.currentTarget.querySelector("input").showPicker()}>
+                <label className="block text-gray-700 font-bold mb-2 text-sm">
+                  وقت الزيارة
+                </label>
+                <div
+                  className="relative"
+                  onClick={(e) =>
+                    e.currentTarget.querySelector("input").showPicker()
+                  }
+                >
                   <input
                     type="time"
                     name="time"
@@ -199,13 +231,18 @@ export default function Booking() {
                     onChange={handleChange}
                     className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right text-gray-400 cursor-pointer"
                   />
-                  <Clock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+                  <Clock
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                    size={18}
+                  />
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-gray-700 font-bold mb-2 text-sm">ملاحظات إضافية</label>
+              <label className="block text-gray-700 font-bold mb-2 text-sm">
+                ملاحظات إضافية
+              </label>
               <textarea
                 name="notes"
                 rows="4"
@@ -225,7 +262,11 @@ export default function Booking() {
                 className="w-4 h-4 accent-[#415a77] cursor-pointer"
               />
               <label className="text-sm text-gray-600 cursor-pointer select-none">
-                أوافق على <Link to="/terms" className="text-[#415a77] underline mx-1"> الشروط والأحكام و سياسة الخصوصية </Link>
+                أوافق على{" "}
+                <Link to="/terms" className="text-[#415a77] underline mx-1">
+                  {" "}
+                  الشروط والأحكام و سياسة الخصوصية{" "}
+                </Link>
               </label>
             </div>
 
@@ -235,7 +276,11 @@ export default function Booking() {
               className="w-full bg-[#415a77] text-white font-bold py-4 rounded-lg hover:bg-[#34495e] transition duration-300 shadow-lg mt-4 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {submitting ? (
-                <> <Loader2 className="animate-spin" size={20} /> جاري المعالجة... </>
+                <>
+                  {" "}
+                  <Loader2 className="animate-spin" size={20} /> جاري
+                  المعالجة...{" "}
+                </>
               ) : (
                 "تأكيد الحجز"
               )}
@@ -246,7 +291,7 @@ export default function Booking() {
 
       {/* Success Modal */}
       {showSuccessModal && bookingDetails && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm mt-4">
           <div className="bg-white w-full max-w-md rounded-[0.5rem] shadow-2xl mt-16 overflow-hidden animate-in fade-in zoom-in duration-300">
             <div className="p-8 flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-[#415a77] rounded-full flex items-center justify-center mb-6 shadow-xl shadow-[#415a77]/20">
@@ -269,7 +314,9 @@ export default function Booking() {
                 </div>
                 <div className="p-5 space-y-4 text-right">
                   <div className="space-y-1">
-                    <p className="text-[10px] text-gray-400 font-black">معلومات العقار</p>
+                    <p className="text-[10px] text-gray-400 font-black">
+                      معلومات العقار
+                    </p>
                     <p className="text-sm font-black text-gray-700">
                       {bookingDetails.unit?.title}
                     </p>
