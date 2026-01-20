@@ -334,7 +334,7 @@ export default function Home() {
       <ToastContainer rtl={true} />
 
       {/* HERO SECTION */}
-      <section className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center py-20 z-50 mb-48 md:mb-32">
+      <section className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center py-20 z-50 mb-96 md:mb-64">
         {/* SLIDER BACKGROUND */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           <AnimatePresence mode="wait">
@@ -365,7 +365,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="text-center text-white mb-10"
           >
-            <h1 className="text-3xl md:text-5xl font-black mb-6 drop-shadow-2xl italic leading-tight">
+            <h1 className="text-2xl md:text-4xl font-black mb-6 drop-shadow-2xl italic leading-tight">
               " تصفح أفضل العقارات المتاحة للإيجار{" "}
               <br className="hidden md:block" /> في مكان واحد "
             </h1>
