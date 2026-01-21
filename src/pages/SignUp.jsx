@@ -4,11 +4,13 @@ import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../context/AuthContext.jsx";
 import signupImg from "../assets/main/signup.png";
 import logo from "../assets/logo/main-logo.png";
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -101,7 +103,12 @@ export default function SignUp() {
 
       if (response.ok) {
         toast.success("تم إنشاء الحساب بنجاح!");
-        setTimeout(() => navigate("/signin"), 2000);
+        if (result.data?.access_token) {
+          login(result.data.access_token, result.data.user);
+          setTimeout(() => navigate("/"), 2000);
+        } else {
+          setTimeout(() => navigate("/signin"), 2000);
+        }
       } else {
         toast.error(result.message || "فشلت العملية، تأكد من البيانات");
       }

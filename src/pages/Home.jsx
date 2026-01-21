@@ -28,11 +28,13 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   const navigate = useNavigate();
+  const { token, ensureAuth } = useAuth();
   const scrollRef = useRef(null);
   const devScrollRef = useRef(null);
 
@@ -56,6 +58,10 @@ export default function Home() {
     "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2070",
   ]);
 
+  // Banners Slider States
+  const [banners, setBanners] = useState([]);
+  const [currentBanner, setCurrentBanner] = useState(0);
+
   const [testimonials, setTestimonials] = useState([]);
   const [testimonialPagination, setTestionalPagination] = useState({
     current_page: 1,
@@ -71,6 +77,15 @@ export default function Home() {
     }, 5000);
     return () => clearInterval(timer);
   }, [heroImages]);
+
+  // Banners Auto Slide Effect
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentBanner((prev) => (prev + 1) % banners.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [banners]);
 
   // --- New Review States ---
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -146,6 +161,7 @@ export default function Home() {
         settingsRes,
         compoundsRes,
         developersRes,
+        bannersRes,
       ] = await Promise.all([
         fetch("https://propix8.com/api/unit-types"),
         fetch("https://propix8.com/api/cities"),
@@ -156,6 +172,7 @@ export default function Home() {
         fetch("https://propix8.com/api/settings"),
         fetch("https://propix8.com/api/compounds"),
         fetch("https://propix8.com/api/developers"),
+        fetch("https://propix8.com/api/banners"),
       ]);
 
       const unitTypesData = await unitTypesRes.json();
@@ -167,6 +184,7 @@ export default function Home() {
       const settingsData = await settingsRes.json();
       const compoundsData = await compoundsRes.json();
       const developersData = await developersRes.json();
+      const bannersData = await bannersRes.json();
 
       setUnitTypes(unitTypesData.data || []);
       setCities(citiesData.data || []);
@@ -175,6 +193,7 @@ export default function Home() {
       setFaqs(faqsData.data || []);
       setCompounds(compoundsData.data || []);
       setDevelopers(developersData.data || []);
+      setBanners(bannersData.data || []);
 
       if (settingsData.data?.home_hero_image) {
         // If API returns one image, we keep our placeholders + API image for demo,
@@ -214,15 +233,7 @@ export default function Home() {
   // --- Adjusted Submit Review with Token ---
   const handleSubmitReview = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("userToken");
-
-    if (!token) {
-      setReviewStatus({
-        text: "يجب تسجيل الدخول أولاً لإضافة تقييم",
-        isError: true,
-      });
-      return;
-    }
+    if (!ensureAuth()) return;
 
     setReviewLoading(true);
     setReviewStatus({ text: "", isError: false });
@@ -293,8 +304,8 @@ export default function Home() {
           theme: "colored",
         });
       }
-    } catch (error) {
-      console.error("Search error:", error);
+    } catch (err) {
+      console.error("Search error:", err);
     } finally {
       setSearchLoading(false);
     }
@@ -374,13 +385,13 @@ export default function Home() {
       </section>
 
       {/* FILTER SECTION */}
-      <div className="relative z-50 -mt-24 flex justify-center px-4 mb-20 overflow-x-hidden">
+      <div className="relative z-1100 -mt-24 flex justify-center px-4 mb-20">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           whileHover={{ scale: 1.01 }}
-          className="w-full max-w-6xl bg-white/40 backdrop-blur-md p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-white/60 text-[#3E5879] transition-all duration-300"
+          className="w-full max-w-6xl bg-white/40 backdrop-blur-md p-6 z-1100 md:p-8 rounded-[1.5rem] shadow-2xl border border-white/60 text-[#3E5879] transition-all duration-300"
         >
           <div className="flex justify-center gap-4 mb-8">
             <div className="bg-[#3E5879] text-white px-10 py-2 rounded-xl font-black shadow-lg text-sm md:text-base">
@@ -533,7 +544,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full left-0 right-0 mt-4 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[999]"
+                  className="absolute top-full left-0 right-0 mt-4 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-[1200]"
                 >
                   <div className="bg-gray-50 px-6 py-3 border-b flex justify-between items-center">
                     <span className="font-bold text-[#3E5879]">
@@ -584,7 +595,68 @@ export default function Home() {
         </motion.div>
       </div>
 
+      {/* NEW BANNER SECTION */}
+      {banners.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 md:px-6 mb-20 relative overflow-hidden">
+          <div className="relative h-62.5 md:h-100 rounded-[1rem] overflow-hidden shadow-1xl group">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentBanner}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.8 }}
+                className="absolute inset-0 w-full h-full"
+              >
+                <img
+                  src={banners[currentBanner].image}
+                  className="w-full h-full object-cover"
+                  alt={`Banner ${banners[currentBanner].id}`}
+                />
+                <div className="absolute inset-0 bg-linear-to-l from-[#3E5879]/60 via-[#3E5879]/20 to-transparent"></div>
+
+                {/* Content Overlay */}
+                <div className="absolute inset-y-0 right-10 md:right-20 flex flex-col justify-center items-start text-right max-w-lg">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <button
+                      onClick={() =>
+                        navigate(banners[currentBanner].url || "/units")
+                      }
+                      className="group flex items-center gap-3 bg-white text-[#3E5879] px-8 py-3.5 rounded-2xl font-black text-lg hover:bg-[#EEF2F6] transition-all shadow-xl hover:scale-105 active:scale-95"
+                    >
+                      <ChevronLeft
+                        className="group-hover:-translate-x-1 transition-transform"
+                        size={20}
+                      />
+                      اكتشف الآن
+                    </button>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Slider Dots */}
+            {banners.length > 1 && (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                {banners.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentBanner(idx)}
+                    className={`h-2.5 transition-all duration-300 rounded-full ${currentBanner === idx ? "w-8 bg-white" : "w-2.5 bg-white/40"}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* COMPOUNDS SECTION */}
+
       <section className="py-16 bg-white overflow-hidden ">
         <div className="max-w-7xl mx-auto px-6 mt-10">
           <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
@@ -747,47 +819,7 @@ export default function Home() {
       {/* STATS SECTION */}
       <section className="py-24 px-6 bg-[#f8f9fa] relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-[#3E5879] text-3xl md:text-5xl font-black mb-6">
-              احصل علي أسلوب حياة راق يليق بك
-            </h2>
-            <p className="text-gray-500 text-lg md:text-xl font-medium max-w-2xl mx-auto">
-              استثمار آمن وخطط سداد مرنة تناسب احتياجاتك
-            </p>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-            <motion.div
-              initial={{ opacity: 0, x: 100 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="rounded-[3rem] overflow-hidden shadow-2xl transform -rotate-1 hover:rotate-0 transition-transform duration-500 border-4 border-white"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=1000"
-                className="w-full h-[450px] object-cover"
-                alt="Luxury"
-              />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: -100 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="rounded-[3rem] overflow-hidden shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500 border-[6px] border-[#3E5879]/10"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&q=80&w=1200"
-                className="w-full h-[450px] object-cover"
-                alt="Modern"
-              />
-            </motion.div>
-          </div>
+          {/* Removed legacy Lifestyle section */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10 border-t border-gray-100 pt-16">
             {stats.map((stat, index) => (
               <div key={index} className="flex flex-col items-center group">

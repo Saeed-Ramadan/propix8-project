@@ -1,4 +1,3 @@
-import React from "react";
 import { MapPinOff, ExternalLink } from "lucide-react";
 
 export default function MapPlaceholder({ className = "w-full h-64" }) {

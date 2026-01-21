@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Suspense, lazy } from "react";
 import { Loader2 } from "lucide-react";
 import MainLayout from "./layouts/MainLayout";
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 
 // Lazy Loading Pages
 const Home = lazy(() => import("./pages/Home"));
@@ -36,19 +37,17 @@ const UserBookingMessage = lazy(
   () => import("./pages/profile/UserBookingMessage"),
 );
 
-// --- 1. مكون حماية المسارات الخاصة (للمسجلين فقط) ---
 const ProtectedRoute = () => {
-  const token = localStorage.getItem("userToken");
-  if (!token) {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
     return <Navigate to="/signin" replace />;
   }
   return <Outlet />;
 };
 
-// --- 2. مكون حماية المسارات العامة (لغير المسجلين فقط) ---
 const PublicRoute = () => {
-  const token = localStorage.getItem("userToken");
-  if (token) {
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }
   return <Outlet />;
@@ -271,7 +270,9 @@ const AnimatedRoutes = () => {
 function App() {
   return (
     <Router>
-      <AnimatedRoutes />
+      <AuthProvider>
+        <AnimatedRoutes />
+      </AuthProvider>
     </Router>
   );
 }

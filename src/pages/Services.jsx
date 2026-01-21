@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 import {
   Home,
   Search,
@@ -15,20 +16,40 @@ import {
   Bath,
   ChevronLeft,
   ChevronRight,
+  Phone,
+  MessageCircle,
+  X,
+  CheckCircle2,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { motion, AnimatePresence } from "framer-motion";
 import ImagePlaceholder from "../components/common/ImagePlaceholder";
 
 export default function Services() {
   const navigate = useNavigate();
+  const { token, ensureAuth } = useAuth();
   const scrollRef = useRef(null);
-  const amenitiesRef = useRef(null); // Ref لقسم الخدمات الجديد
   const [services, setServices] = useState([]);
   const [recommendedUnits, setRecommendedUnits] = useState([]);
-  const [amenities, setAmenities] = useState([]); // State للخدمات المضافة
+  const [homeServices, setHomeServices] = useState([]);
+  const [technicalServices, setTechnicalServices] = useState([]);
   const [loadingServices, setLoadingServices] = useState(true);
   const [loadingUnits, setLoadingUnits] = useState(true);
-  const [loadingAmenities, setLoadingAmenities] = useState(true);
+  const [loadingMaintenance, setLoadingMaintenance] = useState(true);
+
+  // Booking Modal States
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [bookingFormData, setBookingFormData] = useState({
+    phone: "",
+    address: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const homeRef = useRef(null);
+  const technicalRef = useRef(null);
 
   // دالة تحريك السلايدر
   const scroll = (direction, ref) => {
@@ -78,15 +99,73 @@ export default function Services() {
       })
       .catch(() => setLoadingUnits(false));
 
-    // 3. جلب الـ Amenities (خدمات التشغيل المنزلي)
-    fetch("https://propix8.com/api/amenities")
+    // 3. جلب خدمات الصيانة (المنزلية والتقنية)
+    setLoadingMaintenance(true);
+    fetch("https://propix8.com/api/maintenance-services")
       .then((res) => res.json())
       .then((result) => {
-        if (result.status) setAmenities(result.data);
-        setLoadingAmenities(false);
+        if (result.status) {
+          setHomeServices(result.data.home || []);
+          setTechnicalServices(result.data.technical || []);
+        }
+        setLoadingMaintenance(false);
       })
-      .catch(() => setLoadingAmenities(false));
+      .catch(() => setLoadingMaintenance(false));
   }, []);
+
+  const handleOpenBooking = (service) => {
+    if (!ensureAuth()) return;
+    setSelectedService(service);
+    setIsBookingModalOpen(true);
+  };
+
+  const handleBookingSubmit = async (e) => {
+    e.preventDefault();
+    if (!token) {
+      toast.error("يرجى تسجيل الدخول أولاً");
+      navigate("/signin", { state: { from: "/services" } });
+      return;
+    }
+
+    if (!bookingFormData.phone || !bookingFormData.address) {
+      toast.error("يرجى ملء البيانات الأساسية (رقم الهاتف والعنوان)");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(
+        "https://propix8.com/api/maintenance/bookings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            maintenance_service_id: selectedService.id,
+            phone: bookingFormData.phone,
+            address: bookingFormData.address,
+            message: bookingFormData.message,
+          }),
+        },
+      );
+
+      const result = await response.json();
+      if (result.status) {
+        toast.success("تم إرسال طلبك بنجاح! وسنتواصل معك قريباً.");
+        setIsBookingModalOpen(false);
+        setBookingFormData({ phone: "", address: "", message: "" });
+      } else {
+        toast.error(result.message || "فشل إرسال الطلب");
+      }
+    } catch (err) {
+      toast.error("حدث خطأ في الاتصال بالسيرفر");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div
@@ -140,66 +219,262 @@ export default function Services() {
         </motion.div>
       </section>
 
-      {/* 2.5 New Section: Amenities Slider (خدمات التشغيل المنزلي) */}
-      <section className="max-w-7xl mx-auto px-6 mt-24 relative">
-        <div className="flex justify-between items-center mb-10">
-          <h2 className="text-3xl font-black text-[#3E5879]">خدمات اضافية </h2>
-          <div className="flex gap-2">
-            <button
-              onClick={() => scroll("right", amenitiesRef)}
-              className="p-3 rounded-2xl bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
-            >
-              <ChevronRight size={20} />
-            </button>
-            <button
-              onClick={() => scroll("left", amenitiesRef)}
-              className="p-3 rounded-2xl bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
-            >
-              <ChevronLeft size={20} />
-            </button>
+      {/* 2.5 New Section: Animated Service Sliders */}
+      <section className="max-w-7xl mx-auto px-6 mt-24">
+        <ToastContainer position="top-right" autoClose={3000} />
+
+        {/* --- الخدمات المنزلية --- */}
+        <div className="mb-24">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-black text-[#3E5879] mb-2">
+                الخدمات المنزلية
+              </h2>
+              <div className="h-1.5 w-20 bg-[#3E5879] rounded-full"></div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => scroll("right", homeRef)}
+                className="p-3 rounded-2xl bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
+              >
+                <ChevronRight size={20} />
+              </button>
+              <button
+                onClick={() => scroll("left", homeRef)}
+                className="p-3 rounded-2xl bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
+              >
+                <ChevronLeft size={20} />
+              </button>
+            </div>
           </div>
+
+          {loadingMaintenance ? (
+            <div className="flex justify-center py-10">
+              <Loader2 className="animate-spin text-[#3E5879]" />
+            </div>
+          ) : (
+            <motion.div
+              ref={homeRef}
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide snap-x"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {homeServices.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="min-w-[280px] md:min-w-[320px] bg-white rounded-3xl border border-gray-100 p-4 shadow-sm hover:shadow-xl transition-all duration-300 snap-start text-center group"
+                >
+                  <div className="h-48 overflow-hidden rounded-2xl mb-5">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                  </div>
+                  <h3 className="font-black text-xl text-gray-800 mb-6">
+                    {item.title}
+                  </h3>
+                  <button
+                    onClick={() => handleOpenBooking(item)}
+                    className="w-full py-3 bg-[#3E5879] text-white rounded-xl font-bold hover:bg-[#2C3E50] transition-colors shadow-md shadow-[#3E5879]/20 flex items-center justify-center gap-2"
+                  >
+                    <MessageCircle size={18} />
+                    أحجز الآن
+                  </button>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </div>
 
-        {loadingAmenities ? (
-          <div className="flex justify-center py-10">
-            <Loader2 className="animate-spin text-[#3E5879]" />
-          </div>
-        ) : (
-          <motion.div
-            ref={amenitiesRef}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide snap-x"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {amenities.map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="min-w-[280px] md:min-w-[320px] bg-white rounded-3xl border border-gray-100 p-4 shadow-sm hover:shadow-xl transition-all duration-300 snap-start text-center group"
+        {/* --- خدمات الصيانة --- */}
+        <div className="mb-24">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h2 className="text-3xl font-black text-[#3E5879] mb-2">
+                خدمات الصيانة
+              </h2>
+              <div className="h-1.5 w-20 bg-[#3E5879] rounded-full"></div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => scroll("right", technicalRef)}
+                className="p-3 rounded-2xl bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
               >
-                <div className="h-48 overflow-hidden rounded-2xl mb-5">
-                  <img
-                    src={item.icon}
-                    alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                <ChevronRight size={20} />
+              </button>
+              <button
+                onClick={() => scroll("left", technicalRef)}
+                className="p-3 rounded-2xl bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
+              >
+                <ChevronLeft size={20} />
+              </button>
+            </div>
+          </div>
+
+          {loadingMaintenance ? (
+            <div className="flex justify-center py-10">
+              <Loader2 className="animate-spin text-[#3E5879]" />
+            </div>
+          ) : (
+            <motion.div
+              ref={technicalRef}
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide snap-x"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {technicalServices.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="min-w-[280px] md:min-w-[320px] bg-white rounded-3xl border border-gray-100 p-4 shadow-sm hover:shadow-xl transition-all duration-300 snap-start text-center group"
+                >
+                  <div className="h-48 overflow-hidden rounded-2xl mb-5">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                  </div>
+                  <h3 className="font-black text-xl text-gray-800 mb-6">
+                    {item.title}
+                  </h3>
+                  <button
+                    onClick={() => handleOpenBooking(item)}
+                    className="w-full py-3 bg-[#3E5879] text-white rounded-xl font-bold hover:bg-[#2C3E50] transition-colors shadow-md shadow-[#3E5879]/20 flex items-center justify-center gap-2"
+                  >
+                    <Settings size={18} />
+                    أحجز الآن
+                  </button>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </div>
+      </section>
+
+      {/* 2.6 Booking Modal */}
+      <AnimatePresence>
+        {isBookingModalOpen && (
+          <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden"
+            >
+              <div className="bg-[#3E5879] p-8 text-white relative">
+                <button
+                  onClick={() => setIsBookingModalOpen(false)}
+                  className="absolute top-6 left-6 text-white/70 hover:text-white transition-colors"
+                >
+                  <X size={24} />
+                </button>
+                <h3 className="text-2xl font-black mb-2">حجز الخدمة</h3>
+                <p className="text-white/80 font-bold text-sm">
+                  أنت تحجز الآن: {selectedService?.title}
+                </p>
+              </div>
+
+              <form onSubmit={handleBookingSubmit} className="p-8 space-y-6">
+                <div>
+                  <label className="block text-sm font-black text-gray-700 mb-2 mr-1">
+                    رقم الهاتف
+                  </label>
+                  <div className="relative">
+                    <Phone
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+                      size={18}
+                    />
+                    <input
+                      required
+                      type="tel"
+                      placeholder="مثال: 01234567890"
+                      className="w-full bg-gray-50 border-none rounded-2xl p-4 pr-12 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all"
+                      value={bookingFormData.phone}
+                      onChange={(e) =>
+                        setBookingFormData({
+                          ...bookingFormData,
+                          phone: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-black text-gray-700 mb-2 mr-1">
+                    العنوان بالتفصيل
+                  </label>
+                  <div className="relative">
+                    <MapPin
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+                      size={18}
+                    />
+                    <input
+                      required
+                      type="text"
+                      placeholder="المدينة والشارع ورقم العقار..."
+                      className="w-full bg-gray-50 border-none rounded-2xl p-4 pr-12 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all"
+                      value={bookingFormData.address}
+                      onChange={(e) =>
+                        setBookingFormData({
+                          ...bookingFormData,
+                          address: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-black text-gray-700 mb-2 mr-1">
+                    رسالة نصية (اختياري)
+                  </label>
+                  <textarea
+                    rows="3"
+                    placeholder="أي تعليمات إضافية ترغب في ذكرها..."
+                    className="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all resize-none"
+                    value={bookingFormData.message}
+                    onChange={(e) =>
+                      setBookingFormData({
+                        ...bookingFormData,
+                        message: e.target.value,
+                      })
+                    }
                   />
                 </div>
-                <h3 className="font-black text-xl text-gray-800 mb-6">
-                  {item.name}
-                </h3>
-                <button className="w-full py-3 bg-[#3E5879] text-white rounded-xl font-bold hover:bg-[#7895BA] transition-colors shadow-md shadow-[#3E5879]/20">
-                  أحجز الآن
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-[#3E5879] text-white rounded-2xl font-black text-lg hover:bg-[#2C3E50] transition-all shadow-xl shadow-[#3E5879]/20 disabled:opacity-50 flex items-center justify-center gap-3"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="animate-spin" size={20} />
+                  ) : (
+                    <>
+                      <CheckCircle2 size={20} />
+                      إرسال الطلب
+                    </>
+                  )}
                 </button>
-              </motion.div>
-            ))}
-          </motion.div>
+              </form>
+            </motion.div>
+          </div>
         )}
-      </section>
+      </AnimatePresence>
 
       {/* 3. Services Section */}
       <section className="max-w-7xl mx-auto px-6 mt-32">

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 import {
   MapPin,
   Star,
@@ -34,6 +35,7 @@ import MapPlaceholder from "../components/common/MapPlaceholder";
 export default function PropertyDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { token, ensureAuth } = useAuth();
   const [unit, setUnit] = useState(null);
   const [relatedUnits, setRelatedUnits] = useState([]);
   const [settings, setSettings] = useState(null);
@@ -138,16 +140,9 @@ export default function PropertyDetails() {
   }, [id]);
 
   const toggleFavorite = async () => {
-    const token = localStorage.getItem("userToken");
-    const validToken =
-      token && token !== "null" && token !== "undefined" ? token : null;
+    if (!ensureAuth()) return;
 
-    if (!validToken) {
-      toast.warning("يرجى تسجيل الدخول أولاً لاستخدام المفضلة", {
-        position: "top-center",
-      });
-      return;
-    }
+    const validToken = token;
 
     // Optimistic Update
     setIsFavorite((prev) => !prev);
@@ -227,13 +222,7 @@ export default function PropertyDetails() {
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("userToken");
-    if (!token) {
-      toast.warning("يرجى تسجيل الدخول أولاً لإضافة تقييم", {
-        position: "top-center",
-      });
-      return;
-    }
+    if (!ensureAuth()) return;
     if (rating === 0) {
       toast.error("يرجى تحديد التقييم بالنجوم");
       return;

@@ -9,12 +9,14 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { motion } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function ProfileLayout() {
   const navigate = useNavigate();
+  const { token, logout } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const menuItems = [
@@ -47,7 +49,6 @@ export default function ProfileLayout() {
     setIsDeleting(true);
 
     try {
-      const token = localStorage.getItem("userToken");
       const response = await fetch("https://propix8.com/api/profile", {
         method: "DELETE",
         headers: {
@@ -61,11 +62,7 @@ export default function ProfileLayout() {
 
       if (result.status) {
         toast.success("تم حذف الحساب بنجاح، جاري الخروج...");
-        clearAllUserData();
-        setTimeout(() => {
-          navigate("/signin");
-          window.location.reload();
-        }, 2000);
+        logout();
       } else {
         toast.error(result.message || "عذراً، فشلت عملية الحذف");
       }

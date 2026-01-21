@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext.jsx";
 import axios from "axios";
 import {
   Calendar,
@@ -35,7 +36,7 @@ function UserBookingMessage() {
     user_message: "",
   });
 
-  const userToken = localStorage.getItem("userToken");
+  const { token: userToken } = useAuth();
   const today = new Date().toISOString().split("T")[0];
 
   const fetchBookings = async () => {

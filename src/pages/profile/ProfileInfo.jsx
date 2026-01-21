@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, X, Eye, EyeOff, Lock, Camera } from "lucide-react";
@@ -6,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function ProfileInfo() {
+  const { token, updateUser } = useAuth();
   const [user, setUser] = useState(null);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +15,7 @@ export default function ProfileInfo() {
 
   // حالات الـ Popup
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -35,7 +38,6 @@ export default function ProfileInfo() {
 
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem("userToken");
       const response = await fetch("https://propix8.com/api/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -45,8 +47,8 @@ export default function ProfileInfo() {
       const result = await response.json();
       if (result.status) {
         setUser(result.data);
-        // تحديث الـ localStorage بالبيانات الحقيقية القادمة من السيرفر لضمان المزامنة
-        localStorage.setItem("userData", JSON.stringify(result.data));
+        // تحديث الـ context بالبيانات الحقيقية القادمة من السيرفر لضمان المزامنة
+        updateUser(result.data);
 
         setFormData({
           name: result.data.name || "",
@@ -109,7 +111,6 @@ export default function ProfileInfo() {
     }
 
     try {
-      const token = localStorage.getItem("userToken");
       const response = await fetch("https://propix8.com/api/profile", {
         method: "POST",
         headers: {
@@ -124,12 +125,8 @@ export default function ProfileInfo() {
         toast.success("تم تحديث البيانات بنجاح");
 
         // --- الجزء المسؤول عن التحديث في الموقع كله ---
-        // نقوم بتحديث الـ localStorage بالبيانات الجديدة الراجعة من السيرفر
-        localStorage.setItem("user", JSON.stringify(result.data));
-
-        // إطلاق حدث (Custom Event) لتنبيه المكونات الأخرى (مثل الـ Header) بوجود تحديث
-        window.dispatchEvent(new Event("storage"));
-        window.dispatchEvent(new Event("userUpdate"));
+        // نقوم بتحديث الـ context بالبيانات الجديدة الراجعة من السيرفر لضمان ظهورها فورا في الموقع
+        updateUser(result.data);
 
         setIsEditModalOpen(false);
         fetchProfile(); // إعادة جلب البيانات لتحديث واجهة البروفايل الحالية
@@ -168,7 +165,10 @@ export default function ProfileInfo() {
         </h2>
 
         <div className="flex justify-center mb-10">
-          <div className="w-28 h-28 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+          <div
+            onClick={() => setIsImagePreviewOpen(true)}
+            className="w-28 h-28 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-50 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
+          >
             {user?.avatar ? (
               <img
                 src={user.avatar}
@@ -358,6 +358,34 @@ export default function ProfileInfo() {
                   </button>
                 </form>
               </div>
+            </motion.div>
+          </div>
+        )}
+
+        {isImagePreviewOpen && (
+          <div
+            className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 cursor-zoom-out"
+            onClick={() => setIsImagePreviewOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setIsImagePreviewOpen(false)}
+                className="absolute -top-12 right-0 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+                title="إغلاق"
+              >
+                <X size={24} />
+              </button>
+              <img
+                src={user?.avatar || defaultAvatar}
+                className="max-w-full max-h-[80vh] rounded-2xl shadow-2xl object-contain border-4 border-white/20"
+                alt="User Preview"
+              />
             </motion.div>
           </div>
         )}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 import {
   LogOut,
   PlusCircle,
@@ -16,6 +17,7 @@ import {
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const { token: userToken, userData, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -30,11 +32,6 @@ export default function Navbar() {
   const mobileMenuRef = useRef(null);
   const searchRef = useRef(null);
   const mobileSearchRef = useRef(null);
-
-  const userToken = localStorage.getItem("userToken");
-  const storedData = localStorage.getItem("userData");
-  const userData =
-    storedData && storedData !== "undefined" ? JSON.parse(storedData) : {};
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -102,21 +99,19 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await fetch("https://propix8.com/api/logout", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-          Accept: "application/json",
-        },
-      });
+      if (userToken) {
+        await fetch("https://propix8.com/api/logout", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            Accept: "application/json",
+          },
+        });
+      }
     } catch (error) {
       console.error("Logout Error:", error);
     } finally {
-      localStorage.removeItem("userToken");
-      localStorage.removeItem("userData");
-      setIsOpen(false);
-      setIsMobileMenuOpen(false);
-      navigate("/signin");
+      logout();
     }
   };
 

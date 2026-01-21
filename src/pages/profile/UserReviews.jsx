@@ -11,10 +11,12 @@ import {
   User,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function UserReviews() {
+  const { token } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [reviews, setReviews] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
@@ -29,7 +31,6 @@ function UserReviews() {
   const [editFormData, setEditFormData] = useState({
     rating: 5,
     comment: "",
-    comment: "",
     content: "",
   });
   const [submitting, setSubmitting] = useState(false);
@@ -38,7 +39,6 @@ function UserReviews() {
   const fetchData = React.useCallback(
     async (page = 1) => {
       setLoading(true);
-      const token = localStorage.getItem("userToken");
       const endpoint =
         activeTab === "properties"
           ? `https://propix8.com/api/reviews?page=${page}`
@@ -74,7 +74,6 @@ function UserReviews() {
   }, [fetchData, pagination.current_page]); // إضافة fetchData كـ dependency
 
   const executeDelete = async (id, type) => {
-    const token = localStorage.getItem("userToken");
     const endpoint =
       type === "properties"
         ? `https://propix8.com/api/reviews/${id}`
@@ -157,7 +156,6 @@ function UserReviews() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    const token = localStorage.getItem("userToken");
     const endpoint =
       activeTab === "properties"
         ? `https://propix8.com/api/reviews/${editingItem.id}`

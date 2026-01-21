@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { Star, MapPin, BedDouble, Bath, Square, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // استيراد الهوك الخاص بالتنقل
+import { useAuth } from "../../context/AuthContext.jsx";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function UserFavorites() {
+  const { token } = useAuth();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // تعريف دالة التنقل
@@ -52,7 +54,6 @@ function UserFavorites() {
 
   const handleToggleFavorite = async (e, unitId) => {
     e.stopPropagation(); // منع انتقال الحدث للكارت (عشان ميفتحش الصفحة وأنا بمسح)
-    const token = localStorage.getItem("userToken");
 
     deletedIds.current.add(unitId);
     setFavorites((prev) => prev.filter((fav) => fav.unit.id !== unitId));

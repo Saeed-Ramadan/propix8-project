@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { EyeOff, Eye, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 import signupImg from "../assets/main/signup.png";
 import logo from "../assets/logo/main-logo.png";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function SignIn() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,12 +44,11 @@ export default function SignIn() {
 
       if (response.ok && result.data) {
         toast.success("تم تسجيل الدخول بنجاح!");
-        localStorage.setItem("userToken", result.data.access_token);
-        // تأكد إنك بتعمل stringify قبل الحفظ
-        localStorage.setItem("userData", JSON.stringify(result.data.user));
+        login(result.data.access_token, result.data.user);
 
+        const from = location.state?.from || "/";
         setTimeout(() => {
-          window.location.href = "/";
+          navigate(from, { replace: true });
         }, 1500);
       } else {
         toast.error(

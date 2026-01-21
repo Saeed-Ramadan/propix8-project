@@ -1,4 +1,3 @@
-import React from "react";
 import { Building2, ImageOff } from "lucide-react";
 
 export default function ImagePlaceholder({
