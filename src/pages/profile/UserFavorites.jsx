@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Star, MapPin, BedDouble, Bath, Square, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // استيراد الهوك الخاص بالتنقل
-import { useAuth } from "../../context/AuthContext.jsx";
+import { useAuth } from "../../hooks/useAuth.js";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

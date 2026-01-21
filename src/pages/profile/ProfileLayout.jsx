@@ -6,10 +6,11 @@ import {
   Loader2,
   AlertTriangle,
   BookUser,
+  Wrench,
 } from "lucide-react";
 import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext.jsx";
+import { useAuth } from "../../hooks/useAuth.js";
 import { motion } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,6 +28,11 @@ export default function ProfileLayout() {
       name: "طلبات المعاينة",
       path: "user-booking",
       icon: <BookUser size={20} />,
+    },
+    {
+      name: "طلبات الخدمات",
+      path: "service-bookings",
+      icon: <Wrench size={20} />,
     },
   ];
 

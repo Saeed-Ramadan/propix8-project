@@ -1,13 +1,6 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
-const AuthContext = createContext();
+import AuthContext from "./AuthContext.js";
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("userToken"));
@@ -68,9 +61,14 @@ export const AuthProvider = ({ children }) => {
     return true;
   };
 
+  const refreshAttempted = useRef(false);
+
   useEffect(() => {
-    if (token && !userData) {
-      refreshUser();
+    if (token && !userData && !refreshAttempted.current) {
+      refreshAttempted.current = true;
+      setTimeout(() => {
+        refreshUser();
+      }, 0);
     }
   }, [token, refreshUser, userData]);
 
@@ -108,12 +106,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };

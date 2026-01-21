@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext.jsx";
+import { useAuth } from "../../hooks/useAuth.js";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, X, Eye, EyeOff, Lock, Camera } from "lucide-react";
@@ -138,7 +138,7 @@ export default function ProfileInfo() {
     >
       <ToastContainer position="top-right" autoClose={3000} />
 
-      <div className="max-w-4xl mx-auto bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-gray-100">
+      <div className="max-w-4xl mx-auto bg-white rounded-[1rem] p-6 md:p-10 shadow-sm border border-gray-100 ">
         <h2 className="text-xl font-black text-[#3E5879] mb-8 text-right border-r-4 border-[#3E5879] pr-3">
           الحساب الشخصي
         </h2>
@@ -343,7 +343,7 @@ export default function ProfileInfo() {
 
         {isImagePreviewOpen && (
           <div
-            className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 cursor-zoom-out"
+            className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 cursor-zoom-out mt-20"
             onClick={() => setIsImagePreviewOpen(false)}
           >
             <motion.div
@@ -355,7 +355,7 @@ export default function ProfileInfo() {
             >
               <button
                 onClick={() => setIsImagePreviewOpen(false)}
-                className="absolute -top-12 right-0 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+                className="absolute top-4 right-4 p-2 bg-white hover:bg-white/20 rounded-full text-black transition-colors cursor-pointer"
                 title="إغلاق"
               >
                 <X size={24} />

@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../hooks/useAuth.js";
 import {
   LogOut,
-  PlusCircle,
   User,
   ChevronDown,
   Menu,
@@ -12,7 +11,6 @@ import {
   Loader2,
   Mail,
   MapPin,
-  PhoneCall,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -116,7 +114,7 @@ export default function Navbar() {
 
   const SearchResultsList = () =>
     showSearchResults && (
-      <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl border border-gray-100 z-[1100] max-h-[400px] overflow-y-auto">
+      <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl border border-gray-100 z-10000 max-h-100 overflow-y-auto">
         {searchResults.length > 0 ? (
           searchResults.map((unit) => (
             <Link
@@ -156,7 +154,7 @@ export default function Navbar() {
     );
 
   return (
-    <div className="flex flex-col w-full fixed top-0 z-[1000] backdrop-blur-md bg-white/80 shadow-sm transition-all duration-300">
+    <div className="flex flex-col w-full fixed top-0 z-9999 backdrop-blur-md bg-white/80 shadow-sm transition-all duration-300">
       <nav
         className="bg-[#f8f9fa] py-4 px-4 md:px-16 shadow-sm flex justify-center font-cairo"
         dir="rtl"

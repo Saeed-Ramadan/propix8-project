@@ -15,7 +15,6 @@ import {
   ShieldCheck,
   Award,
   Lightbulb,
-  Star,
   MessageSquare,
   ChevronUp,
   ChevronRight,
@@ -28,7 +27,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../hooks/useAuth.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -78,11 +77,11 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [heroImages]);
 
-  // Banners Auto Slide Effect
+  // Banners Auto Slide Effect - Infinite Loop
   useEffect(() => {
     if (banners.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrentBanner((prev) => (prev + 1) % banners.length);
+      setCurrentBanner((prev) => prev + 1); // Increment infinitely
     }, 6000);
     return () => clearInterval(timer);
   }, [banners]);
@@ -385,13 +384,13 @@ export default function Home() {
       </section>
 
       {/* FILTER SECTION */}
-      <div className="relative z-1100 -mt-24 flex justify-center px-4 mb-20">
+      <div className="relative z-[1100] -mt-24 flex justify-center px-4 mb-20">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           whileHover={{ scale: 1.01 }}
-          className="w-full max-w-6xl bg-white/40 backdrop-blur-md p-6 z-1100 md:p-8 rounded-[1.5rem] shadow-2xl border border-white/60 text-[#3E5879] transition-all duration-300"
+          className="w-full max-w-6xl bg-white/40 backdrop-blur-md p-6 z-[1100] md:p-8 rounded-[1.5rem] shadow-2xl border border-white/60 text-[#3E5879] transition-all duration-300"
         >
           <div className="flex justify-center gap-4 mb-8">
             <div className="bg-[#3E5879] text-white px-10 py-2 rounded-xl font-black shadow-lg text-sm md:text-base">
@@ -595,63 +594,103 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* NEW BANNER SECTION */}
+      {/* BANNER CAROUSEL - MULTIPLE BANNERS SIDE BY SIDE */}
       {banners.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 md:px-6 mb-20 relative overflow-hidden">
-          <div className="relative h-62.5 md:h-100 rounded-[1rem] overflow-hidden shadow-1xl group">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentBanner}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.8 }}
-                className="absolute inset-0 w-full h-full"
-              >
-                <img
-                  src={banners[currentBanner].image}
-                  className="w-full h-full object-cover"
-                  alt={`Banner ${banners[currentBanner].id}`}
-                />
-                <div className="absolute inset-0 bg-linear-to-l from-[#3E5879]/60 via-[#3E5879]/20 to-transparent"></div>
-
-                {/* Content Overlay */}
-                <div className="absolute inset-y-0 right-10 md:right-20 flex flex-col justify-center items-start text-right max-w-lg">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <button
-                      onClick={() =>
-                        navigate(banners[currentBanner].url || "/units")
-                      }
-                      className="group flex items-center gap-3 bg-white text-[#3E5879] px-8 py-3.5 rounded-2xl font-black text-lg hover:bg-[#EEF2F6] transition-all shadow-xl hover:scale-105 active:scale-95"
-                    >
-                      <ChevronLeft
-                        className="group-hover:-translate-x-1 transition-transform"
-                        size={20}
-                      />
-                      اكتشف الآن
-                    </button>
-                  </motion.div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Slider Dots */}
-            {banners.length > 1 && (
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                {banners.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentBanner(idx)}
-                    className={`h-2.5 transition-all duration-300 rounded-full ${currentBanner === idx ? "w-8 bg-white" : "w-2.5 bg-white/40"}`}
+        <section className="max-w-7xl mx-auto px-6 mb-20 relative">
+          <div className="relative overflow-hidden py-4">
+            <motion.div
+              animate={{
+                x: `${-(currentBanner % banners.length) * (100 / banners.length)}%`,
+              }}
+              transition={{ type: "spring", stiffness: 100, damping: 25 }}
+              className="flex gap-6"
+              style={{
+                width: `${banners.length * (100 / Math.min(banners.length, 3))}%`,
+              }}
+            >
+              {/* Duplicate banners for infinite effect */}
+              {[...banners, ...banners, ...banners].map((banner, index) => (
+                <motion.div
+                  key={`${banner.id}-${index}`}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="relative flex-shrink-0 w-[450px] md:w-[550px] h-[240px] md:h-[280px] rounded-2xl overflow-hidden shadow-2xl cursor-pointer group"
+                  onClick={() => navigate(banner.url || "/units")}
+                >
+                  {/* Banner Image with Quality Optimization */}
+                  <img
+                    src={`${banner.image}${banner.image.includes("?") ? "&" : "?"}w=1200&h=600&fit=crop&auto=format&q=85`}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    alt={`Banner ${banner.id}`}
+                    loading="lazy"
                   />
-                ))}
-              </div>
-            )}
+
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+
+                  {/* Content Overlay */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 text-right">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <h3 className="text-white text-xl md:text-2xl font-black mb-3 drop-shadow-lg">
+                        عروض حصرية وخاصة
+                      </h3>
+                      <p className="text-white/90 text-sm md:text-base font-bold mb-4 drop-shadow-md">
+                        اكتشف أفضل العروض العقارية بأسعار لا تُفوّت
+                      </p>
+                      <div className="flex items-center gap-2 text-white font-bold text-sm group-hover:gap-3 transition-all">
+                        <ChevronLeft
+                          size={18}
+                          className="group-hover:-translate-x-1 transition-transform"
+                        />
+                        <span>اكتشف الآن</span>
+                      </div>
+                    </motion.div>
+                  </div>
+
+                  {/* Hover Border Effect */}
+                  <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/30 rounded-2xl transition-all duration-300"></div>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
+
+          {/* Navigation Arrows */}
+          {banners.length > 1 && (
+            <>
+              <button
+                onClick={() => setCurrentBanner((prev) => prev - 1)}
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/90 hover:bg-white text-[#3E5879] shadow-xl hover:scale-110 transition-all"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button
+                onClick={() => setCurrentBanner((prev) => prev + 1)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/90 hover:bg-white text-[#3E5879] shadow-xl hover:scale-110 transition-all"
+              >
+                <ChevronRight size={24} />
+              </button>
+            </>
+          )}
+
+          {/* Slider Dots */}
+          {banners.length > 1 && (
+            <div className="flex justify-center gap-2 mt-6">
+              {banners.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentBanner(idx)}
+                  className={`h-2 transition-all duration-300 rounded-full ${
+                    currentBanner % banners.length === idx
+                      ? "w-8 bg-[#3E5879]"
+                      : "w-2 bg-[#3E5879]/30 hover:bg-[#3E5879]/50"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </section>
       )}
 

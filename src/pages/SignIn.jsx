@@ -2,7 +2,7 @@ import { useState } from "react";
 import { EyeOff, Eye, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../hooks/useAuth.js";
 import signupImg from "../assets/main/signup.png";
 import logo from "../assets/logo/main-logo.png";
 import { toast, ToastContainer } from "react-toastify";

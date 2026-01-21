@@ -10,7 +10,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Suspense, lazy } from "react";
 import { Loader2 } from "lucide-react";
 import MainLayout from "./layouts/MainLayout";
-import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import { useAuth } from "./hooks/useAuth.js";
 
 // Lazy Loading Pages
 const Home = lazy(() => import("./pages/Home"));
@@ -35,6 +36,9 @@ const UserFavorites = lazy(() => import("./pages/profile/UserFavorites"));
 const UserReviews = lazy(() => import("./pages/profile/UserReviews"));
 const UserBookingMessage = lazy(
   () => import("./pages/profile/UserBookingMessage"),
+);
+const UserServiceBookings = lazy(
+  () => import("./pages/profile/UserServiceBookings"),
 );
 
 const ProtectedRoute = () => {
@@ -246,6 +250,14 @@ const AnimatedRoutes = () => {
                   element={
                     <PageTransition>
                       <UserReviews />
+                    </PageTransition>
+                  }
+                />
+                <Route
+                  path="service-bookings"
+                  element={
+                    <PageTransition>
+                      <UserServiceBookings />
                     </PageTransition>
                   }
                 />
