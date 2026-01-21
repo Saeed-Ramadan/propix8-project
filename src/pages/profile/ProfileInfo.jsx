@@ -7,10 +7,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function ProfileInfo() {
-  const { token, updateUser } = useAuth();
-  const [user, setUser] = useState(null);
+  const { token, userData, updateUser, refreshUser } = useAuth();
   const [cities, setCities] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   // حالات الـ Popup
@@ -32,40 +30,24 @@ export default function ProfileInfo() {
   const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
-    fetchProfile();
     fetchCities();
   }, []);
 
-  const fetchProfile = async () => {
-    try {
-      const response = await fetch("https://propix8.com/api/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      });
-      const result = await response.json();
-      if (result.status) {
-        setUser(result.data);
-        // تحديث الـ context بالبيانات الحقيقية القادمة من السيرفر لضمان المزامنة
-        updateUser(result.data);
-
-        setFormData({
-          name: result.data.name || "",
-          phone: result.data.phone || "",
-          address: result.data.address || "",
-          city_id: result.data.city?.id || "",
-          current_password: "",
-          password: "",
-          password_confirmation: "",
-        });
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (userData) {
+      setFormData((prev) => ({
+        ...prev,
+        name: userData.name || "",
+        phone: userData.phone || "",
+        address: userData.address || "",
+        city_id: userData.city?.id || "",
+      }));
+    } else if (token) {
+      refreshUser();
     }
-  };
+  }, [userData, token, refreshUser]);
+
+  // Removed local fetchProfile in favor of AuthContext refreshUser
 
   const fetchCities = async () => {
     try {
@@ -124,30 +106,27 @@ export default function ProfileInfo() {
       if (result.status) {
         toast.success("تم تحديث البيانات بنجاح");
 
-        // --- الجزء المسؤول عن التحديث في الموقع كله ---
-        // نقوم بتحديث الـ context بالبيانات الجديدة الراجعة من السيرفر لضمان ظهورها فورا في الموقع
         updateUser(result.data);
 
         setIsEditModalOpen(false);
-        fetchProfile(); // إعادة جلب البيانات لتحديث واجهة البروفايل الحالية
+        refreshUser(); // تحديث البيانات من السيرفر لضمان المزامنة الكاملة
       } else {
         toast.error(result.message || "حدث خطأ أثناء التحديث");
       }
-    } catch (error) {
+    } catch {
       toast.error("فشل الاتصال بالسيرفر");
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading)
+  if (!userData && token) {
     return (
-      <div className="flex justify-center py-20">
-        <Loader2 className="animate-spin text-[#3E5879]" size={40} />
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
+        <Loader2 className="w-12 h-12 text-[#3E5879] animate-spin" />
       </div>
     );
-
-  const defaultAvatar = `https://ui-avatars.com/api/?name=${user?.name}&background=3E5879&color=fff&bold=true`;
+  }
 
   return (
     <motion.div
@@ -169,15 +148,15 @@ export default function ProfileInfo() {
             onClick={() => setIsImagePreviewOpen(true)}
             className="w-28 h-28 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-50 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
           >
-            {user?.avatar ? (
+            {userData?.avatar ? (
               <img
-                src={user.avatar}
+                src={userData.avatar}
                 className="w-full h-full object-cover"
                 alt="User"
               />
             ) : (
               <img
-                src={defaultAvatar}
+                src={`https://ui-avatars.com/api/?name=${userData?.name}&background=3E5879&color=fff&bold=true`}
                 className="w-full h-full object-cover"
                 alt="User"
               />
@@ -186,15 +165,15 @@ export default function ProfileInfo() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <ReadOnlyField label="الاسم بالكامل" value={user?.name} />
-          <ReadOnlyField label="البريد الإلكتروني" value={user?.email} />
-          <ReadOnlyField label="رقم الهاتف" value={user?.phone} />
-          <ReadOnlyField label="العنوان" value={user?.address} />
+          <ReadOnlyField label="الاسم بالكامل" value={userData?.name} />
+          <ReadOnlyField label="البريد الإلكتروني" value={userData?.email} />
+          <ReadOnlyField label="رقم الهاتف" value={userData?.phone} />
+          <ReadOnlyField label="العنوان" value={userData?.address} />
           <ReadOnlyField
             label="نوع المستخدم"
-            value={user?.role === "seller" ? "بائع" : "مشتري"}
+            value={userData?.role === "seller" ? "بائع" : "مشتري"}
           />
-          <ReadOnlyField label="المدينة" value={user?.city?.name} />
+          <ReadOnlyField label="المدينة" value={userData?.city?.name} />
         </div>
 
         <button
@@ -207,7 +186,7 @@ export default function ProfileInfo() {
 
       <AnimatePresence>
         {isEditModalOpen && (
-          <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4 mt-20">
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -237,15 +216,15 @@ export default function ProfileInfo() {
                           className="w-full h-full object-cover"
                           alt="User"
                         />
-                      ) : user?.avatar ? (
+                      ) : userData?.avatar ? (
                         <img
-                          src={user.avatar}
+                          src={userData.avatar}
                           className="w-full h-full object-cover"
                           alt="User"
                         />
                       ) : (
                         <img
-                          src={defaultAvatar}
+                          src={`https://ui-avatars.com/api/?name=${userData?.name}&background=3E5879&color=fff&bold=true`}
                           className="w-full h-full object-cover"
                           alt="User"
                         />
@@ -341,7 +320,7 @@ export default function ProfileInfo() {
                     </div>
                     <SelectField
                       label="نوع المستخدم"
-                      value={user?.role === "seller" ? "بائع" : "مشتري"}
+                      value={userData?.role === "seller" ? "بائع" : "مشتري"}
                     />
                   </div>
 
@@ -382,7 +361,10 @@ export default function ProfileInfo() {
                 <X size={24} />
               </button>
               <img
-                src={user?.avatar || defaultAvatar}
+                src={
+                  userData?.avatar ||
+                  `https://ui-avatars.com/api/?name=${userData?.name}&background=3E5879&color=fff&bold=true`
+                }
                 className="max-w-full max-h-[80vh] rounded-2xl shadow-2xl object-contain border-4 border-white/20"
                 alt="User Preview"
               />

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import {
   LogOut,
@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 
 export default function Navbar() {
-  const navigate = useNavigate();
   const { token: userToken, userData, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -157,7 +156,7 @@ export default function Navbar() {
     );
 
   return (
-    <div className="flex flex-col w-full sticky top-0 z-[1000]">
+    <div className="flex flex-col w-full fixed top-0 z-[1000] backdrop-blur-md bg-white/80 shadow-sm transition-all duration-300">
       <nav
         className="bg-[#f8f9fa] py-4 px-4 md:px-16 shadow-sm flex justify-center font-cairo"
         dir="rtl"

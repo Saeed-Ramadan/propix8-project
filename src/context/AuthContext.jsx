@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
@@ -23,6 +29,26 @@ export const AuthProvider = ({ children }) => {
     setUserData(data);
   };
 
+  const refreshUser = useCallback(async () => {
+    const currentToken = localStorage.getItem("userToken");
+    if (!currentToken) return;
+
+    try {
+      const response = await fetch("https://propix8.com/api/profile", {
+        headers: {
+          Authorization: `Bearer ${currentToken}`,
+          Accept: "application/json",
+        },
+      });
+      const result = await response.json();
+      if (result.status) {
+        updateUser(result.data);
+      }
+    } catch (error) {
+      console.error("AuthContext: Error refreshing user data:", error);
+    }
+  }, []);
+
   const logout = () => {
     localStorage.removeItem("userToken");
     localStorage.removeItem("userData");
@@ -41,6 +67,12 @@ export const AuthProvider = ({ children }) => {
     if (callback) callback();
     return true;
   };
+
+  useEffect(() => {
+    if (token && !userData) {
+      refreshUser();
+    }
+  }, [token, refreshUser, userData]);
 
   useEffect(() => {
     const handleStorageChange = (e) => {
@@ -68,6 +100,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         updateUser,
+        refreshUser,
         ensureAuth,
         isAuthenticated: !!token,
       }}

@@ -34,7 +34,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   const navigate = useNavigate();
-  const { token, ensureAuth } = useAuth();
+  const { token, userData, ensureAuth } = useAuth();
   const scrollRef = useRef(null);
   const devScrollRef = useRef(null);
 
@@ -1078,31 +1078,49 @@ export default function Home() {
             {testimonialsLoading ? (
               <Loader2 className="animate-spin text-[#3E5879] mx-auto" />
             ) : (
-              testimonials.map((testi, index) => (
-                <motion.div
-                  key={testi.id}
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2 }}
-                  className="bg-[#f8f9fa] p-8 rounded-[2rem] border-r-8 border-[#3E5879] flex gap-6 shadow-sm"
-                >
-                  <img
-                    src={
-                      testi.image ||
-                      `https://ui-avatars.com/api/?name=${testi.name}`
-                    }
-                    className="w-16 h-16 rounded-xl object-cover shadow-sm"
-                    alt=""
-                  />
-                  <div className="text-right">
-                    <h4 className="font-black text-[#3E5879]">{testi.name}</h4>
-                    <p className="text-gray-500 font-bold italic mt-1 leading-relaxed text-sm">
-                      "{testi.content}"
-                    </p>
-                  </div>
-                </motion.div>
-              ))
+              testimonials.map((testi, index) => {
+                const isMe =
+                  userData &&
+                  ((testi.user_id &&
+                    String(testi.user_id) === String(userData.id)) ||
+                    (testi.user?.id &&
+                      String(testi.user.id) === String(userData.id)) ||
+                    (testi.name &&
+                      userData.name &&
+                      testi.name.trim().toLowerCase() ===
+                        userData.name.trim().toLowerCase()));
+
+                return (
+                  <motion.div
+                    key={testi.id}
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.2 }}
+                    className="bg-[#f8f9fa] p-8 rounded-[2rem] border-r-8 border-[#3E5879] flex gap-6 shadow-sm"
+                  >
+                    <img
+                      src={
+                        isMe
+                          ? userData.avatar ||
+                            `https://ui-avatars.com/api/?name=${userData.name}&background=3E5879&color=fff&bold=true`
+                          : testi.image ||
+                            `https://ui-avatars.com/api/?name=${testi.name}`
+                      }
+                      className="w-16 h-16 rounded-xl object-cover shadow-sm bg-gray-100"
+                      alt={testi.name}
+                    />
+                    <div className="text-right">
+                      <h4 className="font-black text-[#3E5879]">
+                        {isMe ? userData.name : testi.name}
+                      </h4>
+                      <p className="text-gray-500 font-bold italic mt-1 leading-relaxed text-sm">
+                        "{testi.content}"
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })
             )}
           </div>
         </div>

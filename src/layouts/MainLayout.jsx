@@ -7,7 +7,7 @@ export default function MainLayout() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-grow pt-24 md:pt-32">
         <Outlet />
       </main>
       <ScrollToButton />

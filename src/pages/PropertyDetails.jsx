@@ -35,7 +35,7 @@ import MapPlaceholder from "../components/common/MapPlaceholder";
 export default function PropertyDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { token, ensureAuth } = useAuth();
+  const { token, userData, ensureAuth } = useAuth();
   const [unit, setUnit] = useState(null);
   const [relatedUnits, setRelatedUnits] = useState([]);
   const [settings, setSettings] = useState(null);
@@ -806,12 +806,30 @@ export default function PropertyDetails() {
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-[#3E5879] text-white rounded-full flex items-center justify-center font-black">
-                          {rev.user?.name?.charAt(0)}
+                        <div className="w-12 h-12 bg-[#3E5879] text-white rounded-full flex items-center justify-center font-black overflow-hidden border border-gray-100">
+                          {rev.user?.name === userData?.name ? (
+                            userData.avatar ? (
+                              <img
+                                src={userData.avatar}
+                                alt={userData.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <img
+                                src={`https://ui-avatars.com/api/?name=${userData?.name}&background=3E5879&color=fff&bold=true`}
+                                alt={userData.name}
+                                className="w-full h-full object-cover"
+                              />
+                            )
+                          ) : (
+                            rev.user?.name?.charAt(0) || <User size={20} />
+                          )}
                         </div>
                         <div>
                           <h4 className="font-bold text-[#3E5879]">
-                            {rev.user?.name}
+                            {rev.user?.name === userData?.name
+                              ? userData?.name
+                              : rev.user?.name}
                           </h4>
                           <span className="text-[10px] text-gray-400">
                             {new Date(rev.created_at).toLocaleDateString(

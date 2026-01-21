@@ -16,7 +16,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function UserReviews() {
-  const { token } = useAuth();
+  const { token, userData } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [reviews, setReviews] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
@@ -277,7 +277,7 @@ function UserReviews() {
                   <div className="flex justify-between items-start mb-1">
                     <div>
                       <h3 className="font-black text-[#3E5879] text-base">
-                        {review.user?.name}
+                        {userData?.name || review.user?.name}
                       </h3>
                       <p className="text-[10px] text-gray-400 font-bold mb-2">
                         وحدة: {review.unit?.title}
@@ -333,20 +333,24 @@ function UserReviews() {
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-100">
-                        {item.image ? (
+                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-100 overflow-hidden">
+                        {userData?.avatar ? (
                           <img
-                            src={item.image}
+                            src={userData.avatar}
                             alt=""
                             className="w-full h-full rounded-full object-cover"
                           />
                         ) : (
-                          <User size={20} className="text-gray-300" />
+                          <img
+                            src={`https://ui-avatars.com/api/?name=${userData?.name}&background=3E5879&color=fff&bold=true`}
+                            alt=""
+                            className="w-full h-full rounded-full object-cover"
+                          />
                         )}
                       </div>
                       <div>
                         <h3 className="font-black text-[#3E5879] text-sm">
-                          {item.name}
+                          {userData?.name || item.name}
                         </h3>
                       </div>
                     </div>
