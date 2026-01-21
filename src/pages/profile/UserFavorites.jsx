@@ -89,7 +89,7 @@ function UserFavorites() {
 
   return (
     <div
-      className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-gray-100 font-cairo"
+      className="bg-white rounded-[1rem] p-6 md:p-10 shadow-sm border border-gray-100 font-cairo"
       dir="rtl"
     >
       <ToastContainer position="top-right" autoClose={2000} rtl={true} />

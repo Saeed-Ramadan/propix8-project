@@ -1069,47 +1069,13 @@ export default function Home() {
               رأيك يهمنا ويساعدنا على تقديم خدمة أفضل دائماً.
             </p>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-start pt-2">
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="cursor-pointer flex items-center gap-2 bg-[#3E5879] text-white px-6 py-3 rounded-full font-black hover:bg-[#2c3e56] transition-all shadow-lg text-sm"
               >
                 <MessageSquare size={18} />
                 أضف تقييمك الآن
-              </button>
-            </div>
-
-            <div className="flex items-center justify-end gap-4 pt-4">
-              <button
-                onClick={() =>
-                  fetchTestimonials(testimonialPagination.current_page - 1)
-                }
-                disabled={
-                  testimonialPagination.current_page === 1 ||
-                  testimonialsLoading
-                }
-                className="cursor-pointer p-3 rounded-full bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
-              >
-                <ChevronRight size={24} />
-              </button>
-              <div className=" cursor-pointerflex items-center gap-2 font-black text-[#3E5879]">
-                {" "}
-                <span>
-                  صفحة {testimonialPagination.current_page} من{" "}
-                  {testimonialPagination.last_page}
-                </span>{" "}
-              </div>
-              <button
-                onClick={() =>
-                  fetchTestimonials(testimonialPagination.current_page + 1)
-                }
-                disabled={
-                  testimonialPagination.current_page ===
-                    testimonialPagination.last_page || testimonialsLoading
-                }
-                className="cursor-pointer p-3 rounded-full bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
-              >
-                <ChevronLeft size={24} />
               </button>
             </div>
           </div>
@@ -1161,6 +1127,39 @@ export default function Home() {
                 );
               })
             )}
+            <div className="flex items-center justify-end gap-4 pt-4">
+              <button
+                onClick={() =>
+                  fetchTestimonials(testimonialPagination.current_page - 1)
+                }
+                disabled={
+                  testimonialPagination.current_page === 1 ||
+                  testimonialsLoading
+                }
+                className="cursor-pointer p-3 rounded-full bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
+              >
+                <ChevronRight size={24} />
+              </button>
+              <div className=" cursor-pointerflex items-center gap-2 font-black text-[#3E5879]">
+                {" "}
+                <span>
+                  صفحة {testimonialPagination.current_page} من{" "}
+                  {testimonialPagination.last_page}
+                </span>{" "}
+              </div>
+              <button
+                onClick={() =>
+                  fetchTestimonials(testimonialPagination.current_page + 1)
+                }
+                disabled={
+                  testimonialPagination.current_page ===
+                    testimonialPagination.last_page || testimonialsLoading
+                }
+                className="cursor-pointer p-3 rounded-full bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
+              >
+                <ChevronLeft size={24} />
+              </button>
+            </div>
           </div>
         </div>
       </section>

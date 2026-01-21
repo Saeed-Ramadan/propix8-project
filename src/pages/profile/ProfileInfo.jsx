@@ -138,7 +138,7 @@ export default function ProfileInfo() {
     >
       <ToastContainer position="top-right" autoClose={3000} />
 
-      <div className="max-w-4xl mx-auto bg-white rounded-[1rem] p-6 md:p-10 shadow-sm border border-gray-100 ">
+      <div className="max-w-4xl mx-auto bg-white rounded-[1rem] p-6 md:p-10 shadow-sm border border-gray-100 -mt-8 ">
         <h2 className="text-xl font-black text-[#3E5879] mb-8 text-right border-r-4 border-[#3E5879] pr-3">
           الحساب الشخصي
         </h2>

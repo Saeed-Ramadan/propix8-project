@@ -212,7 +212,7 @@ function UserBookingMessage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05 }}
-                className="bg-white border border-gray-100 rounded-[0.5rem] p-6 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white border border-gray-100 rounded-[1rem] -mt-4 p-6 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-sm text-[#3E5879] font-black tracking-wider">

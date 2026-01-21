@@ -174,7 +174,7 @@ export default function UserServiceBookings() {
     >
       <ToastContainer position="top-right" autoClose={3000} rtl />
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl -mt-6 mx-auto">
         <h2 className="text-2xl font-black text-[#3E5879] mb-8 text-right border-r-4 border-[#3E5879] pr-3">
           طلبات حجز الخدمات
         </h2>
@@ -237,13 +237,13 @@ export default function UserServiceBookings() {
                       {booking.service.title}
                     </h3>
                     <div className="space-y-1 text-sm text-gray-600">
-                      <div className="flex items-center justify-end gap-2">
-                        <span className="font-bold">{booking.phone}</span>
+                      <div className="flex items-center  gap-2">
                         <Phone size={14} />
+                        <span className="font-bold">{booking.phone}</span>
                       </div>
-                      <div className="flex items-center justify-end gap-2">
-                        <span className="font-bold">{booking.address}</span>
+                      <div className="flex items-center  gap-2">
                         <MapPin size={14} />
+                        <span className="font-bold">{booking.address}</span>
                       </div>
                     </div>
                   </div>

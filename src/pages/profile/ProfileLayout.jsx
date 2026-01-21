@@ -139,7 +139,7 @@ export default function ProfileLayout() {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="w-full md:w-80 shrink-0"
         >
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
             <div className="flex flex-col">
               {menuItems.map((item, index) => (
                 <NavLink
