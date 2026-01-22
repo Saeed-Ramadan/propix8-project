@@ -157,6 +157,69 @@ function UnitsListing() {
 
   const formatPrice = (price) => new Intl.NumberFormat("ar-EG").format(price);
 
+  // دالة تبديل حالة المفضلة
+  const toggleFavorite = async (unitId, e) => {
+    e.stopPropagation(); // منع الانتقال لصفحة التفاصيل
+
+    if (!token) {
+      toast.error("يجب تسجيل الدخول أولاً");
+      return;
+    }
+
+    // Optimistic Update - تحديث الحالة مباشرة قبل الـ API
+    setUnits((prevUnits) =>
+      prevUnits.map((unit) =>
+        unit.id === unitId
+          ? { ...unit, is_favourite: !unit.is_favourite }
+          : unit,
+      ),
+    );
+
+    try {
+      const response = await fetch("https://propix8.com/api/favorites/toggle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ unit_id: parseInt(unitId) }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.status) {
+        // Rollback في حالة الفشل
+        setUnits((prevUnits) =>
+          prevUnits.map((unit) =>
+            unit.id === unitId
+              ? { ...unit, is_favourite: !unit.is_favourite }
+              : unit,
+          ),
+        );
+        toast.error(result.message || "حدث خطأ، حاول مرة أخرى");
+      } else {
+        toast.success(result.message, {
+          position: "top-center",
+          autoClose: 1500,
+          theme: "colored",
+          style: { fontFamily: "Cairo", borderRadius: "15px" },
+        });
+      }
+    } catch (error) {
+      // Rollback في حالة الخطأ
+      setUnits((prevUnits) =>
+        prevUnits.map((unit) =>
+          unit.id === unitId
+            ? { ...unit, is_favourite: !unit.is_favourite }
+            : unit,
+        ),
+      );
+      console.error("Favorite Toggle Error:", error);
+      toast.error("خطأ في الاتصال بالسيرفر");
+    }
+  };
+
   return (
     <div
       className="bg-[#FFFFFF] min-h-screen font-cairo text-right pb-10"
@@ -514,10 +577,7 @@ function UnitsListing() {
                         {/* تعديل زر القلب بناءً على حالة تسجيل الدخول و is_favourite */}
                         {token && (
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // هنا يمكنك إضافة دالة toggleFavourite لاحقاً
-                            }}
+                            onClick={(e) => toggleFavorite(unit.id, e)}
                             className={`absolute top-4 left-4 w-8 h-8 backdrop-blur rounded-full flex items-center justify-center transition-colors z-10 ${unit.is_favourite ? "bg-red-50 text-red-500 shadow-sm" : "bg-white/80 text-gray-400 hover:text-red-500"}`}
                           >
                             <Heart
