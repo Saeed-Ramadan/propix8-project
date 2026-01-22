@@ -744,6 +744,38 @@ export default function PropertyDetails() {
               </p>
             </div>
           </motion.div>
+          {/* قسم المرافق والخدمات - Amenities */}
+          {unit.amenities && unit.amenities.length > 0 && (
+            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mt-10">
+              <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3">
+                المرافق والخدمات
+              </h3>
+
+              {/* التعديل هنا: استخدام auto-fill و minmax لضمان استيعاب أي نص */}
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4">
+                {unit.amenities.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-transparent hover:border-[#3E5879]/20 hover:bg-white hover:shadow-md transition-all group min-w-0"
+                  >
+                    {/* حاوية الصورة/الأيقونة */}
+                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-white border border-gray-100 flex-shrink-0 p-1.5 shadow-sm">
+                      <img
+                        src={item.icon}
+                        alt={item.name}
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform"
+                      />
+                    </div>
+
+                    {/* اسم المرفق مع خاصية الاستيعاب التلقائي للنص */}
+                    <span className="text-sm font-black text-[#3E5879] leading-tight truncate-none whitespace-normal break-words">
+                      {item.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           {/* floor plan - عرض مساقط الطوابق فقط */}
           {unit.media?.some((m) => m.type === "floorplan") && (
             <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
