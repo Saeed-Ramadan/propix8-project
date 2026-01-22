@@ -53,6 +53,7 @@ function UnitsListing() {
   });
 
   const navigate = useNavigate();
+  const token = localStorage.getItem("userToken"); // جلب التوكن للتأكد من تسجيل الدخول
 
   // 1. جلب بيانات الفلاتر (مدن، كمبوندات، مطورين) عند تحميل الصفحة
   useEffect(() => {
@@ -87,7 +88,17 @@ function UnitsListing() {
         });
 
         const url = `https://propix8.com/api/units?${params.toString()}`;
-        const response = await fetch(url);
+
+        // إضافة التوكن في الهيدر إذا كان موجوداً لتفعيل is_favourite
+        const headers = {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        };
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(url, { headers });
         const result = await response.json();
 
         if (result.status) {
@@ -104,7 +115,7 @@ function UnitsListing() {
         setLoading(false);
       }
     },
-    [filters],
+    [filters, token],
   );
 
   useEffect(() => {
@@ -496,17 +507,25 @@ function UnitsListing() {
                             iconSize={40}
                           />
                         )}
-                        {/* Fallback for onError - Hidden by default unless img fails, but structure relies on replacement.
-                            Simpler: Use conditional rendering or source swap.
-                            I will just use conditional logic above.
-                            For onError, swapping src is safest for list items without per-item state.
-                        */}
                         <div className="absolute top-4 right-4 bg-[#3E5879] text-white text-[10px] px-4 py-1.5 rounded-xl font-bold shadow-lg z-10">
                           {unit.offer_type === "sale" ? "للبيع" : "للإيجار"}
                         </div>
-                        <button className="absolute top-4 left-4 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors z-10">
-                          <Heart size={16} />
-                        </button>
+
+                        {/* تعديل زر القلب بناءً على حالة تسجيل الدخول و is_favourite */}
+                        {token && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // هنا يمكنك إضافة دالة toggleFavourite لاحقاً
+                            }}
+                            className={`absolute top-4 left-4 w-8 h-8 backdrop-blur rounded-full flex items-center justify-center transition-colors z-10 ${unit.is_favourite ? "bg-red-50 text-red-500 shadow-sm" : "bg-white/80 text-gray-400 hover:text-red-500"}`}
+                          >
+                            <Heart
+                              size={16}
+                              fill={unit.is_favourite ? "currentColor" : "none"}
+                            />
+                          </button>
+                        )}
                       </div>
 
                       <div className="p-6 flex-1 flex flex-col justify-between">
