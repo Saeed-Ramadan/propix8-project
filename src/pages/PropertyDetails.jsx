@@ -744,22 +744,29 @@ export default function PropertyDetails() {
               </p>
             </div>
           </motion.div>
-          {/* قسم المرافق والخدمات - Amenities */}
+          {/* قسم المرافق والخدمات - Slider */}
           {unit.amenities && unit.amenities.length > 0 && (
             <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mt-10">
-              <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3">
-                المرافق والخدمات
-              </h3>
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-xl font-bold text-[#3E5879] border-r-4 border-[#3E5879] pr-3">
+                  المرافق والخدمات
+                </h3>
+                <div className="hidden md:flex gap-2">
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                    اسحب لليسار لرؤية المزيد
+                  </span>
+                </div>
+              </div>
 
-              {/* التعديل هنا: استخدام auto-fill و minmax لضمان استيعاب أي نص */}
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4">
+              {/* حاوية السلايدر */}
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory cursor-grab active:cursor-grabbing">
                 {unit.amenities.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-transparent hover:border-[#3E5879]/20 hover:bg-white hover:shadow-md transition-all group min-w-0"
+                    className="flex-none w-[200px] snap-start flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-[#3E5879]/20 hover:bg-white hover:shadow-md transition-all group"
                   >
-                    {/* حاوية الصورة/الأيقونة */}
-                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-white border border-gray-100 flex-shrink-0 p-1.5 shadow-sm">
+                    {/* الأيقونة */}
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-white border border-gray-100 flex-shrink-0 p-2 shadow-sm">
                       <img
                         src={item.icon}
                         alt={item.name}
@@ -767,8 +774,8 @@ export default function PropertyDetails() {
                       />
                     </div>
 
-                    {/* اسم المرفق مع خاصية الاستيعاب التلقائي للنص */}
-                    <span className="text-sm font-black text-[#3E5879] leading-tight truncate-none whitespace-normal break-words">
+                    {/* الاسم - يدعم النصوص الطويلة وينزل سطر جديد إذا لزم الأمر */}
+                    <span className="text-sm font-black text-[#3E5879] leading-tight whitespace-normal break-words">
                       {item.name}
                     </span>
                   </div>
