@@ -970,7 +970,7 @@ export default function PropertyDetails() {
                         ))}
                       </div>
                     </div>
-                    <p className="text-gray-600 font-bold leading-relaxed">
+                    <p className="text-gray-600 font-bold leading-relaxed whitespace-pre-wrap break-words w-full">
                       {rev.comment}
                     </p>
                   </div>
