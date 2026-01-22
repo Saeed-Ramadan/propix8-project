@@ -29,9 +29,6 @@ import "react-toastify/dist/ReactToastify.css";
 import ImagePlaceholder from "../components/common/ImagePlaceholder";
 import MapPlaceholder from "../components/common/MapPlaceholder";
 
-// ... [Skipping unchanged lines for brevity if possible, but replace tool needs context]
-// I will split this into chunks to be safe.
-
 export default function PropertyDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -46,7 +43,7 @@ export default function PropertyDetails() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   // حالة الـ Popup والنموذج
-  const [isModalOpen, setIsModalOpen] = useState(false); // Changed from showContactModal
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -113,7 +110,8 @@ export default function PropertyDetails() {
         const data = result.data || result;
         if (data) {
           setUnit(data);
-          setIsFavorite(!!data.is_favorite);
+          // هنا تم التعديل لاستخدام is_favourite من الـ API response
+          setIsFavorite(!!data.is_favourite);
           const images = data.media?.filter((m) => m.type === "image") || [];
           if (images.length > 0) setActiveImage(images[0].file_path);
         }
@@ -202,7 +200,7 @@ export default function PropertyDetails() {
           theme: "colored",
           style: { fontFamily: "Cairo", borderRadius: "15px" },
         });
-        setIsModalOpen(false); // Changed from setShowContactModal
+        setIsModalOpen(false);
         setFormData({
           name: "",
           email: "",
@@ -277,7 +275,7 @@ export default function PropertyDetails() {
 
   const images =
     unit.media?.filter((m) => m.type === "image").map((m) => m.file_path) || [];
-  // هذا المتغير سيساعدنا في معرفة هل نعرض المعرض أم رسالة "لا توجد صور"
+
   const hasImages = images.length > 0;
   const displayImages =
     images.length > 0
