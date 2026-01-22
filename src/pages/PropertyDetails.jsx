@@ -682,7 +682,7 @@ export default function PropertyDetails() {
               </div>
             </div>
           </motion.div>
-
+          {/* unit details  */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -744,7 +744,92 @@ export default function PropertyDetails() {
               </p>
             </div>
           </motion.div>
+          {/* floor plan - عرض مساقط الطوابق فقط */}
+          {unit.media?.some((m) => m.type === "floorplan") && (
+            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+              <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
+                تصميم المساحة الداخلية
+              </h3>
+              <div className="grid grid-cols-1 gap-6">
+                {unit.media
+                  .filter((item) => item.type === "floorplan")
+                  .map((plan, index) => (
+                    <div
+                      key={plan.id || index}
+                      className="rounded-[2.5rem] overflow-hidden border-4 border-white shadow-lg relative group bg-gray-50"
+                    >
+                      <img
+                        src={plan.file_path}
+                        alt={`Floor Plan ${index + 1}`}
+                        className="w-full h-auto object-contain max-h-[600px] transition-transform duration-500 group-hover:scale-105"
+                      />
+                      {/* زر لتكبير الصورة أو عرضها في نافذة جديدة اختيارياً */}
+                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <a
+                          href={plan.file_path}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="bg-white text-[#3E5879] px-6 py-2 rounded-full font-bold shadow-lg"
+                        >
+                          عرض الصورة كاملة
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
 
+          {/* unit video */}
+          <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+            <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
+              جولة داخل العقار
+            </h3>
+            {unitVideo ? (
+              <div className="rounded-[2.5rem] overflow-hidden aspect-video bg-black shadow-2xl border-8 border-white">
+                <video
+                  controls
+                  className="w-full h-full object-contain"
+                  poster={displayImages[0]}
+                >
+                  <source src={unitVideo.file_path} type="video/mp4" />
+                </video>
+              </div>
+            ) : (
+              <div className="relative rounded-[2.5rem] overflow-hidden aspect-video bg-gray-100 flex items-center justify-center border-4 border-dashed border-gray-200">
+                <div className="text-center">
+                  <Play size={48} className="text-gray-200 mx-auto mb-3" />
+                  <div className="text-gray-400 font-bold tracking-widest uppercase text-xs">
+                    الفيديو سيتم توفيره قريباً
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          {/* location */}
+          <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+            <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
+              موقع العقار
+            </h3>
+            <div className="rounded-[2.5rem] overflow-hidden h-[400px] bg-gray-100 border-4 border-white shadow-lg relative">
+              {unit.latitude && unit.longitude ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  scrolling="no"
+                  marginHeight="0"
+                  marginWidth="0"
+                  title="Property Location"
+                  src={`https://maps.google.com/maps?q=${unit.latitude},${unit.longitude}&z=15&output=embed`}
+                  className="w-full h-full"
+                ></iframe>
+              ) : (
+                <MapPlaceholder className="w-full h-full bg-gray-50 content-center" />
+              )}
+            </div>
+          </div>
+          {/* add review  */}
           <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
             <h3 className="text-xl font-bold text-[#3E5879] mb-6 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
               أضف تقييمك
@@ -786,7 +871,7 @@ export default function PropertyDetails() {
               </button>
             </form>
           </div>
-
+          {/* all reviews  */}
           <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
             <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
               تقييمات الزوار
@@ -888,57 +973,8 @@ export default function PropertyDetails() {
               </p>
             )}
           </div>
-
-          <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
-            <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
-              جولة داخل العقار
-            </h3>
-            {unitVideo ? (
-              <div className="rounded-[2.5rem] overflow-hidden aspect-video bg-black shadow-2xl border-8 border-white">
-                <video
-                  controls
-                  className="w-full h-full object-contain"
-                  poster={displayImages[0]}
-                >
-                  <source src={unitVideo.file_path} type="video/mp4" />
-                </video>
-              </div>
-            ) : (
-              <div className="relative rounded-[2.5rem] overflow-hidden aspect-video bg-gray-100 flex items-center justify-center border-4 border-dashed border-gray-200">
-                <div className="text-center">
-                  <Play size={48} className="text-gray-200 mx-auto mb-3" />
-                  <div className="text-gray-400 font-bold tracking-widest uppercase text-xs">
-                    الفيديو سيتم توفيره قريباً
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
-            <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
-              موقع العقار
-            </h3>
-            <div className="rounded-[2.5rem] overflow-hidden h-[400px] bg-gray-100 border-4 border-white shadow-lg relative">
-              {unit.latitude && unit.longitude ? (
-                <iframe
-                  width="100%"
-                  height="100%"
-                  frameBorder="0"
-                  scrolling="no"
-                  marginHeight="0"
-                  marginWidth="0"
-                  title="Property Location"
-                  src={`https://maps.google.com/maps?q=${unit.latitude},${unit.longitude}&z=15&output=embed`}
-                  className="w-full h-full"
-                ></iframe>
-              ) : (
-                <MapPlaceholder className="w-full h-full bg-gray-50 content-center" />
-              )}
-            </div>
-          </div>
         </div>
-
+        {/* user owner datails */}
         <div className="space-y-8">
           <div className="bg-white p-8 rounded-[3rem] shadow-xl border border-gray-50 sticky top-24">
             <div className="flex items-center gap-5 mb-8">
@@ -1020,7 +1056,7 @@ export default function PropertyDetails() {
           </div>
         </div>
       </div>
-
+      {/* relatedUnits */}
       <section className="max-w-7xl mx-auto px-6 mt-24">
         <div className="flex justify-between items-end mb-10">
           <div>
