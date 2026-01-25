@@ -179,11 +179,14 @@ export default function Navbar() {
 
             {/* Logo Section */}
             <Link to="/" className="flex items-center shrink-0">
-              {settings?.site_logo ? (
+              {settings === null ? (
+                // Loading Placeholder - Skeleton
+                <div className="w-32 md:w-48 h-12 md:h-16 bg-gray-200 animate-pulse rounded-md opacity-30"></div>
+              ) : settings?.site_logo ? (
                 <img
-                  src={settings?.site_logo || null}
-                  alt={settings?.site_name || "Logo"}
-                  className="w-32 md:w-48 h-12 md:h-16 object-contain  transition-all"
+                  src={settings.site_logo}
+                  alt={settings.site_name || "Logo"}
+                  className="w-32 md:w-48 h-12 md:h-16 object-contain transition-all"
                 />
               ) : (
                 <span className="text-xl md:text-2xl font-black bg-gradient-to-l from-[#3E5879] to-[#213547] bg-clip-text text-transparent">

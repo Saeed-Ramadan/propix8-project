@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Search,
   MapPin,
@@ -9,23 +9,23 @@ import {
   Users,
   Globe,
   X,
-  BedDouble,
   Bath,
+  BedDouble,
   Square,
   ShieldCheck,
   Award,
   Lightbulb,
-  MessageSquare,
-  ChevronUp,
   ChevronRight,
   ChevronLeft,
   Mail,
   Phone,
   MapPinned,
+  MessageSquare,
+  ChevronUp,
   AlertCircle,
   CheckCircle2,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
 import { ToastContainer, toast } from "react-toastify";
@@ -194,11 +194,15 @@ export default function Home() {
       setDevelopers(developersData.data || []);
       setBanners(bannersData.data || []);
 
-      if (settingsData.data?.home_hero_image) {
-        // If API returns one image, we keep our placeholders + API image for demo,
-        // or just use API image. User asked "if > 1".
-        // For now, I'll prepend the API image to the placeholders so we have > 1 for the demo.
-        setHeroImages((prev) => [settingsData.data.home_hero_image, ...prev]);
+      if (
+        settingsData.data?.home_hero_image &&
+        Array.isArray(settingsData.data.home_hero_image) &&
+        settingsData.data.home_hero_image.length > 0
+      ) {
+        setHeroImages(settingsData.data.home_hero_image);
+      } else if (typeof settingsData.data?.home_hero_image === "string") {
+        // Fallback if it returns a single string instead of array
+        setHeroImages([settingsData.data.home_hero_image]);
       }
 
       const about = pagesData.data?.find((page) => page.slug === "about-us");
@@ -348,7 +352,7 @@ export default function Home() {
         {/* SLIDER BACKGROUND */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           <AnimatePresence mode="wait">
-            <motion.img
+            <Motion.img
               key={currentSlide}
               src={heroImages[currentSlide]}
               initial={{ opacity: 0, scale: 1.1 }}
@@ -369,7 +373,7 @@ export default function Home() {
 
         {/* HERO CONTENT */}
         <div className="relative z-10 w-full max-w-6xl px-6 h-full flex flex-col justify-center items-center -mt-20 overflow-x-hidden">
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -379,13 +383,13 @@ export default function Home() {
               " تصفح أفضل العقارات المتاحة للإيجار{" "}
               <br className="hidden md:block" /> في مكان واحد "
             </h1>
-          </motion.div>
+          </Motion.div>
         </div>
       </section>
 
       {/* FILTER SECTION */}
       <div className="relative z-[1100] -mt-24 flex justify-center px-4 mb-20">
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -449,7 +453,7 @@ export default function Home() {
                 <input
                   type="number"
                   placeholder="الأعلى"
-                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-500 font-bold shadow-sm hover:bg-white transition-all"
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-[#3E5879] font-bold shadow-sm hover:bg-white transition-all"
                   onChange={(e) =>
                     setFilters({
                       ...filters,
@@ -460,7 +464,7 @@ export default function Home() {
                 <input
                   type="number"
                   placeholder="الأدنى"
-                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-500 font-bold shadow-sm hover:bg-white transition-all"
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-[#3E5879] font-bold shadow-sm hover:bg-white transition-all"
                   onChange={(e) =>
                     setFilters({
                       ...filters,
@@ -477,7 +481,7 @@ export default function Home() {
               </label>
               <div className="relative mt-2">
                 <select
-                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-right appearance-none focus:ring-2 font-bold ring-[#3E5879] outline-none cursor-pointer text-sm shadow-sm hover:bg-white transition-all"
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-right appearance-none focus:ring-2 font-bold ring-[#3E5879] placeholder-[#3E5879] outline-none cursor-pointer text-sm shadow-sm hover:bg-white transition-all"
                   onChange={(e) =>
                     setFilters({ ...filters, city_id: e.target.value })
                   }
@@ -504,7 +508,7 @@ export default function Home() {
                 <input
                   type="number"
                   placeholder="الأعلى"
-                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-500 font-bold shadow-sm hover:bg-white transition-all"
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-[#3E5879] font-bold shadow-sm hover:bg-white transition-all"
                   onChange={(e) =>
                     setFilters({ ...filters, max_price: e.target.value })
                   }
@@ -512,7 +516,7 @@ export default function Home() {
                 <input
                   type="number"
                   placeholder="الأدنى"
-                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-gray-500 font-bold shadow-sm hover:bg-white transition-all"
+                  className="w-full p-4 bg-white/90 rounded-xl border border-gray-100 text-center text-sm focus:ring-2 ring-[#3E5879] outline-none placeholder-[#3E5879] font-bold shadow-sm hover:bg-white transition-all"
                   onChange={(e) =>
                     setFilters({ ...filters, min_price: e.target.value })
                   }
@@ -539,7 +543,7 @@ export default function Home() {
             {/* Search Results Dropdown */}
             <AnimatePresence>
               {searchResults.length > 0 && (
-                <motion.div
+                <Motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
@@ -587,110 +591,108 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                </motion.div>
+                </Motion.div>
               )}
             </AnimatePresence>
           </div>
-        </motion.div>
+        </Motion.div>
       </div>
 
-      {/* BANNER CAROUSEL - MULTIPLE BANNERS SIDE BY SIDE */}
+      {/* BANNER CAROUSEL - SINGLE SLIDE */}
       {banners.length > 0 && (
-        <section className="max-w-7xl mx-auto px-6 mb-20 relative">
-          <div className="relative overflow-hidden py-4">
-            <motion.div
-              animate={{
-                x: `${-(currentBanner % banners.length) * (100 / banners.length)}%`,
-              }}
-              transition={{ type: "spring", stiffness: 100, damping: 25 }}
-              className="flex gap-6"
-              style={{
-                width: `${banners.length * (100 / Math.min(banners.length, 3))}%`,
-              }}
-            >
-              {/* Duplicate banners for infinite effect */}
-              {[...banners, ...banners, ...banners].map((banner, index) => (
-                <motion.div
-                  key={`${banner.id}-${index}`}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="relative flex-shrink-0 w-[450px] md:w-[550px] h-[240px] md:h-[280px] rounded-2xl overflow-hidden shadow-2xl cursor-pointer group"
-                  onClick={() => navigate(banner.url || "/units")}
-                >
-                  {/* Banner Image with Quality Optimization */}
-                  <img
-                    src={`${banner.image}${banner.image.includes("?") ? "&" : "?"}w=1200&h=600&fit=crop&auto=format&q=85`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    alt={`Banner ${banner.id}`}
-                    loading="lazy"
-                  />
+        <section className="max-w-7xl mx-auto px-6 mb-20 relative overflow-hidden dir-ltr">
+          <div className="relative rounded-[2rem] overflow-hidden shadow-2xl h-[280px] md:h-[400px]">
+            <AnimatePresence mode="wait">
+              <Motion.div
+                key={currentBanner}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+                className="absolute inset-0 w-full h-full cursor-pointer group"
+                onClick={() =>
+                  navigate(
+                    banners[currentBanner % banners.length]?.url || "/units",
+                  )
+                }
+              >
+                {/* Banner Image */}
+                <img
+                  src={banners[currentBanner % banners.length]?.image}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt={`Banner ${banners[currentBanner % banners.length]?.id}`}
+                  loading="lazy"
+                />
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#3E5879]/90 via-black/20 to-transparent"></div>
 
-                  {/* Content Overlay */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 text-right">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <h3 className="text-white text-xl md:text-2xl font-black mb-3 drop-shadow-lg">
-                        عروض حصرية وخاصة
-                      </h3>
-                      <p className="text-white/90 text-sm md:text-base font-bold mb-4 drop-shadow-md">
-                        اكتشف أفضل العروض العقارية بأسعار لا تُفوّت
-                      </p>
-                      <div className="flex items-center gap-2 text-white font-bold text-sm group-hover:gap-3 transition-all">
-                        <ChevronLeft
-                          size={18}
-                          className="group-hover:-translate-x-1 transition-transform"
-                        />
-                        <span>اكتشف الآن</span>
-                      </div>
-                    </motion.div>
-                  </div>
+                {/* Content Overlay */}
+                <div className="absolute inset-x-0 bottom-0 p-8 md:p-12 flex flex-col items-end text-right">
+                  <Motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                  >
+                    <h3 className="text-white text-2xl md:text-3xl font-black mb-3 drop-shadow-lg leading-tight">
+                      عروض حصرية وخاصة
+                    </h3>
+                    <p className="text-gray-100 text-sm md:text-base font-bold mb-6 drop-shadow-md max-w-xl">
+                      اكتشف أفضل العروض العقارية بأسعار لا تُفوّت، فرص استثمارية
+                      مميزة وتسهيلات في السداد
+                    </p>
 
-                  {/* Hover Border Effect */}
-                  <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/30 rounded-2xl transition-all duration-300"></div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+                    <div className="inline-flex items-center gap-2 bg-white text-[#3E5879] px-6 py-2.5 rounded-xl font-black hover:bg-[#3E5879] hover:text-white transition-all shadow-lg active:scale-95">
+                      <span>اكتشف التفاصيل</span>
+                      <ChevronLeft size={20} />
+                    </div>
+                  </Motion.div>
+                </div>
+              </Motion.div>
+            </AnimatePresence>
 
-          {/* Navigation Arrows */}
-          {banners.length > 1 && (
-            <>
+            {/* Navigation Arrows */}
+            <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
               <button
-                onClick={() => setCurrentBanner((prev) => prev - 1)}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/90 hover:bg-white text-[#3E5879] shadow-xl hover:scale-110 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentBanner(
+                    (prev) => (prev - 1 + banners.length) % banners.length,
+                  );
+                }}
+                className="pointer-events-auto p-3 rounded-full bg-white/20 hover:bg-white text-white hover:text-[#3E5879] backdrop-blur-md transition-all shadow-lg hover:scale-110 active:scale-95"
               >
                 <ChevronLeft size={24} />
               </button>
               <button
-                onClick={() => setCurrentBanner((prev) => prev + 1)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/90 hover:bg-white text-[#3E5879] shadow-xl hover:scale-110 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentBanner((prev) => (prev + 1) % banners.length);
+                }}
+                className="pointer-events-auto p-3 rounded-full bg-white/20 hover:bg-white text-white hover:text-[#3E5879] backdrop-blur-md transition-all shadow-lg hover:scale-110 active:scale-95"
               >
                 <ChevronRight size={24} />
               </button>
-            </>
-          )}
+            </div>
 
-          {/* Slider Dots */}
-          {banners.length > 1 && (
-            <div className="flex justify-center gap-2 mt-6">
+            {/* Dots */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
               {banners.map((_, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setCurrentBanner(idx)}
-                  className={`h-2 transition-all duration-300 rounded-full ${
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentBanner(idx);
+                  }}
+                  className={`h-2 transition-all duration-300 rounded-full shadow-sm ${
                     currentBanner % banners.length === idx
-                      ? "w-8 bg-[#3E5879]"
-                      : "w-2 bg-[#3E5879]/30 hover:bg-[#3E5879]/50"
+                      ? "w-8 bg-white"
+                      : "w-2 bg-white/40 hover:bg-white/70"
                   }`}
                 />
               ))}
             </div>
-          )}
+          </div>
         </section>
       )}
 
@@ -699,7 +701,7 @@ export default function Home() {
       <section className="py-16 bg-white overflow-hidden ">
         <div className="max-w-7xl mx-auto px-6 mt-10">
           <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -712,7 +714,7 @@ export default function Home() {
               <p className="text-gray-500 font-bold">
                 تصفح الوحدات حسب الكمبوند
               </p>
-            </motion.div>
+            </Motion.div>
             <div className="flex gap-3">
               <button
                 onClick={() => scroll(scrollRef, "right")}
@@ -735,7 +737,7 @@ export default function Home() {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {compounds.map((compound, index) => (
-              <motion.div
+              <Motion.div
                 key={compound.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -753,7 +755,7 @@ export default function Home() {
                 <div className=" cursor-pointer inline-flex items-center gap-2 text-[#3E5879] font-black text-sm bg-white px-6 py-2.5 rounded-xl shadow-md group-hover:bg-[#EEF2F6] transition-all duration-300">
                   عرض الوحدات <ChevronLeft size={16} />
                 </div>
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
         </div>
@@ -763,7 +765,7 @@ export default function Home() {
       <section className="py-20 bg-[#f0f2f5] overflow-hidden">
         <div className="max-w-6xl mx-auto px-3">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4 border-r-4 border-[#3E5879] pr-6">
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -776,7 +778,7 @@ export default function Home() {
               <p className="text-gray-500 font-bold">
                 أكبر المطورين العقاريين في مصر
               </p>
-            </motion.div>
+            </Motion.div>
             <div className="flex gap-3">
               <button
                 onClick={() => scroll(devScrollRef, "right")}
@@ -799,7 +801,7 @@ export default function Home() {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {developers.map((dev, index) => (
-              <motion.div
+              <Motion.div
                 key={dev.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -849,7 +851,7 @@ export default function Home() {
                     عرض جميع المشاريع
                   </button>
                 </div>
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
         </div>
@@ -883,7 +885,7 @@ export default function Home() {
       {/* UNITS LIST SECTION */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -896,7 +898,7 @@ export default function Home() {
               نقدم حلولاً عقارية متكاملة تناسب جميع احتياجاتك، من السكني إلى
               التجاري والاستثماري
             </p>
-          </motion.div>
+          </Motion.div>
           <div className="flex flex-wrap justify-center gap-3 mb-12">
             <button
               onClick={() => setActiveTab("all")}
@@ -919,7 +921,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {filteredUnits.length > 0 ? (
               filteredUnits.map((unit, index) => (
-                <motion.div
+                <Motion.div
                   key={unit.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -946,15 +948,15 @@ export default function Home() {
                     )}
                   </div>
                   <div className="p-6 text-right">
+                    <h3 className="text-xl font-black text-[#3E5879] mb-3">
+                      {unit.unit_type?.name}
+                    </h3>
                     <div className="flex items-center justify-start gap-2 text-gray-400 text-sm mb-2">
                       <MapPin size={16} className="text-[#3E5879]" />
-                      <span className="font-bold text-[#3E5879] text-base">
+                      <span className="font-bold text-gray-400 text-base">
                         {unit.city?.name} - {unit.address?.split("،")[0]}
                       </span>
                     </div>
-                    <h3 className="text-xl font-black text-[#000] mb-3">
-                      {unit.unit_type?.name} فاخرة بتشطيب سوبر لوكس
-                    </h3>
                     <div className="text-[#3E5879] text-xl font-black mb-4 flex justify-end">
                       {parseFloat(unit.price).toLocaleString()} ج.م
                     </div>
@@ -976,7 +978,7 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </Motion.div>
               ))
             ) : (
               <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white rounded-[3rem] shadow-sm border border-dashed border-gray-300">
@@ -999,23 +1001,23 @@ export default function Home() {
       {/* ABOUT US SECTION */}
       <section className="py-24 bg-[#f8f9fa]">
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className="inline-block bg-[#3E5879] text-white px-8 py-2 rounded-xl font-bold mb-6"
           >
             {aboutData?.title || "من نحن"}
-          </motion.div>
-          <motion.h2
+          </Motion.div>
+          <Motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-black text-[#3E5879] mb-6"
           >
             علامة بارزة في عالم العقارات الفاخرة
-          </motion.h2>
-          <motion.p
+          </Motion.h2>
+          <Motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -1024,7 +1026,7 @@ export default function Home() {
           >
             {aboutData?.content ||
               "نحن شركة تطوير عقاري رائدة نضع بصمتنا في عالم الفخامة والتميز."}
-          </motion.p>
+          </Motion.p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { icon: ShieldCheck, title: "الثقة", desc: "أساس كل نجاح." },
@@ -1035,7 +1037,7 @@ export default function Home() {
                 desc: "مفاهيم سكنية عصرية.",
               },
             ].map((item, index) => (
-              <motion.div
+              <Motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -1052,7 +1054,7 @@ export default function Home() {
                 <p className="text-gray-500 font-bold leading-relaxed">
                   {item.desc}
                 </p>
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
         </div>
@@ -1096,7 +1098,7 @@ export default function Home() {
                         userData.name.trim().toLowerCase()));
 
                 return (
-                  <motion.div
+                  <Motion.div
                     key={testi.id}
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -1119,11 +1121,11 @@ export default function Home() {
                       <h4 className="font-black text-[#3E5879]">
                         {isMe ? userData.name : testi.name}
                       </h4>
-                      <p className="text-gray-500 font-bold italic mt-1 leading-relaxed text-sm">
+                      <p className="text-gray-500 font-bold italic mt-1 text-sm leading-relaxed whitespace-pre-wrap break-words break-all">
                         "{testi.content}"
                       </p>
                     </div>
-                  </motion.div>
+                  </Motion.div>
                 );
               })
             )}
@@ -1172,7 +1174,7 @@ export default function Home() {
           </h2>
           <div className="space-y-4">
             {faqs.map((faq, index) => (
-              <motion.div
+              <Motion.div
                 key={faq.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -1196,7 +1198,7 @@ export default function Home() {
                     {faq.answer}
                   </div>
                 )}
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
         </div>

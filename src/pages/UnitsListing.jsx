@@ -574,7 +574,6 @@ function UnitsListing() {
                           {unit.offer_type === "sale" ? "للبيع" : "للإيجار"}
                         </div>
 
-                        {/* تعديل زر القلب بناءً على حالة تسجيل الدخول و is_favourite */}
                         {token && (
                           <button
                             onClick={(e) => toggleFavorite(unit.id, e)}
@@ -590,7 +589,10 @@ function UnitsListing() {
 
                       <div className="p-6 flex-1 flex flex-col justify-between">
                         <div>
-                          <div className="flex items-center gap-1.5 text-gray-400 text-[11px] font-bold mb-2">
+                          <h3 className="text-lg font-black text-[#3E5879] mb-3 line-clamp-1 group-hover:text-[#2C405A] transition-colors">
+                            {unit.title}
+                          </h3>
+                          <div className="flex items-center gap-1.5 text-gray-400 text-[11px] font-bold mb-4">
                             <MapPin size={14} className="text-[#3E5879]" />
                             <span>
                               {unit.city?.name}{" "}
@@ -599,9 +601,6 @@ function UnitsListing() {
                                 : ""}
                             </span>
                           </div>
-                          <h3 className="text-lg font-black text-[#3E5879] mb-3 line-clamp-1 group-hover:text-[#2C405A] transition-colors">
-                            {unit.title}
-                          </h3>
 
                           <div className="flex items-center gap-5 text-gray-500 text-[11px] font-bold border-b border-gray-50 pb-4">
                             <div className="flex items-center gap-1.5">

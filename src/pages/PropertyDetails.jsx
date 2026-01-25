@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
 import {
   MapPin,
@@ -14,14 +14,10 @@ import {
   ChevronRight,
   Loader2,
   X,
-  Send,
   User,
-  AtSign,
-  Smartphone,
   MessageSquareMore,
   CalendarCheck,
   ChevronLeft,
-  MessageSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
@@ -970,7 +966,7 @@ export default function PropertyDetails() {
                         ))}
                       </div>
                     </div>
-                    <p className="text-gray-600 font-bold leading-relaxed whitespace-pre-wrap break-words w-full">
+                    <p className="text-gray-600 font-bold leading-relaxed whitespace-pre-wrap break-words break-all w-full">
                       {rev.comment}
                     </p>
                   </div>
