@@ -45,7 +45,7 @@ export default function ForgotPassword() {
         if (receivedToken) {
           // التوجيه لصفحة الـ Reset Password بعد ثانية واحدة لإعطاء فرصة لرؤية الرسالة
           setTimeout(() => {
-            navigate(`/reset-password/${receivedToken}?email=${email}`);
+            navigate(`/password-reset/${receivedToken}?email=${email}`);
           }, 1500);
         } else {
           // إذا لم يرسل السيرفر التوكن، نطلب من المستخدم فحص بريده

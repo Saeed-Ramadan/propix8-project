@@ -214,7 +214,7 @@ function UserReviews() {
 
   return (
     <div
-      className="bg-white rounded-[1rem] p-6 md:p-10 shadow-sm border border-gray-100 font-cairo"
+      className="bg-white rounded-[0.5rem] p-6 md:p-10 shadow-sm border border-gray-100 font-cairo"
       dir="rtl"
     >
       <ToastContainer position="top-right" autoClose={3000} rtl={true} />
@@ -235,7 +235,7 @@ function UserReviews() {
           {activeTab === "properties" && (
             <motion.div
               layoutId="activeTab"
-              className="absolute bottom-0 right-0 w-full h-0.5 bg-[#3E5879] rounded-full"
+              className="absolute bottom-0 right-0 w-full h-0.5 bg-[#3E5879] rounded-[0.5rem]"
             />
           )}
         </button>
@@ -251,7 +251,7 @@ function UserReviews() {
           {activeTab === "site" && (
             <motion.div
               layoutId="activeTab"
-              className="absolute bottom-0 right-0 w-full h-0.5 bg-[#3E5879] rounded-full"
+              className="absolute bottom-0 right-0 w-full h-0.5 bg-[#3E5879] rounded-[0.5rem]"
             />
           )}
         </button>
@@ -328,7 +328,7 @@ function UserReviews() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="bg-[#F8F9FA] rounded-2xl p-6 border border-gray-50 hover:shadow-md transition-all relative"
+                  className="bg-[#F8F9FA] rounded-[0.5rem] p-6 border border-gray-50 hover:shadow-md transition-all relative"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center gap-3">
@@ -396,7 +396,7 @@ function UserReviews() {
                       current_page: prev.current_page - 1,
                     }))
                   }
-                  className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30"
+                  className="p-2 rounded-[0.5rem] hover:bg-gray-100 disabled:opacity-30"
                 >
                   <ChevronRight size={20} className="text-[#3E5879]" />
                 </button>
@@ -411,7 +411,7 @@ function UserReviews() {
                       current_page: prev.current_page + 1,
                     }))
                   }
-                  className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30"
+                  className="p-2 rounded-[0.5rem] hover:bg-gray-100 disabled:opacity-30"
                 >
                   <ChevronLeft size={20} className="text-[#3E5879]" />
                 </button>
@@ -429,7 +429,7 @@ function UserReviews() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6"
+              className="bg-white w-full max-w-md rounded-[0.5rem] shadow-2xl p-6"
             >
               <div className="flex justify-between items-center mb-6 font-bold">
                 <h3 className="text-[#3E5879]">
@@ -484,7 +484,7 @@ function UserReviews() {
                             comment: e.target.value,
                           })
                         }
-                        className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none text-xs min-h-[100px] focus:border-[#3E5879]"
+                        className="w-full p-3 bg-gray-50 border border-gray-100 rounded-[0.5rem] outline-none text-xs min-h-[100px] focus:border-[#3E5879]"
                         required
                       />
                     </div>
@@ -503,7 +503,7 @@ function UserReviews() {
                             content: e.target.value,
                           })
                         }
-                        className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none text-xs min-h-[100px] focus:border-[#3E5879]"
+                        className="w-full p-3 bg-gray-50 border border-gray-100 rounded-[0.5rem] outline-none text-xs min-h-[100px] focus:border-[#3E5879]"
                         required
                       />
                     </div>
@@ -512,7 +512,7 @@ function UserReviews() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-[#3E5879] text-white py-3 rounded-xl font-bold text-sm flex justify-center items-center gap-2 disabled:bg-gray-300"
+                  className="w-full bg-[#3E5879] text-white py-3 rounded-[0.5rem] font-bold text-sm flex justify-center items-center gap-2 disabled:bg-gray-300"
                 >
                   {submitting ? (
                     <Loader2 className="animate-spin" size={18} />

@@ -600,8 +600,8 @@ export default function Home() {
 
       {/* BANNER CAROUSEL - SINGLE SLIDE */}
       {banners.length > 0 && (
-        <section className="max-w-7xl mx-auto px-6 mb-20 relative overflow-hidden dir-ltr">
-          <div className="relative rounded-[2rem] overflow-hidden shadow-2xl h-[280px] md:h-[400px]">
+        <section className="max-w-7xl mx-auto px-6 mb-20 relative overflow-hidden dir-rtl">
+          <div className="relative rounded-[0.5rem] overflow-hidden h-[280px] md:h-[400px]">
             <AnimatePresence mode="wait">
               <Motion.div
                 key={currentBanner}
@@ -782,7 +782,7 @@ export default function Home() {
             <div className="flex gap-3">
               <button
                 onClick={() => scroll(devScrollRef, "right")}
-                className="p-3 rounded-xl bg-white text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all shadow-md"
+                className="p-3 rounded-[0.5rem] bg-white text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all shadow-md"
               >
                 <ChevronRight size={24} />
               </button>
@@ -1005,7 +1005,7 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-block bg-[#3E5879] text-white px-8 py-2 rounded-xl font-bold mb-6"
+            className="inline-block bg-[#3E5879] text-white px-8 py-2 rounded-[0.5rem] font-bold mb-6"
           >
             {aboutData?.title || "من نحن"}
           </Motion.div>
@@ -1043,9 +1043,9 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.2 }}
-                className="bg-white p-10 rounded-3xl group hover:shadow-xl transition-all duration-300"
+                className="bg-white p-10 rounded-[0.5rem] group hover:shadow-xl transition-all duration-300"
               >
-                <div className="bg-[#3E5879] w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <div className="bg-[#3E5879] w-14 h-14 rounded-[0.5rem] flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <item.icon className="text-white" size={30} />
                 </div>
                 <h4 className="text-2xl font-black text-[#3E5879] mb-4">
@@ -1074,7 +1074,7 @@ export default function Home() {
             <div className="flex justify-start pt-2">
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="cursor-pointer flex items-center gap-2 bg-[#3E5879] text-white px-6 py-3 rounded-full font-black hover:bg-[#2c3e56] transition-all shadow-lg text-sm"
+                className="cursor-pointer flex items-center gap-2 bg-[#3E5879] text-white px-6 py-3 rounded-[0.5rem] font-black hover:bg-[#2c3e56] transition-all shadow-lg text-sm"
               >
                 <MessageSquare size={18} />
                 أضف تقييمك الآن
@@ -1104,7 +1104,7 @@ export default function Home() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.2 }}
-                    className="bg-[#f8f9fa] p-8 rounded-[2rem] border-r-8 border-[#3E5879] flex gap-6 shadow-sm"
+                    className="bg-[#f8f9fa] p-8 rounded-[0.5rem] border-r-8 border-[#3E5879] flex gap-6 shadow-sm"
                   >
                     <img
                       src={
@@ -1138,7 +1138,7 @@ export default function Home() {
                   testimonialPagination.current_page === 1 ||
                   testimonialsLoading
                 }
-                className="cursor-pointer p-3 rounded-full bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
+                className="cursor-pointer p-3 rounded-[0.5rem] bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
               >
                 <ChevronRight size={24} />
               </button>
@@ -1157,7 +1157,7 @@ export default function Home() {
                   testimonialPagination.current_page ===
                     testimonialPagination.last_page || testimonialsLoading
                 }
-                className="cursor-pointer p-3 rounded-full bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
+                className="cursor-pointer p-3 rounded-[0.5rem] bg-[#f0f2f5] text-[#3E5879] hover:bg-[#3E5879] hover:text-white transition-all disabled:opacity-30"
               >
                 <ChevronLeft size={24} />
               </button>
@@ -1180,7 +1180,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm"
+                className="bg-white rounded-[0.5rem] overflow-hidden shadow-sm"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
@@ -1211,7 +1211,7 @@ export default function Home() {
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setIsModalOpen(false)}
           ></div>
-          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
+          <div className="relative bg-white w-full max-w-md rounded-[0.5rem] p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
             <button
               onClick={() => setIsModalOpen(false)}
               className="cursor-pointer absolute top-6 left-6 text-gray-400 hover:text-red-500 transition-colors"
@@ -1219,7 +1219,7 @@ export default function Home() {
               <X size={24} />
             </button>
             <div className="text-center space-y-4">
-              <div className="bg-[#f0f4f8] w-16 h-16 rounded-full flex items-center justify-center mx-auto text-[#3E5879]">
+              <div className="bg-[#f0f4f8] w-16 h-16 rounded-[0.5rem] flex items-center justify-center mx-auto text-[#3E5879]">
                 <MessageSquare size={32} />
               </div>
               <h3 className="text-2xl font-black text-[#3E5879]">
@@ -1238,7 +1238,7 @@ export default function Home() {
                   onChange={(e) => setReviewContent(e.target.value)}
                   placeholder="اكتب تقييمك هنا..."
                   rows="4"
-                  className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm text-right outline-none focus:ring-2 focus:ring-[#3E5879]/20 resize-none transition-all font-bold"
+                  className="w-full bg-gray-50 border border-gray-100 rounded-[0.5rem] p-4 text-sm text-right outline-none focus:ring-2 focus:ring-[#3E5879]/20 resize-none transition-all font-bold"
                 ></textarea>
 
                 {reviewStatus.text && (
@@ -1261,7 +1261,7 @@ export default function Home() {
                 <button
                   disabled={reviewLoading}
                   type="submit"
-                  className="cursor-pointer w-full bg-[#3E5879] text-white font-black py-4 rounded-2xl hover:bg-[#2c3e56] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg"
+                  className="cursor-pointer w-full bg-[#3E5879] text-white font-black py-4 rounded-[0.5rem] hover:bg-[#2c3e56] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg"
                 >
                   {reviewLoading ? (
                     <Loader2 className="animate-spin" size={20} />

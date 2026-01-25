@@ -111,7 +111,7 @@ const AnimatedRoutes = () => {
               }
             />
             <Route
-              path="/reset-password/:token"
+              path="/password-reset/:token"
               element={
                 <PageTransition>
                   <ResetPassword />

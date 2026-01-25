@@ -60,7 +60,7 @@ export default function Footer() {
           </p>
           <Link
             to="/units"
-            className="group mt-4 bg-white text-[#415a77] px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-[#e9ecef] transition-all w-fit shadow-lg shadow-black/10"
+            className="group mt-4 bg-white text-[#415a77] px-6 py-3 rounded-[0.5rem] font-bold flex items-center gap-2 hover:bg-[#e9ecef] transition-all w-fit shadow-lg shadow-black/10"
           >
             اكتشف وحدتك الآن
             <ArrowLeft
@@ -126,7 +126,7 @@ export default function Footer() {
           </h3>
           <ul className="space-y-5 text-gray-300">
             <li className="flex items-center gap-4 group">
-              <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+              <div className="p-2 bg-white/10 rounded-[0.5rem] group-hover:bg-white/20 transition-colors">
                 <Phone size={18} />
               </div>
               <span
@@ -137,7 +137,7 @@ export default function Footer() {
               </span>
             </li>
             <li className="flex items-center gap-4 group">
-              <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+              <div className="p-2 bg-white/10 rounded-[0.5rem] group-hover:bg-white/20 transition-colors">
                 <Mail size={18} />
               </div>
               <span className="group-hover:text-white transition-colors">
@@ -145,7 +145,7 @@ export default function Footer() {
               </span>
             </li>
             <li className="flex items-center gap-4 group">
-              <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+              <div className="p-2 bg-white/10 rounded-[0.5rem] group-hover:bg-white/20 transition-colors">
                 <MapPin size={18} />
               </div>
               <span className="group-hover:text-white transition-colors">

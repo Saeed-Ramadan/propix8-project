@@ -237,7 +237,7 @@ function UserBookingMessage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05 }}
-                className="bg-white border border-gray-100 rounded-[1rem] -mt-4 p-6 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white border border-gray-100 rounded-[0.5rem] -mt-4 p-6 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-sm text-[#3E5879] font-black tracking-wider">
@@ -341,7 +341,7 @@ function UserBookingMessage() {
             );
           })
         ) : (
-          <div className="text-center py-20 bg-white rounded-[1rem] border-2 border-dashed border-gray-100">
+          <div className="text-center py-20 bg-white rounded-[0.5rem] border-2 border-dashed border-gray-100">
             <p className="text-gray-400 font-black text-lg">
               لا توجد طلبات معاينة حالياً
             </p>
@@ -358,7 +358,7 @@ function UserBookingMessage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className="bg-white w-full max-w-md rounded-[1rem] shadow-2xl overflow-hidden"
+              className="bg-white w-full max-w-md rounded-[0.5rem] shadow-2xl overflow-hidden"
             >
               <div className="flex justify-between items-center p-6 border-b border-gray-50">
                 <button

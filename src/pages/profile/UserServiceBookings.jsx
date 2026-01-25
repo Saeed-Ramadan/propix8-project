@@ -190,7 +190,7 @@ export default function UserServiceBookings() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-6 py-2 rounded-xl font-bold text-sm whitespace-nowrap transition-all ${
+              className={`px-6 py-2 rounded-[0.5rem] font-bold text-sm whitespace-nowrap transition-all ${
                 activeTab === tab.key
                   ? "bg-[#3E5879] text-white shadow-md"
                   : "bg-white text-gray-600 hover:bg-gray-50"
@@ -203,7 +203,7 @@ export default function UserServiceBookings() {
 
         {/* Bookings List */}
         {filteredBookings.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
+          <div className="bg-white rounded-[0.5rem] p-12 text-center shadow-sm">
             <Wrench size={48} className="mx-auto text-gray-300 mb-4" />
             <h3 className="text-xl font-bold text-[#3E5879] mb-2">
               لا توجد طلبات
@@ -217,7 +217,7 @@ export default function UserServiceBookings() {
                 key={booking.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all"
+                className="bg-white rounded-[0.5rem] p-6 shadow-sm hover:shadow-md transition-all"
               >
                 <div className="flex items-start justify-between mb-4">
                   {getStatusBadge(booking.status)}
@@ -230,7 +230,7 @@ export default function UserServiceBookings() {
                   <img
                     src={booking.service.image}
                     alt={booking.service.title}
-                    className="w-20 h-20 rounded-xl object-cover"
+                    className="w-20 h-20 rounded-[0.5rem] object-cover"
                   />
                   <div className="flex-1 text-right">
                     <h3 className="text-lg font-black text-[#3E5879] mb-2">
@@ -259,7 +259,7 @@ export default function UserServiceBookings() {
                   <div className="flex gap-1">
                     <button
                       onClick={() => setDetailsModal(booking)}
-                      className="px-2 py-2 bg-[#3E5879] text-white rounded-xl font-bold text-sm hover:bg-[#2c3e56] transition-all flex items-center gap-2"
+                      className="px-2 py-2 bg-[#3E5879] text-white rounded-[0.5rem] font-bold text-sm hover:bg-[#2c3e56] transition-all flex items-center gap-2"
                     >
                       <Eye size={16} />
                       تفاصيل
@@ -275,14 +275,14 @@ export default function UserServiceBookings() {
                               message: booking.message,
                             });
                           }}
-                          className="px-2 py-2 bg-blue-500 text-white rounded-xl font-bold text-sm hover:bg-blue-600 transition-all flex items-center gap-2"
+                          className="px-2 py-2 bg-blue-500 text-white rounded-[0.5rem] font-bold text-sm hover:bg-blue-600 transition-all flex items-center gap-2"
                         >
                           <Edit size={16} />
                           تعديل
                         </button>
                         <button
                           onClick={() => setDeleteModal(booking)}
-                          className="px-2 py-2 bg-[#E02F2F] text-white rounded-xl font-bold text-sm hover:bg-red-600 transition-all flex items-center gap-2"
+                          className="px-2 py-2 bg-[#E02F2F] text-white rounded-[0.5rem] font-bold text-sm hover:bg-red-600 transition-all flex items-center gap-2"
                         >
                           <Trash2 size={16} />
                           حذف
@@ -305,7 +305,7 @@ export default function UserServiceBookings() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
+              className="bg-white w-full max-w-lg rounded-[0.5rem] shadow-2xl overflow-hidden"
             >
               <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
                 <h3 className="text-lg font-black text-[#3E5879]">
@@ -394,7 +394,7 @@ export default function UserServiceBookings() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
+              className="bg-white w-full max-w-lg rounded-[0.5rem] shadow-2xl overflow-hidden"
             >
               <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-[#F8F9FA]">
                 <h3 className="text-lg font-black text-[#3E5879]">
@@ -418,7 +418,7 @@ export default function UserServiceBookings() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, phone: e.target.value })
                     }
-                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none text-right focus:border-[#3E5879] transition-all"
+                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[0.5rem] outline-none text-right focus:border-[#3E5879] transition-all"
                     required
                   />
                 </div>
@@ -432,7 +432,7 @@ export default function UserServiceBookings() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, address: e.target.value })
                     }
-                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none text-right focus:border-[#3E5879] transition-all"
+                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[0.5rem] outline-none text-right focus:border-[#3E5879] transition-all"
                     required
                   />
                 </div>
@@ -446,14 +446,14 @@ export default function UserServiceBookings() {
                       setEditForm({ ...editForm, message: e.target.value })
                     }
                     rows={4}
-                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none text-right focus:border-[#3E5879] transition-all resize-none"
+                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[0.5rem] outline-none text-right focus:border-[#3E5879] transition-all resize-none"
                     required
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-[#3E5879] text-white font-bold py-3 rounded-xl hover:bg-[#2c3e56] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full bg-[#3E5879] text-white font-bold py-3 rounded-[0.5rem] hover:bg-[#2c3e56] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {submitting ? (
                     <>
@@ -478,7 +478,7 @@ export default function UserServiceBookings() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden"
+              className="bg-white w-full max-w-md rounded-[0.5rem] shadow-2xl overflow-hidden"
             >
               <div className="p-6 text-center">
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -493,13 +493,13 @@ export default function UserServiceBookings() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setDeleteModal(null)}
-                    className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-all"
+                    className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-[0.5rem] font-bold hover:bg-gray-200 transition-all"
                   >
                     إلغاء
                   </button>
                   <button
                     onClick={handleDelete}
-                    className="flex-1 px-4 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition-all"
+                    className="flex-1 px-4 py-3 bg-red-500 text-white rounded-[0.5rem] font-bold hover:bg-red-600 transition-all"
                   >
                     حذف
                   </button>

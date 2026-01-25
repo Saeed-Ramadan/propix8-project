@@ -118,7 +118,7 @@ export default function Navbar() {
 
   const SearchResultsList = () =>
     showSearchResults && (
-      <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl border border-gray-100 z-10000 max-h-100 overflow-y-auto">
+      <div className="absolute top-full mt-2 w-full bg-white rounded-[0.5rem] shadow-2xl border border-gray-100 z-10000 max-h-100 overflow-y-auto">
         {searchResults.length > 0 ? (
           searchResults.map((unit) => (
             <Link
@@ -254,7 +254,7 @@ export default function Navbar() {
               <input
                 type="text"
                 placeholder="ابحث عن عقار..."
-                className="w-full bg-white border border-gray-200 rounded-xl py-2 pr-10 pl-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E5879]/20"
+                className="w-full bg-white border border-gray-200 rounded-[0.5rem] py-2 pr-10 pl-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E5879]/20"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -282,16 +282,16 @@ export default function Navbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsOpen(!isOpen)}
-                  className="flex items-center gap-2 bg-white border border-gray-200 p-1 md:pr-1.5 md:pl-4 rounded-full font-bold text-[#3E5879] hover:shadow-sm transition-all"
+                  className="flex items-center gap-2 bg-white border border-gray-200 p-1 md:pr-1.5 md:pl-4 rounded-[0.5rem] font-bold text-[#3E5879] hover:shadow-sm transition-all"
                 >
                   {userData.avatar ? (
                     <img
                       src={userData.avatar}
                       alt=""
-                      className="w-8 h-8 rounded-full object-cover"
+                      className="w-8 h-8 rounded-[0.5rem] object-cover"
                     />
                   ) : (
-                    <div className="w-8 h-8 bg-[#3E5879] text-white rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-[#3E5879] text-white rounded-[0.5rem] flex items-center justify-center">
                       <User size={16} />
                     </div>
                   )}
@@ -305,7 +305,7 @@ export default function Navbar() {
                 </button>
 
                 {isOpen && (
-                  <div className="absolute left-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-[999] overflow-hidden">
+                  <div className="absolute left-0 mt-3 w-64 bg-white rounded-[0.5rem] shadow-2xl border border-gray-100 py-2 z-[999] overflow-hidden">
                     <div className="px-4 py-3 bg-gray-50/80 border-b border-gray-100 mb-1">
                       <p className="text-sm font-black text-[#3E5879] truncate mb-1.5">
                         {userData.name || "المستخدم"}

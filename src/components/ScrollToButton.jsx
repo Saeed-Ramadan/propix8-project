@@ -40,7 +40,7 @@ const ScrollToButton = () => {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={handleScrollToggle}
-      className="fixed bottom-8 right-8 z-[2000] w-14 h-14 bg-[#3E5879] text-white rounded-full shadow-2xl flex items-center justify-center border-4 border-white/20 backdrop-blur-md transition-colors hover:bg-[#2C3E50]"
+      className="fixed bottom-8 right-8 z-[2000] w-14 h-14 bg-[#3E5879] text-white rounded-[0.5rem] shadow-2xl flex items-center justify-center border-4 border-white/20 backdrop-blur-md transition-colors hover:bg-[#2C3E50]"
       title={isAtTop ? "الذهاب للأسفل" : "العودة للأعلى"}
     >
       <AnimatePresence mode="wait">

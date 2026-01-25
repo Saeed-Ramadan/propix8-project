@@ -138,7 +138,7 @@ export default function ProfileInfo() {
     >
       <ToastContainer position="top-right" autoClose={3000} />
 
-      <div className="max-w-4xl mx-auto bg-white rounded-[1rem] p-6 md:p-10 shadow-sm border border-gray-100 -mt-8 ">
+      <div className="max-w-4xl mx-auto bg-white rounded-[0.5rem] p-6 md:p-10 shadow-sm border border-gray-100 -mt-8 ">
         <h2 className="text-xl font-black text-[#3E5879] mb-8 text-right border-r-4 border-[#3E5879] pr-3">
           الحساب الشخصي
         </h2>
@@ -178,7 +178,7 @@ export default function ProfileInfo() {
 
         <button
           onClick={() => setIsEditModalOpen(true)}
-          className="w-full md:w-64 mt-10 mx-auto block bg-[#3E5879] text-white font-bold py-3.5 rounded-xl hover:bg-[#2c3e56] transition-all shadow-md active:scale-95"
+          className="w-full md:w-64 mt-10 mx-auto block bg-[#3E5879] text-white font-bold py-3.5 rounded-[0.5rem] hover:bg-[#2c3e56] transition-all shadow-md active:scale-95"
         >
           تعديل البيانات
         </button>
@@ -192,7 +192,7 @@ export default function ProfileInfo() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-white w-full max-w-lg rounded-[1rem] shadow-2xl relative overflow-hidden"
+              className="bg-white w-full max-w-lg rounded-[0.5rem] shadow-2xl relative overflow-hidden"
             >
               <div className="p-4 border-b border-gray-50 flex justify-between items-center bg-[#F8F9FA]">
                 <h3 className="text-lg font-black text-[#3E5879]">
