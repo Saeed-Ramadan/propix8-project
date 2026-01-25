@@ -18,7 +18,10 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem("siteSettings");
+    return saved ? JSON.parse(saved) : null;
+  });
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -37,6 +40,7 @@ export default function Navbar() {
         const result = await response.json();
         if (result.status) {
           setSettings(result.data);
+          localStorage.setItem("siteSettings", JSON.stringify(result.data));
         }
       } catch (error) {
         console.error("Error fetching settings:", error);

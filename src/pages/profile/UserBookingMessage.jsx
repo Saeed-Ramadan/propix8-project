@@ -136,6 +136,31 @@ function UserBookingMessage() {
     }
   };
 
+  const handleAcceptReschedule = async (id) => {
+    try {
+      const response = await axios.post(
+        `https://propix8.com/api/bookings/${id}`,
+        {
+          status: "accepted",
+          _method: "PUT",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            Accept: "application/json",
+          },
+        },
+      );
+
+      if (response.data.status) {
+        toast.success("تم تأكيد الموعد بنجاح");
+        fetchBookings();
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "فشل تأكيد الموعد");
+    }
+  };
+
   const handleSubmitReschedule = async () => {
     if (!formData.date || !formData.time) {
       toast.error("يرجى اختيار التاريخ والوقت");
@@ -284,7 +309,16 @@ function UserBookingMessage() {
                           onClick={() => handleOpenReschedule(booking)}
                           className="bg-gray-100 text-[#3E5879] px-8 py-3 rounded-[0.5rem] text-sm font-black hover:bg-gray-200 transition-all"
                         >
-                          اقتراح موعد آخر
+                          تعديل
+                        </button>
+                      )}
+
+                      {booking.status === "reschedule_admin" && (
+                        <button
+                          onClick={() => handleAcceptReschedule(booking.id)}
+                          className="bg-[#28A745] text-white px-8 py-3 rounded-[0.5rem] text-sm font-black hover:bg-[#218838] transition-all shadow-lg shadow-[#28A745]/20"
+                        >
+                          تأكيد المعاد
                         </button>
                       )}
                       <button

@@ -13,8 +13,11 @@ import {
 import { Link } from "react-router-dom";
 
 export default function Footer() {
-  const [settings, setSettings] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem("siteSettings");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [loading, setLoading] = useState(!settings);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -23,6 +26,7 @@ export default function Footer() {
         const result = await response.json();
         if (result.status) {
           setSettings(result.data);
+          localStorage.setItem("siteSettings", JSON.stringify(result.data));
         }
       } catch (error) {
         console.error("Error fetching settings:", error);
