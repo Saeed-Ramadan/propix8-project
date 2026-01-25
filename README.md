@@ -15,6 +15,7 @@ The application is optimized for performance and user experience, featuring smoo
 
 *   **🏠 Advanced Property Search**: Filter properties by type (Sale/Rent), price range, area, city, and developer.
 *   **🔐 User Authentication**: Secure login, registration, and password reset functionality using JWT.
+*   **🔄 Real-time Data Sync**: Automatic data polling using React Query to keep user profiles and notifications up-to-date.
 *   **❤️ Favorites System**: innovative favorites feature allowing users to pin and manage their top property choices.
 *   **📅 Booking Management**: Integrated system for booking services and viewing booking history.
 *   **🗺️ Interactive Maps**: Visual property location exploration using Leaflet.
@@ -30,7 +31,7 @@ The application is optimized for performance and user experience, featuring smoo
 *   **Frontend Framework**: [React 19](https://react.dev/)
 *   **Build Tool**: [Vite](https://vitejs.dev/)
 *   **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-*   **State Management**: React Context API
+*   **State Management**: React Context API + TanStack Query (React Query)
 *   **Routing**: React Router DOM v7
 *   **Forms & Validation**: React Hook Form + Zod
 *   **Icons**: Lucide React
@@ -111,4 +112,4 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-**Developed with ❤️ by the Fourth Pyramid Team.**
+**Developed with ❤️ by Saeed Ramadan.**

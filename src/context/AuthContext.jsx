@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import AuthContext from "./AuthContext.js";
 
@@ -78,35 +79,54 @@ export const AuthProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [refreshToken]);
 
-  // Refresh user profile after login (if token present)
-  const refreshUser = useCallback(async () => {
-    const currentToken = localStorage.getItem("userToken");
-    if (!currentToken) return;
-    try {
-      const response = await fetch("https://propix8.com/api/profile", {
-        headers: {
-          Authorization: `Bearer ${currentToken}`,
-          Accept: "application/json",
-        },
-      });
-      const result = await response.json();
-      if (result.status) {
-        updateUser(result.data);
-      }
-    } catch (error) {
-      console.error("AuthContext: Error refreshing user data:", error);
-    }
-  }, []);
+  // React Query for User Profile
+  const queryClient = useQueryClient();
 
-  const refreshAttempted = useRef(false);
-  useEffect(() => {
-    if (token && !userData && !refreshAttempted.current) {
-      refreshAttempted.current = true;
-      setTimeout(() => {
-        refreshUser();
-      }, 0);
+  const fetchProfile = async () => {
+    const currentToken = localStorage.getItem("userToken");
+    if (!currentToken) return null;
+
+    const response = await fetch("https://propix8.com/api/profile", {
+      headers: {
+        Authorization: `Bearer ${currentToken}`,
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      // If 401, token might be invalid. Let the query fail or handle logout.
+      // For now we just return null or throw.
+      throw new Error("Failed to fetch profile");
     }
-  }, [token, refreshUser, userData]);
+
+    const result = await response.json();
+    return result.status ? result.data : null;
+  };
+
+  const { data: queryUserData } = useQuery({
+    queryKey: ["userProfile", token],
+    queryFn: fetchProfile,
+    enabled: !!token,
+    refetchInterval: 10000, // Poll every 10 seconds
+    retry: false, // Don't retry if it fails (e.g. 401)
+  });
+
+  // Sync Query Data with Local State & Storage
+  useEffect(() => {
+    if (queryUserData) {
+      // Only update if data actually changed to avoid potential loops if strict equality check fails
+      // However, for simplicity and ensuring sync:
+      const currentStored = localStorage.getItem("userData");
+      if (JSON.stringify(queryUserData) !== currentStored) {
+        updateUser(queryUserData);
+      }
+    }
+  }, [queryUserData]);
+
+  // Manual refresh becomes invalidation
+  const refreshUser = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+  }, [queryClient]);
 
   // Sync via storage event (for other windows)
   useEffect(() => {
