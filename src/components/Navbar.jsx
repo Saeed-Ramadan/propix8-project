@@ -271,6 +271,14 @@ export default function Navbar() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            {userToken && userData?.role === "admin" && (
+              <a
+                href="/admin"
+                className="bg-[#3E5879] text-white px-4 py-1.5 rounded-xl font-bold hover:bg-[#2c3846] transition-all text-sm"
+              >
+                لوحة التحكم
+              </a>
+            )}
             {/* {userToken && userData?.role === 'seller' && (
               <Link to="/add-property" className="bg-[#3E5879] text-white p-2 md:px-5 md:py-2 rounded-xl shadow-md font-bold flex items-center gap-2 hover:bg-[#2c3846] transition-all">
                 <PlusCircle size={18} />
@@ -396,6 +404,15 @@ export default function Navbar() {
             >
               تواصل معنا
             </NavLink>
+
+            {userToken && userData?.role === "admin" && (
+              <a
+                href="/admin"
+                className="font-bold text-red-600 hover:text-red-800"
+              >
+                لوحة التحكم
+              </a>
+            )}
           </div>
         )}
       </nav>
