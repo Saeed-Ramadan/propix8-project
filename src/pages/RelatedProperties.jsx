@@ -7,18 +7,30 @@ import {
   Bath,
   Loader2,
   ChevronRight,
+  Star,
 } from "lucide-react";
+import { useAuth } from "../hooks/useAuth.js";
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 import { motion } from "framer-motion";
 
 export default function RelatedProperties() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { token, ensureAuth } = useAuth();
   const [relatedUnits, setRelatedUnits] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetch(`https://propix8.com/api/units/${id}/related`)
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    fetch(`https://propix8.com/api/units/${id}/related`, { headers })
       .then((res) => res.json())
       .then((result) => {
         if (result.status) {
@@ -31,6 +43,72 @@ export default function RelatedProperties() {
         setLoading(false);
       });
   }, [id]);
+
+  const toggleFavorite = async (unitId, e) => {
+    e.stopPropagation();
+    if (!ensureAuth()) return;
+
+    // Robust boolean check
+    setRelatedUnits((prevUnits) =>
+      prevUnits.map((unit) => {
+        if (unit.id === unitId) {
+          const currentStatus = !!(
+            unit.is_favourite === true ||
+            unit.is_favourite === 1 ||
+            unit.is_favourite === "1" ||
+            unit.is_favourite === "true"
+          );
+          return { ...unit, is_favourite: !currentStatus };
+        }
+        return unit;
+      }),
+    );
+
+    try {
+      const response = await fetch("https://propix8.com/api/favorites/toggle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ unit_id: unitId }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Use result.status directly as returned by API (true = added, false = removed)
+        const finalStatus = result.status;
+        setRelatedUnits((prevUnits) =>
+          prevUnits.map((unit) =>
+            unit.id === unitId ? { ...unit, is_favourite: finalStatus } : unit,
+          ),
+        );
+        toast.success(result.message, toastOptions);
+      } else {
+        // Rollback
+        setRelatedUnits((prevUnits) =>
+          prevUnits.map((unit) =>
+            unit.id === unitId
+              ? { ...unit, is_favourite: !newFavoriteStatus }
+              : unit,
+          ),
+        );
+        toast.error(result.message || "حدث خطأ، حاول مرة أخرى", toastOptions);
+      }
+    } catch (error) {
+      // Rollback
+      setRelatedUnits((prevUnits) =>
+        prevUnits.map((unit) =>
+          unit.id === unitId
+            ? { ...unit, is_favourite: !newFavoriteStatus }
+            : unit,
+        ),
+      );
+      toast.error("خطأ في الاتصال بالسيرفر", toastOptions);
+    }
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen font-cairo py-12" dir="rtl">
@@ -94,6 +172,32 @@ export default function RelatedProperties() {
                       {item.city?.name}
                     </span>
                   </div>
+
+                  {token && (
+                    <button
+                      onClick={(e) => toggleFavorite(item.id, e)}
+                      className={`absolute top-5 right-5 w-8 h-8 backdrop-blur rounded-full flex items-center justify-center transition-colors z-10 ${
+                        item.is_favourite === true ||
+                        item.is_favourite === 1 ||
+                        item.is_favourite === "1" ||
+                        item.is_favourite === "true"
+                          ? "bg-yellow-50 text-yellow-500 shadow-sm"
+                          : "bg-white/80 text-gray-400 hover:text-yellow-500"
+                      }`}
+                    >
+                      <Star
+                        size={16}
+                        fill={
+                          item.is_favourite === true ||
+                          item.is_favourite === 1 ||
+                          item.is_favourite === "1" ||
+                          item.is_favourite === "true"
+                            ? "currentColor"
+                            : "none"
+                        }
+                      />
+                    </button>
+                  )}
                 </div>
 
                 <div className="p-6">

@@ -22,7 +22,6 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { toastOptions } from "../utils/toastConfig.js";
-import "react-toastify/dist/ReactToastify.css";
 import ImagePlaceholder from "../components/common/ImagePlaceholder";
 import MapPlaceholder from "../components/common/MapPlaceholder";
 
@@ -37,7 +36,6 @@ export default function PropertyDetails() {
   const [loadingRelated, setLoadingRelated] = useState(true);
   const [activeImage, setActiveImage] = useState(null);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
 
   // حالة الـ Popup والنموذج
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,6 +47,67 @@ export default function PropertyDetails() {
     address: "",
     message: "",
   });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[0-9]{10,15}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    if (name === "name") {
+      setErrors((prev) => ({
+        ...prev,
+        name: value.length < 3 ? "الاسم يجب أن يكون 3 أحرف على الأقل" : "",
+      }));
+    }
+
+    if (name === "email") {
+      if (value === "") {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      } else if (!validateEmail(value)) {
+        setErrors((prev) => ({ ...prev, email: "بريد إلكتروني غير صحيح" }));
+      } else {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      }
+    }
+
+    if (name === "phone") {
+      setErrors((prev) => ({
+        ...prev,
+        phone: !validatePhone(value) ? "رقم هاتف غير صحيح" : "",
+      }));
+    }
+
+    if (name === "message") {
+      setErrors((prev) => ({
+        ...prev,
+        message:
+          value.length < 10 ? "الرسالة يجب أن تكون 10 أحرف على الأقل" : "",
+      }));
+    }
+  };
+
+  const isFormValid =
+    formData.name.length >= 3 &&
+    validateEmail(formData.email) &&
+    validatePhone(formData.phone) &&
+    formData.message.length >= 10 &&
+    !Object.values(errors).some((err) => err !== "");
 
   // --- حالات التقييم (إضافة وعرض) ---
   const [rating, setRating] = useState(0);
@@ -102,25 +161,41 @@ export default function PropertyDetails() {
         Accept: "application/json",
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch unit");
+        }
+        return res.json();
+      })
       .then((result) => {
         const data = result.data || result;
-        if (data) {
+        if (data && data.id) {
           setUnit(data);
-          // هنا تم التعديل لاستخدام is_favourite من الـ API response
-          setIsFavorite(!!data.is_favourite);
           const images = data.media?.filter((m) => m.type === "image") || [];
           if (images.length > 0) setActiveImage(images[0].file_path);
+        } else {
+          navigate("/notfound", { replace: true });
         }
         setLoading(false);
       })
       .catch((err) => {
         // console.error("Error fetching unit:", err);
         setLoading(false);
+        navigate("/notfound", { replace: true });
       });
 
     setLoadingRelated(true);
-    fetch(`https://propix8.com/api/units/${id}/related`)
+    const relatedHeaders = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    };
+    if (validToken) {
+      relatedHeaders["Authorization"] = `Bearer ${validToken}`;
+    }
+
+    fetch(`https://propix8.com/api/units/${id}/related`, {
+      headers: relatedHeaders,
+    })
       .then((res) => res.json())
       .then((result) => {
         if (result.status) setRelatedUnits(result.data);
@@ -134,13 +209,46 @@ export default function PropertyDetails() {
     fetchReviews();
   }, [id]);
 
-  const toggleFavorite = async () => {
+  const toggleFavorite = async (unitId = null, e = null) => {
+    if (e) e.stopPropagation();
     if (!ensureAuth()) return;
 
-    const validToken = token;
+    const targetId = unitId || id;
+    const isMainUnit = targetId === id;
+
+    let currentStatus = false;
+    if (isMainUnit) {
+      currentStatus = !!(
+        unit.is_favourite === true ||
+        unit.is_favourite === 1 ||
+        unit.is_favourite === "1" ||
+        unit.is_favourite === "true"
+      );
+    } else {
+      const targetUnit = relatedUnits.find((u) => u.id === targetId);
+      if (targetUnit) {
+        currentStatus = !!(
+          targetUnit.is_favourite === true ||
+          targetUnit.is_favourite === 1 ||
+          targetUnit.is_favourite === "1" ||
+          targetUnit.is_favourite === "true"
+        );
+      }
+    }
+
+    const newFavoriteStatus = !currentStatus;
 
     // Optimistic Update
-    setIsFavorite((prev) => !prev);
+    if (isMainUnit) {
+      setUnit((prev) =>
+        prev ? { ...prev, is_favourite: newFavoriteStatus } : prev,
+      );
+    }
+    setRelatedUnits((prev) =>
+      prev.map((u) =>
+        u.id === targetId ? { ...u, is_favourite: newFavoriteStatus } : u,
+      ),
+    );
 
     try {
       const response = await fetch("https://propix8.com/api/favorites/toggle", {
@@ -148,24 +256,53 @@ export default function PropertyDetails() {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Authorization: `Bearer ${validToken}`,
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ unit_id: parseInt(id) }),
+        body: JSON.stringify({ unit_id: targetId }),
       });
 
       const result = await response.json();
 
-      if (!response.ok || !result.status) {
-        // Rollback on failure
-        setIsFavorite((prev) => !prev);
-        toast.error(result.message || "حدث خطأ، حاول مرة أخرى", toastOptions);
-      } else {
+      if (response.ok) {
+        // Use result.status directly as returned by API (true = added, false = removed)
+        const finalStatus = result.status;
+        if (isMainUnit) {
+          setUnit((prev) =>
+            prev ? { ...prev, is_favourite: finalStatus } : prev,
+          );
+        }
+        setRelatedUnits((prev) =>
+          prev.map((u) =>
+            u.id === targetId ? { ...u, is_favourite: finalStatus } : u,
+          ),
+        );
         toast.success(result.message, toastOptions);
+      } else {
+        // Rollback
+        if (isMainUnit) {
+          setUnit((prev) =>
+            prev ? { ...prev, is_favourite: !newFavoriteStatus } : prev,
+          );
+        }
+        setRelatedUnits((prev) =>
+          prev.map((u) =>
+            u.id === targetId ? { ...u, is_favourite: !newFavoriteStatus } : u,
+          ),
+        );
+        toast.error(result.message || "حدث خطأ، حاول مرة أخرى", toastOptions);
       }
     } catch (error) {
-      // Rollback on error
-      setIsFavorite((prev) => !prev);
-      // console.error("Favorite Toggle Error:", error);
+      // Rollback
+      if (isMainUnit) {
+        setUnit((prev) =>
+          prev ? { ...prev, is_favourite: !newFavoriteStatus } : prev,
+        );
+      }
+      setRelatedUnits((prev) =>
+        prev.map((u) =>
+          u.id === targetId ? { ...u, is_favourite: !newFavoriteStatus } : u,
+        ),
+      );
       toast.error("خطأ في الاتصال بالسيرفر", toastOptions);
     }
   };
@@ -186,8 +323,13 @@ export default function PropertyDetails() {
       });
       const result = await response.json();
       if (result.status) {
-        toast.success(result.message || "تم إرسال رسالتك بنجاح", toastOptions);
         setIsModalOpen(false);
+        setTimeout(() => {
+          toast.success(
+            result.message || "تم إرسال رسالتك بنجاح",
+            toastOptions,
+          );
+        }, 100);
         setFormData({
           name: "",
           email: "",
@@ -253,13 +395,7 @@ export default function PropertyDetails() {
     );
   }
 
-  if (!unit) {
-    return (
-      <div className="text-center py-20 font-bold text-xl font-cairo">
-        العقار غير موجود
-      </div>
-    );
-  }
+  if (!unit) return null;
 
   const images =
     unit.media?.filter((m) => m.type === "image").map((m) => m.file_path) || [];
@@ -333,61 +469,102 @@ export default function PropertyDetails() {
 
                 {/* Form Section */}
                 <form onSubmit={handleSendMessage} className="space-y-4">
-                  {/* ... same form inputs ... */}
-                  <p className="font-bold text-gray-700 text-sm mb-1">
+                  <p className="font-bold text-gray-700 text-sm mb-1 text-right">
                     معلوماتك
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <input
-                      required
-                      type="text"
-                      placeholder="الاسم بالكامل"
-                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all text-xs text-right"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                    />
-                    <input
-                      required
-                      type="email"
-                      placeholder="البريد الإلكتروني"
-                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all text-xs text-right"
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                    />
-                    <input
-                      required
-                      type="tel"
-                      placeholder="رقم الهاتف"
-                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all text-xs text-right"
-                      value={formData.phone}
-                      onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value })
-                      }
-                    />
+                    <div>
+                      <input
+                        name="name"
+                        required
+                        type="text"
+                        placeholder="الاسم بالكامل"
+                        className={`w-full px-4 py-2.5 bg-white border rounded-lg outline-none transition-all text-xs text-right ${
+                          errors.name
+                            ? "border-red-500 ring-1 ring-red-500"
+                            : "border-gray-200 focus:border-[#3E5879]"
+                        }`}
+                        value={formData.name}
+                        onChange={handleFormChange}
+                      />
+                      {errors.name && (
+                        <p className="text-red-500 text-[9px] mt-1 pr-1 font-bold">
+                          {errors.name}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        name="email"
+                        required
+                        type="email"
+                        placeholder="البريد الإلكتروني"
+                        className={`w-full px-4 py-2.5 bg-white border rounded-lg outline-none transition-all text-xs text-right ${
+                          errors.email
+                            ? "border-red-500 ring-1 ring-red-500"
+                            : "border-gray-200 focus:border-[#3E5879]"
+                        }`}
+                        value={formData.email}
+                        onChange={handleFormChange}
+                      />
+                      {errors.email && (
+                        <p className="text-red-500 text-[9px] mt-1 pr-1 font-bold">
+                          {errors.email}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        name="phone"
+                        required
+                        type="tel"
+                        placeholder="رقم الهاتف"
+                        className={`w-full px-4 py-2.5 bg-white border rounded-lg outline-none transition-all text-xs text-right ${
+                          errors.phone
+                            ? "border-red-500 ring-1 ring-red-500"
+                            : "border-gray-200 focus:border-[#3E5879]"
+                        }`}
+                        value={formData.phone}
+                        onChange={handleFormChange}
+                      />
+                      {errors.phone && (
+                        <p className="text-red-500 text-[9px] mt-1 pr-1 font-bold">
+                          {errors.phone}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="relative">
+                  <div className="relative text-right">
                     <textarea
+                      name="message"
                       required
                       placeholder="اكتب رسالتك هنا..."
                       rows="3"
-                      className="w-full p-3 bg-white border border-gray-200 rounded-lg outline-none focus:border-[#3E5879] transition-all resize-none text-xs text-right"
+                      className={`w-full p-3 bg-white border rounded-lg outline-none transition-all resize-none text-xs text-right ${
+                        errors.message
+                          ? "border-red-500 ring-1 ring-red-500"
+                          : "border-gray-200 focus:border-[#3E5879]"
+                      }`}
                       value={formData.message}
-                      onChange={(e) =>
-                        setFormData({ ...formData, message: e.target.value })
-                      }
+                      onChange={handleFormChange}
                     ></textarea>
+                    {errors.message && (
+                      <p className="text-red-500 text-[9px] mb-2 pr-1 font-bold">
+                        {errors.message}
+                      </p>
+                    )}
                   </div>
 
                   <button
-                    disabled={submitting}
+                    disabled={submitting || !isFormValid}
                     type="submit"
-                    className="w-full bg-[#465E7D] text-white py-3 rounded-lg font-bold text-base hover:bg-[#3E5879] transition-all disabled:opacity-50 shadow-md"
+                    className={`w-full py-3 rounded-lg font-bold text-base transition-all shadow-md flex items-center justify-center ${
+                      submitting || !isFormValid
+                        ? "bg-gray-400 cursor-not-allowed opacity-70"
+                        : "bg-[#465E7D] text-white hover:bg-[#3E5879]"
+                    }`}
                   >
                     {submitting ? (
                       <Loader2 className="animate-spin mx-auto" size={20} />
@@ -466,12 +643,31 @@ export default function PropertyDetails() {
                     {unit.unit_type?.name || "عقار"}
                   </span>
                 </div>
-                <button
-                  onClick={toggleFavorite}
-                  className={`p-2 rounded-xl transition-all ${isFavorite ? "bg-yellow-50 text-yellow-500 scale-110" : "bg-gray-50 text-gray-300 hover:text-yellow-500"}`}
-                >
-                  <Star size={24} fill={isFavorite ? "currentColor" : "none"} />
-                </button>
+                {token && (
+                  <button
+                    onClick={() => toggleFavorite()}
+                    className={`p-2 rounded-xl transition-all ${
+                      unit.is_favourite === true ||
+                      unit.is_favourite === 1 ||
+                      unit.is_favourite === "1" ||
+                      unit.is_favourite === "true"
+                        ? "bg-yellow-50 text-yellow-500 scale-110"
+                        : "bg-gray-50 text-gray-300 hover:text-yellow-500"
+                    }`}
+                  >
+                    <Star
+                      size={24}
+                      fill={
+                        unit.is_favourite === true ||
+                        unit.is_favourite === 1 ||
+                        unit.is_favourite === "1" ||
+                        unit.is_favourite === "true"
+                          ? "currentColor"
+                          : "none"
+                      }
+                    />
+                  </button>
+                )}
               </div>
               <h1 className="text-3xl md:text-4xl font-black text-[#3E5879] mb-3 leading-tight">
                 {unit.title}
@@ -1138,6 +1334,33 @@ export default function PropertyDetails() {
                       {item.city?.name}
                     </span>
                   </div>
+
+                  {token && (
+                    <button
+                      onClick={(e) => toggleFavorite(item.id, e)}
+                      className={`absolute top-5 right-5 w-8 h-8 backdrop-blur rounded-full flex items-center justify-center transition-colors z-10 ${
+                        item.is_favourite === true ||
+                        item.is_favourite === 1 ||
+                        item.is_favourite === "1" ||
+                        item.is_favourite === "true"
+                          ? "bg-yellow-50 text-yellow-500 shadow-sm"
+                          : "bg-white/80 text-gray-400 hover:text-yellow-500"
+                      }`}
+                    >
+                      <Star
+                        size={16}
+                        fill={
+                          item.is_favourite === true ||
+                          item.is_favourite === 1 ||
+                          item.is_favourite === "1" ||
+                          item.is_favourite === "true"
+                            ? "currentColor"
+                            : "none"
+                        }
+                      />
+                    </button>
+                  )}
+
                   <div className="absolute bottom-5 right-5 bg-[#3E5879] text-white px-4 py-1 rounded-lg text-xs font-bold shadow-lg">
                     {item.offer_type === "rent" ? "للإيجار" : "للبيع"}
                   </div>

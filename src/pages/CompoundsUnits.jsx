@@ -14,11 +14,16 @@ import {
   ChevronLeft,
   Building2,
   Info,
+  Star,
 } from "lucide-react";
+import { useAuth } from "../hooks/useAuth.js";
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 
 function CompoundsUnits() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { token, ensureAuth } = useAuth();
   const [compoundData, setCompoundData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -29,20 +34,117 @@ function CompoundsUnits() {
   useEffect(() => {
     const fetchCompound = async () => {
       try {
+        const headers = {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        };
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
         const response = await axios.get(
           `https://propix8.com/api/compounds/${id}`,
+          { headers },
         );
         if (response.data.status) {
           setCompoundData(response.data.data);
+        } else if (response.data.status === false) {
+          navigate("/notfound", { replace: true });
         }
       } catch (error) {
         // console.error("Error fetching data:", error);
+        navigate("/notfound", { replace: true });
       } finally {
         setLoading(false);
       }
     };
     fetchCompound();
   }, [id]);
+
+  const toggleFavorite = async (unitId, e) => {
+    e.stopPropagation();
+    if (!ensureAuth()) return;
+
+    const currentStatus = !!(
+      compoundData?.units.find((u) => u.id === unitId)?.is_favourite === true ||
+      compoundData?.units.find((u) => u.id === unitId)?.is_favourite === 1 ||
+      compoundData?.units.find((u) => u.id === unitId)?.is_favourite === "1" ||
+      compoundData?.units.find((u) => u.id === unitId)?.is_favourite === "true"
+    );
+    const newFavoriteStatus = !currentStatus;
+
+    // Optimistic Update
+    setCompoundData((prevComp) => {
+      if (!prevComp) return prevComp;
+      return {
+        ...prevComp,
+        units: prevComp.units.map((unit) => {
+          if (unit.id === unitId) {
+            return { ...unit, is_favourite: newFavoriteStatus };
+          }
+          return unit;
+        }),
+      };
+    });
+
+    try {
+      const response = await fetch("https://propix8.com/api/favorites/toggle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ unit_id: unitId }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Use result.status directly as returned by API (true = added, false = removed)
+        const finalStatus = result.status;
+        setCompoundData((prevComp) => {
+          if (!prevComp) return prevComp;
+          return {
+            ...prevComp,
+            units: prevComp.units.map((unit) =>
+              unit.id === unitId
+                ? { ...unit, is_favourite: finalStatus }
+                : unit,
+            ),
+          };
+        });
+        toast.success(result.message, toastOptions);
+      } else {
+        // Rollback
+        setCompoundData((prevComp) => {
+          if (!prevComp) return prevComp;
+          return {
+            ...prevComp,
+            units: prevComp.units.map((unit) =>
+              unit.id === unitId
+                ? { ...unit, is_favourite: !newFavoriteStatus }
+                : unit,
+            ),
+          };
+        });
+        toast.error(result.message || "حدث خطأ، حاول مرة أخرى", toastOptions);
+      }
+    } catch (error) {
+      // Rollback
+      setCompoundData((prevComp) => {
+        if (!prevComp) return prevComp;
+        return {
+          ...prevComp,
+          units: prevComp.units.map((unit) =>
+            unit.id === unitId
+              ? { ...unit, is_favourite: !newFavoriteStatus }
+              : unit,
+          ),
+        };
+      });
+      toast.error("خطأ في الاتصال بالسيرفر", toastOptions);
+    }
+  };
 
   if (loading)
     return (
@@ -57,12 +159,7 @@ function CompoundsUnits() {
       </div>
     );
 
-  if (!compoundData)
-    return (
-      <div className="text-center py-20 font-bold text-red-500 font-cairo">
-        لم يتم العثور على الكومباوند!
-      </div>
-    );
+  if (!compoundData) return null;
 
   // حسابات الـ Pagination
   const indexOfLastUnit = currentPage * unitsPerPage;
@@ -168,6 +265,32 @@ function CompoundsUnits() {
                 <div className="absolute top-6 right-6 bg-white/95 backdrop-blur px-5 py-2 rounded-2xl text-xs font-black shadow-xl text-[#3E5879]">
                   لـ {unit.offer_type === "rent" ? "الإيجار" : "البيع"}
                 </div>
+
+                {token && (
+                  <button
+                    onClick={(e) => toggleFavorite(unit.id, e)}
+                    className={`absolute top-6 left-6 w-10 h-10 backdrop-blur rounded-full flex items-center justify-center transition-colors z-10 ${
+                      unit.is_favourite === true ||
+                      unit.is_favourite === 1 ||
+                      unit.is_favourite === "1" ||
+                      unit.is_favourite === "true"
+                        ? "bg-yellow-50 text-yellow-500 shadow-sm"
+                        : "bg-white/80 text-gray-400 hover:text-yellow-500"
+                    }`}
+                  >
+                    <Star
+                      size={20}
+                      fill={
+                        unit.is_favourite === true ||
+                        unit.is_favourite === 1 ||
+                        unit.is_favourite === "1" ||
+                        unit.is_favourite === "true"
+                          ? "currentColor"
+                          : "none"
+                      }
+                    />
+                  </button>
+                )}
                 <div className="absolute bottom-6 right-6">
                   <div className="bg-[#3E5879] text-white px-5 py-2.5 rounded-2xl shadow-2xl font-black text-xl border border-white/20">
                     {parseFloat(unit.price).toLocaleString()}{" "}

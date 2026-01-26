@@ -70,15 +70,42 @@ function UserFavorites() {
       });
 
       const result = await response.json();
-      if (result.status) {
-        toast.success("تمت إزالة العقار من قائمة مفضلاتك");
+      if (response.ok) {
+        // In this page, if result.status is false, it means removed successfully
+        if (result.status === false) {
+          toast.success("تمت إزالة العقار من قائمة مفضلاتك");
+          setFavorites((prev) => prev.filter((fav) => fav.unit.id !== unitId));
+        } else {
+          // It was somehow added back? Update its status to true and keep it.
+          setFavorites((prev) =>
+            prev.map((fav) =>
+              fav.unit.id === unitId
+                ? { ...fav, unit: { ...fav.unit, is_favourite: true } }
+                : fav,
+            ),
+          );
+          deletedIds.current.delete(unitId);
+        }
       } else {
         deletedIds.current.delete(unitId);
-        fetchFavorites(pagination.current_page);
+        setFavorites((prev) =>
+          prev.map((fav) =>
+            fav.unit.id === unitId
+              ? { ...fav, unit: { ...fav.unit, is_favourite: true } }
+              : fav,
+          ),
+        );
         toast.error(result.message || "فشل في تعديل المفضلة");
       }
     } catch (error) {
       deletedIds.current.delete(unitId);
+      setFavorites((prev) =>
+        prev.map((fav) =>
+          fav.unit.id === unitId
+            ? { ...fav, unit: { ...fav.unit, is_favourite: true } }
+            : fav,
+        ),
+      );
       toast.error("خطأ في الشبكة");
     }
   };

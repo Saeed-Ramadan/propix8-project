@@ -46,7 +46,53 @@ export default function Services() {
     address: "",
     message: "",
   });
+  const [errors, setErrors] = useState({
+    phone: "",
+    address: "",
+    message: "",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[0-9]{10,15}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const handleBookingChange = (e) => {
+    const { name, value } = e.target;
+    setBookingFormData({ ...bookingFormData, [name]: value });
+
+    if (name === "phone") {
+      setErrors((prev) => ({
+        ...prev,
+        phone: !validatePhone(value) ? "يرجى إدخال رقم هاتف صحيح" : "",
+      }));
+    }
+
+    if (name === "address") {
+      setErrors((prev) => ({
+        ...prev,
+        address:
+          value.length < 10 ? "العنوان يجب أن يكون 10 أحرف على الأقل" : "",
+      }));
+    }
+
+    if (name === "message" && value.length > 0) {
+      setErrors((prev) => ({
+        ...prev,
+        message:
+          value.length < 10 ? "الرسالة يجب أن تكون 10 أحرف على الأقل" : "",
+      }));
+    } else if (name === "message") {
+      setErrors((prev) => ({ ...prev, message: "" }));
+    }
+  };
+
+  const isFormValid =
+    validatePhone(bookingFormData.phone) &&
+    bookingFormData.address.length >= 10 &&
+    (bookingFormData.message === "" || bookingFormData.message.length >= 10) &&
+    !Object.values(errors).some((err) => err !== "");
 
   const homeRef = useRef(null);
   const technicalRef = useRef(null);
@@ -402,18 +448,23 @@ export default function Services() {
                       size={18}
                     />
                     <input
+                      name="phone"
                       required
                       type="tel"
                       placeholder="مثال: 01234567890"
-                      className="w-full bg-gray-50 border-none rounded-[0.5rem] p-2 pr-12 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all"
+                      className={`w-full bg-gray-50 border rounded-[0.5rem] p-2 pr-12 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all ${
+                        errors.phone
+                          ? "border-red-500 ring-1 ring-red-500"
+                          : "border-transparent"
+                      }`}
                       value={bookingFormData.phone}
-                      onChange={(e) =>
-                        setBookingFormData({
-                          ...bookingFormData,
-                          phone: e.target.value,
-                        })
-                      }
+                      onChange={handleBookingChange}
                     />
+                    {errors.phone && (
+                      <p className="text-red-500 text-[10px] mt-1 mr-1 font-bold">
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -427,18 +478,23 @@ export default function Services() {
                       size={18}
                     />
                     <input
+                      name="address"
                       required
                       type="text"
                       placeholder="المدينة والشارع ورقم العقار..."
-                      className="w-full bg-gray-50 border-none rounded-[0.5rem] p-2 pr-12 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all"
+                      className={`w-full bg-gray-50 border rounded-[0.5rem] p-2 pr-12 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all ${
+                        errors.address
+                          ? "border-red-500 ring-1 ring-red-500"
+                          : "border-transparent"
+                      }`}
                       value={bookingFormData.address}
-                      onChange={(e) =>
-                        setBookingFormData({
-                          ...bookingFormData,
-                          address: e.target.value,
-                        })
-                      }
+                      onChange={handleBookingChange}
                     />
+                    {errors.address && (
+                      <p className="text-red-500 text-[10px] mt-1 mr-1 font-bold">
+                        {errors.address}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -447,23 +503,32 @@ export default function Services() {
                     رسالة نصية (اختياري)
                   </label>
                   <textarea
+                    name="message"
                     rows="3"
                     placeholder="أي تعليمات إضافية ترغب في ذكرها..."
-                    className="w-full bg-gray-50 border-none rounded-[0.5rem] p-2 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all resize-none"
+                    className={`w-full bg-gray-50 border rounded-[0.5rem] p-2 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all resize-none ${
+                      errors.message
+                        ? "border-red-500 ring-1 ring-red-500"
+                        : "border-transparent"
+                    }`}
                     value={bookingFormData.message}
-                    onChange={(e) =>
-                      setBookingFormData({
-                        ...bookingFormData,
-                        message: e.target.value,
-                      })
-                    }
+                    onChange={handleBookingChange}
                   />
+                  {errors.message && (
+                    <p className="text-red-500 text-[10px] mt-1 mr-1 font-bold">
+                      {errors.message}
+                    </p>
+                  )}
                 </div>
 
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-2 bg-[#3E5879] text-white rounded-[0.5rem] font-black text-lg hover:bg-[#2C3E50] transition-all shadow-xl shadow-[#3E5879]/20 disabled:opacity-50 flex items-center justify-center gap-3"
+                  disabled={isSubmitting || !isFormValid}
+                  className={`w-full py-2 rounded-[0.5rem] font-black text-lg transition-all shadow-xl flex items-center justify-center gap-3 ${
+                    isSubmitting || !isFormValid
+                      ? "bg-gray-400 cursor-not-allowed opacity-70"
+                      : "bg-[#3E5879] text-white hover:bg-[#2C3E50] shadow-[#3E5879]/20"
+                  }`}
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin" size={20} />

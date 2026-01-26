@@ -31,6 +31,22 @@ export default function Booking() {
     agreed: false,
   });
 
+  const [errors, setErrors] = useState({
+    name: "",
+    phone: "",
+    email: "",
+  });
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[0-9]{10,15}$/;
+    return phoneRegex.test(phone);
+  };
+
   const today = new Date().toISOString().split("T")[0];
   const currentTime = new Date().toLocaleTimeString("en-GB", {
     hour: "2-digit",
@@ -49,7 +65,44 @@ export default function Booking() {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+
+    // Real-time validation
+    if (name === "name") {
+      setErrors((prev) => ({
+        ...prev,
+        name: value.length < 3 ? "الاسم يجب أن يكون 3 أحرف على الأقل" : "",
+      }));
+    }
+
+    if (name === "phone") {
+      setErrors((prev) => ({
+        ...prev,
+        phone: !validatePhone(value) ? "يرجى إدخال رقم هاتف صحيح" : "",
+      }));
+    }
+
+    if (name === "email") {
+      if (value === "") {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      } else if (!validateEmail(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          email: "يرجى إدخال بريد إلكتروني صحيح",
+        }));
+      } else {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      }
+    }
   };
+
+  const isFormValid =
+    formData.name.length >= 3 &&
+    validatePhone(formData.phone) &&
+    validateEmail(formData.email) &&
+    formData.date &&
+    formData.time &&
+    formData.agreed &&
+    !Object.values(errors).some((err) => err !== "");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -134,12 +187,21 @@ export default function Booking() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="أدخل اسمك بالكامل"
-                  className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
+                  className={`w-full bg-gray-50 border rounded-lg p-3 pr-10 outline-none transition-all ${
+                    errors.name
+                      ? "border-red-500 ring-1 ring-red-500"
+                      : "border-transparent focus:ring-2 focus:ring-[#415a77]"
+                  }`}
                 />
                 <User
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                   size={18}
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-[10px] mt-1 mr-1 font-bold">
+                    {errors.name}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -155,12 +217,21 @@ export default function Booking() {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="رقم الهاتف"
-                  className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
+                  className={`w-full bg-gray-50 border rounded-lg p-3 pr-10 outline-none transition-all ${
+                    errors.phone
+                      ? "border-red-500 ring-1 ring-red-500"
+                      : "border-transparent focus:ring-2 focus:ring-[#415a77]"
+                  }`}
                 />
                 <Phone
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                   size={18}
                 />
+                {errors.phone && (
+                  <p className="text-red-500 text-[10px] mt-1 mr-1 font-bold">
+                    {errors.phone}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -176,12 +247,21 @@ export default function Booking() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="البريد الإلكتروني"
-                  className="w-full bg-gray-50 border-none rounded-lg p-3 pr-10 focus:ring-2 focus:ring-[#415a77] outline-none text-right"
+                  className={`w-full bg-gray-50 border rounded-lg p-3 pr-10 outline-none transition-all ${
+                    errors.email
+                      ? "border-red-500 ring-1 ring-red-500"
+                      : "border-transparent focus:ring-2 focus:ring-[#415a77]"
+                  }`}
                 />
                 <Mail
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                   size={18}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-[10px] mt-1 mr-1 font-bold">
+                    {errors.email}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -270,14 +350,17 @@ export default function Booking() {
 
             <button
               type="submit"
-              disabled={submitting}
-              className="w-full bg-[#415a77] text-white font-bold py-4 rounded-lg hover:bg-[#34495e] transition duration-300 shadow-lg mt-4 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={submitting || !isFormValid}
+              className={`w-full py-4 rounded-lg font-bold transition duration-300 shadow-lg mt-4 flex items-center justify-center gap-2 ${
+                submitting || !isFormValid
+                  ? "bg-gray-400 cursor-not-allowed opacity-70"
+                  : "bg-[#415a77] text-white hover:bg-[#34495e]"
+              }`}
             >
               {submitting ? (
                 <>
-                  {" "}
                   <Loader2 className="animate-spin" size={20} /> جاري
-                  المعالجة...{" "}
+                  المعالجة...
                 </>
               ) : (
                 "تأكيد الحجز"

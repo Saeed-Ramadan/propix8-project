@@ -10,13 +10,14 @@ import {
   Loader2,
   ArrowLeftRight,
   Home,
-  Heart,
+  Star,
   Filter,
   Calendar,
   Car,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth.js";
 import { toast } from "react-toastify";
 import { toastOptions } from "../utils/toastConfig.js";
 import ImagePlaceholder from "../components/common/ImagePlaceholder";
@@ -54,7 +55,7 @@ function UnitsListing() {
   });
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("userToken"); // جلب التوكن للتأكد من تسجيل الدخول
+  const { token, ensureAuth } = useAuth();
 
   // 1. جلب بيانات الفلاتر (مدن، كمبوندات، مطورين) عند تحميل الصفحة
   useEffect(() => {
@@ -167,13 +168,20 @@ function UnitsListing() {
       return;
     }
 
-    // Optimistic Update - تحديث الحالة مباشرة قبل الـ API
+    // Robust boolean check
     setUnits((prevUnits) =>
-      prevUnits.map((unit) =>
-        unit.id === unitId
-          ? { ...unit, is_favourite: !unit.is_favourite }
-          : unit,
-      ),
+      prevUnits.map((unit) => {
+        if (unit.id === unitId) {
+          const currentStatus = !!(
+            unit.is_favourite === true ||
+            unit.is_favourite === 1 ||
+            unit.is_favourite === "1" ||
+            unit.is_favourite === "true"
+          );
+          return { ...unit, is_favourite: !currentStatus };
+        }
+        return unit;
+      }),
     );
 
     try {
@@ -189,29 +197,35 @@ function UnitsListing() {
 
       const result = await response.json();
 
-      if (!response.ok || !result.status) {
-        // Rollback في حالة الفشل
+      if (response.ok) {
+        // Use result.status directly as returned by API (true = added, false = removed)
+        const finalStatus = result.status;
+        setUnits((prevUnits) =>
+          prevUnits.map((unit) =>
+            unit.id === unitId ? { ...unit, is_favourite: finalStatus } : unit,
+          ),
+        );
+        toast.success(result.message, toastOptions);
+      } else {
+        // Rollback
         setUnits((prevUnits) =>
           prevUnits.map((unit) =>
             unit.id === unitId
-              ? { ...unit, is_favourite: !unit.is_favourite }
+              ? { ...unit, is_favourite: !newFavoriteStatus }
               : unit,
           ),
         );
         toast.error(result.message || "حدث خطأ، حاول مرة أخرى", toastOptions);
-      } else {
-        toast.success(result.message, toastOptions);
       }
     } catch (error) {
-      // Rollback في حالة الخطأ
+      // Rollback
       setUnits((prevUnits) =>
         prevUnits.map((unit) =>
           unit.id === unitId
-            ? { ...unit, is_favourite: !unit.is_favourite }
+            ? { ...unit, is_favourite: !newFavoriteStatus }
             : unit,
         ),
       );
-      // console.error("Favorite Toggle Error:", error);
       toast.error("خطأ في الاتصال بالسيرفر", toastOptions);
     }
   };
@@ -571,11 +585,25 @@ function UnitsListing() {
                         {token && (
                           <button
                             onClick={(e) => toggleFavorite(unit.id, e)}
-                            className={`absolute top-4 left-4 w-8 h-8 backdrop-blur rounded-full flex items-center justify-center transition-colors z-10 ${unit.is_favourite ? "bg-red-50 text-red-500 shadow-sm" : "bg-white/80 text-gray-400 hover:text-red-500"}`}
+                            className={`absolute top-4 left-4 w-8 h-8 backdrop-blur rounded-full flex items-center justify-center transition-colors z-10 ${
+                              unit.is_favourite === true ||
+                              unit.is_favourite === 1 ||
+                              unit.is_favourite === "1" ||
+                              unit.is_favourite === "true"
+                                ? "bg-yellow-50 text-yellow-500 shadow-sm"
+                                : "bg-white/80 text-gray-400 hover:text-yellow-500"
+                            }`}
                           >
-                            <Heart
+                            <Star
                               size={16}
-                              fill={unit.is_favourite ? "currentColor" : "none"}
+                              fill={
+                                unit.is_favourite === true ||
+                                unit.is_favourite === 1 ||
+                                unit.is_favourite === "1" ||
+                                unit.is_favourite === "true"
+                                  ? "currentColor"
+                                  : "none"
+                              }
                             />
                           </button>
                         )}

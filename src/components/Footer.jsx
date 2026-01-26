@@ -86,7 +86,7 @@ export default function Footer() {
             </li>
             <li>
               <a
-                href="#"
+                href="/units"
                 className="hover:text-white hover:pr-2 transition-all duration-300"
               >
                 المشاريع الجديدة
@@ -94,7 +94,7 @@ export default function Footer() {
             </li>
             <li>
               <a
-                href="#"
+                href="/units"
                 className="hover:text-white hover:pr-2 transition-all duration-300"
               >
                 الوحدات المميزة

@@ -31,6 +31,22 @@ export default function ContactUs() {
 
   const [loading, setLoading] = useState(false);
   const [responseMsg, setResponseMsg] = useState({ text: "", isError: false });
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[0-9]{10,15}$/;
+    return phoneRegex.test(phone);
+  };
 
   // 3. سحب بيانات الإعدادات عند فتح الصفحة
   useEffect(() => {
@@ -49,8 +65,53 @@ export default function ContactUs() {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // Real-time validation
+    if (name === "name") {
+      setErrors((prev) => ({
+        ...prev,
+        name: value.length < 3 ? "الاسم يجب أن يكون 3 أحرف على الأقل" : "",
+      }));
+    }
+
+    if (name === "email") {
+      if (value === "") {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      } else if (!validateEmail(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          email: "يرجى إدخال بريد إلكتروني صحيح",
+        }));
+      } else {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      }
+    }
+
+    if (name === "phone") {
+      setErrors((prev) => ({
+        ...prev,
+        phone: !validatePhone(value) ? "يرجى إدخال رقم هاتف صحيح" : "",
+      }));
+    }
+
+    if (name === "message") {
+      setErrors((prev) => ({
+        ...prev,
+        message:
+          value.length < 10 ? "الرسالة يجب أن تكون 10 أحرف على الأقل" : "",
+      }));
+    }
   };
+
+  const isFormValid =
+    formData.name.length >= 3 &&
+    validateEmail(formData.email) &&
+    validatePhone(formData.phone) &&
+    formData.message.length >= 10 &&
+    formData.address &&
+    !Object.values(errors).some((err) => err !== "");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -151,25 +212,47 @@ export default function ContactUs() {
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                type="text"
-                placeholder="ادخل اسمك هنا"
-                className="w-full bg-white border-none rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 outline-none focus:ring-1 focus:ring-[#465E7E]"
-              />
+              <div>
+                <input
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  type="text"
+                  placeholder="ادخل اسمك هنا"
+                  className={`w-full bg-white border rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 outline-none transition-all ${
+                    errors.name
+                      ? "border-red-500 ring-1 ring-red-500"
+                      : "border-none focus:ring-1 focus:ring-[#465E7E]"
+                  }`}
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-[10px] mt-1 mr-1 font-bold">
+                    {errors.name}
+                  </p>
+                )}
+              </div>
 
-              <input
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                type="email"
-                placeholder="بريدك الإلكتروني"
-                className="w-full bg-white border-none rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 outline-none focus:ring-1 focus:ring-[#465E7E]"
-              />
+              <div>
+                <input
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  type="email"
+                  placeholder="بريدك الإلكتروني"
+                  className={`w-full bg-white border rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 outline-none transition-all ${
+                    errors.email
+                      ? "border-red-500 ring-1 ring-red-500"
+                      : "border-none focus:ring-1 focus:ring-[#465E7E]"
+                  }`}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-[10px] mt-1 mr-1 font-bold">
+                    {errors.email}
+                  </p>
+                )}
+              </div>
 
               <input
                 name="address"
@@ -189,32 +272,49 @@ export default function ContactUs() {
                   required
                   type="tel"
                   placeholder="رقم التليفون"
-                  className="w-full bg-white border-none rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 outline-none focus:ring-1 focus:ring-[#465E7E]"
+                  className={`w-full bg-white border rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 outline-none transition-all ${
+                    errors.phone
+                      ? "border-red-500 ring-1 ring-red-500"
+                      : "border-none focus:ring-1 focus:ring-[#465E7E]"
+                  }`}
                 />
-                <div className="absolute inset-y-0 left-3 flex items-center gap-1 border-r border-gray-100 pr-2">
-                  <img
-                    src="https://flagcdn.com/w20/eg.png"
-                    alt="Egypt"
-                    className="w-4 h-auto"
-                  />
-                  <span className="text-[10px] text-gray-400">▼</span>
-                </div>
+
+                {errors.phone && (
+                  <p className="text-red-500 text-[10px] mt-1 mr-1 font-bold">
+                    {errors.phone}
+                  </p>
+                )}
               </div>
 
-              <textarea
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-                placeholder="رسالة"
-                rows="3"
-                className="w-full bg-white border-none rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 resize-none outline-none focus:ring-1 focus:ring-[#465E7E]"
-              ></textarea>
+              <div>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  placeholder="رسالة"
+                  rows="3"
+                  className={`w-full bg-white border rounded-lg py-3 px-4 text-xs shadow-sm text-right placeholder-gray-400 resize-none outline-none transition-all ${
+                    errors.message
+                      ? "border-red-500 ring-1 ring-red-500"
+                      : "border-none focus:ring-1 focus:ring-[#465E7E]"
+                  }`}
+                ></textarea>
+                {errors.message && (
+                  <p className="text-red-500 text-[10px] mt-1 mr-1 font-bold">
+                    {errors.message}
+                  </p>
+                )}
+              </div>
 
               <button
-                disabled={loading}
+                disabled={loading || !isFormValid}
                 type="submit"
-                className="w-full bg-[#465E7E] text-white font-bold py-3.5 rounded-lg hover:bg-[#354862] transition-all shadow-md text-md flex items-center justify-center gap-2 disabled:opacity-70"
+                className={`w-full py-3.5 rounded-lg font-bold transition-all shadow-md text-md flex items-center justify-center gap-2 ${
+                  loading || !isFormValid
+                    ? "bg-gray-400 cursor-not-allowed opacity-70"
+                    : "bg-[#465E7E] text-white hover:bg-[#354862]"
+                }`}
               >
                 {loading ? (
                   <Loader2 className="animate-spin" size={20} />

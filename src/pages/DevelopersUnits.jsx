@@ -13,13 +13,17 @@ import {
   ArrowLeft,
   Loader2,
   Info,
+  Star,
 } from "lucide-react";
+import { useAuth } from "../hooks/useAuth.js";
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 
 function DevelopersUnits() {
   // سحب الـ ID من الـ URL (مثلاً: /developer/2)
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const { token, ensureAuth } = useAuth();
   const [developer, setDeveloper] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -28,20 +32,116 @@ function DevelopersUnits() {
     // التأكد من وجود ID قبل طلب البيانات
     if (id) {
       setLoading(true);
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
       axios
-        .get(`https://propix8.com/api/developers/${id}`)
+        .get(`https://propix8.com/api/developers/${id}`, { headers })
         .then((response) => {
           if (response.data.status) {
             setDeveloper(response.data.data);
+          } else if (response.data.status === false) {
+            navigate("/notfound", { replace: true });
           }
           setLoading(false);
         })
         .catch((err) => {
           // console.error("Error fetching developer data:", err);
           setLoading(false);
+          navigate("/notfound", { replace: true });
         });
     }
   }, [id]); // إعادة الطلب عند تغيير الـ ID في الـ URL
+
+  const toggleFavorite = async (unitId, e) => {
+    e.stopPropagation();
+    if (!ensureAuth()) return;
+
+    const currentStatus = !!(
+      developer?.units.find((u) => u.id === unitId)?.is_favourite === true ||
+      developer?.units.find((u) => u.id === unitId)?.is_favourite === 1 ||
+      developer?.units.find((u) => u.id === unitId)?.is_favourite === "1" ||
+      developer?.units.find((u) => u.id === unitId)?.is_favourite === "true"
+    );
+    const newFavoriteStatus = !currentStatus;
+
+    // Optimistic Update
+    setDeveloper((prevDev) => {
+      if (!prevDev) return prevDev;
+      return {
+        ...prevDev,
+        units: prevDev.units.map((unit) => {
+          if (unit.id === unitId) {
+            return { ...unit, is_favourite: newFavoriteStatus };
+          }
+          return unit;
+        }),
+      };
+    });
+
+    try {
+      const response = await fetch("https://propix8.com/api/favorites/toggle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ unit_id: unitId }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Use result.status directly as returned by API (true = added, false = removed)
+        const finalStatus = result.status;
+        setDeveloper((prevDev) => {
+          if (!prevDev) return prevDev;
+          return {
+            ...prevDev,
+            units: prevDev.units.map((unit) =>
+              unit.id === unitId
+                ? { ...unit, is_favourite: finalStatus }
+                : unit,
+            ),
+          };
+        });
+        toast.success(result.message, toastOptions);
+      } else {
+        // Rollback
+        setDeveloper((prevDev) => {
+          if (!prevDev) return prevDev;
+          return {
+            ...prevDev,
+            units: prevDev.units.map((unit) =>
+              unit.id === unitId
+                ? { ...unit, is_favourite: !newFavoriteStatus }
+                : unit,
+            ),
+          };
+        });
+        toast.error(result.message || "حدث خطأ، حاول مرة أخرى", toastOptions);
+      }
+    } catch (error) {
+      // Rollback
+      setDeveloper((prevDev) => {
+        if (!prevDev) return prevDev;
+        return {
+          ...prevDev,
+          units: prevDev.units.map((unit) =>
+            unit.id === unitId
+              ? { ...unit, is_favourite: !newFavoriteStatus }
+              : unit,
+          ),
+        };
+      });
+      toast.error("خطأ في الاتصال بالسيرفر", toastOptions);
+    }
+  };
 
   if (loading) {
     return (
@@ -51,13 +151,7 @@ function DevelopersUnits() {
     );
   }
 
-  if (!developer) {
-    return (
-      <div className="text-center py-20 font-bold text-[#3E5879]">
-        عذراً، لم يتم العثور على بيانات هذا المطور (ID: {id})
-      </div>
-    );
-  }
+  if (!developer) return null;
 
   const filteredUnits = developer.units.filter((unit) =>
     filter === "all" ? true : unit.offer_type === filter,
@@ -191,6 +285,32 @@ function DevelopersUnits() {
                 >
                   {unit.offer_type === "rent" ? "للإيجار" : "للبيع"}
                 </div>
+
+                {token && (
+                  <button
+                    onClick={(e) => toggleFavorite(unit.id, e)}
+                    className={`absolute top-6 left-6 w-10 h-10 backdrop-blur rounded-full flex items-center justify-center transition-colors z-10 ${
+                      unit.is_favourite === true ||
+                      unit.is_favourite === 1 ||
+                      unit.is_favourite === "1" ||
+                      unit.is_favourite === "true"
+                        ? "bg-yellow-50 text-yellow-500 shadow-sm"
+                        : "bg-white/80 text-gray-400 hover:text-yellow-500"
+                    }`}
+                  >
+                    <Star
+                      size={20}
+                      fill={
+                        unit.is_favourite === true ||
+                        unit.is_favourite === 1 ||
+                        unit.is_favourite === "1" ||
+                        unit.is_favourite === "true"
+                          ? "currentColor"
+                          : "none"
+                      }
+                    />
+                  </button>
+                )}
                 <div className="absolute bottom-6 right-6 left-6 text-white">
                   <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-80">
                     {unit.unit_type.name}

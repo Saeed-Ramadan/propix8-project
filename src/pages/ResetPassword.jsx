@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EyeOff, Eye, Loader2, Lock } from "lucide-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -22,10 +22,70 @@ export default function ResetPassword() {
     password: "",
     password_confirmation: "",
   });
+  const [errors, setErrors] = useState({
+    password: "",
+    password_confirmation: "",
+  });
+
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem("siteSettings");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch("https://propix8.com/api/settings");
+        const result = await response.json();
+        if (result.status) {
+          setSettings(result.data);
+          localStorage.setItem("siteSettings", JSON.stringify(result.data));
+        }
+      } catch (error) {
+        // console.error("Error fetching settings:", error);
+      }
+    };
+    if (!settings) fetchSettings();
+  }, [settings]);
+
+  const validatePassword = (password) => {
+    const hasLetter = /[a-zA-Z]/.test(password);
+    return hasLetter;
+  };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // Real-time validation
+    if (name === "password") {
+      if (value === "") {
+        setErrors((prev) => ({ ...prev, password: "" }));
+      } else if (!validatePassword(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          password: "يجب أن تحتوي كلمة المرور على حرف واحد على الأقل",
+        }));
+      } else {
+        setErrors((prev) => ({ ...prev, password: "" }));
+      }
+    }
+
+    if (name === "password_confirmation") {
+      setErrors((prev) => ({
+        ...prev,
+        password_confirmation:
+          value !== formData.password ? "كلمتا المرور غير متطابقتين" : "",
+      }));
+    }
   };
+
+  const isFormValid =
+    formData.password &&
+    validatePassword(formData.password) &&
+    formData.password === formData.password_confirmation &&
+    !errors.password &&
+    !errors.password_confirmation;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,11 +131,15 @@ export default function ResetPassword() {
         <div className="relative h-full w-full">
           <img
             src={signupImg}
-            className="w-full h-full object-cover rounded-[2.5rem]"
+            className="w-full h-full object-cover rounded-[0.5rem]"
             alt="reset"
           />
           <div className="absolute inset-0 flex items-start justify-center pt-12">
-            <img src={logo} alt="Logo" className="w-44" />
+            <img
+              src={settings?.site_logo || logo}
+              alt="Logo"
+              className="w-44"
+            />
           </div>
         </div>
       </div>
@@ -116,7 +180,11 @@ export default function ResetPassword() {
                 required
                 placeholder="كلمة المرور الجديدة"
                 onChange={handleChange}
-                className="w-full bg-white border-none px-10 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-left"
+                className={`w-full bg-white border-2 px-10 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-left transition-all ${
+                  errors.password
+                    ? "border-red-500 ring-1 ring-red-500"
+                    : "border-transparent"
+                }`}
                 dir="ltr"
               />
               <button
@@ -126,6 +194,11 @@ export default function ResetPassword() {
               >
                 {showPass ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
+              {errors.password && (
+                <p className="text-red-500 text-[10px] font-bold mt-1 mr-1 animate-pulse">
+                  {errors.password}
+                </p>
+              )}
             </div>
 
             <div className="relative">
@@ -135,7 +208,11 @@ export default function ResetPassword() {
                 required
                 placeholder="تأكيد كلمة المرور"
                 onChange={handleChange}
-                className="w-full bg-white border-none px-10 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-left"
+                className={`w-full bg-white border-2 px-10 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-left transition-all ${
+                  errors.password_confirmation
+                    ? "border-red-500 ring-1 ring-red-500"
+                    : "border-transparent"
+                }`}
                 dir="ltr"
               />
               <button
@@ -145,12 +222,21 @@ export default function ResetPassword() {
               >
                 {showConfirmPass ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
+              {errors.password_confirmation && (
+                <p className="text-red-500 text-[10px] font-bold mt-1 mr-1 animate-pulse">
+                  {errors.password_confirmation}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-[#3E5879] text-white py-4 rounded-xl font-bold text-xl hover:bg-[#2d415a] transition-all shadow-lg flex justify-center items-center gap-2"
+              disabled={loading || !isFormValid}
+              className={`w-full py-4 rounded-xl font-bold text-xl transition-all shadow-lg flex justify-center items-center gap-2 ${
+                loading || !isFormValid
+                  ? "bg-gray-400 cursor-not-allowed opacity-70"
+                  : "bg-[#3E5879] text-white hover:bg-[#2d415a]"
+              }`}
             >
               {loading ? (
                 <Loader2 className="animate-spin" />

@@ -24,6 +24,7 @@ import {
   ChevronUp,
   AlertCircle,
   CheckCircle2,
+  Star,
 } from "lucide-react";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,17 @@ import { useAuth } from "../hooks/useAuth.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 export default function Home() {
+  const toastOptions = {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+    className: "font-black font-cairo !rounded-2xl",
+  };
   const navigate = useNavigate();
   const { token, userData, ensureAuth } = useAuth();
   const scrollRef = useRef(null);
@@ -158,7 +170,16 @@ export default function Home() {
         typeId === "all"
           ? `https://propix8.com/api/units?page=${page}`
           : `https://propix8.com/api/units?unit_type_id=${typeId}&page=${page}`;
-      const res = await fetch(url);
+
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(url, { headers });
       const result = await res.json();
       setUnits(result.data || []);
       if (result.pagination) {
@@ -171,6 +192,108 @@ export default function Home() {
       // console.error("Error fetching units:", error);
     } finally {
       setUnitsLoading(false);
+    }
+  };
+
+  const toggleFavorite = async (unitId, e) => {
+    e.stopPropagation();
+    if (!ensureAuth()) return;
+
+    const currentStatus =
+      !!(
+        units.find((u) => u.id === unitId)?.is_favourite === true ||
+        units.find((u) => u.id === unitId)?.is_favourite === 1 ||
+        units.find((u) => u.id === unitId)?.is_favourite === "1" ||
+        units.find((u) => u.id === unitId)?.is_favourite === "true"
+      ) ||
+      !!(
+        searchResults.find((u) => u.id === unitId)?.is_favourite === true ||
+        searchResults.find((u) => u.id === unitId)?.is_favourite === 1 ||
+        searchResults.find((u) => u.id === unitId)?.is_favourite === "1" ||
+        searchResults.find((u) => u.id === unitId)?.is_favourite === "true"
+      );
+    const newFavoriteStatus = !currentStatus;
+
+    // Optimistic Update
+    setUnits((prevUnits) =>
+      prevUnits.map((unit) => {
+        if (unit.id === unitId) {
+          return { ...unit, is_favourite: newFavoriteStatus };
+        }
+        return unit;
+      }),
+    );
+    setSearchResults((prevResults) =>
+      prevResults.map((unit) => {
+        if (unit.id === unitId) {
+          return { ...unit, is_favourite: newFavoriteStatus };
+        }
+        return unit;
+      }),
+    );
+
+    try {
+      const response = await fetch("https://propix8.com/api/favorites/toggle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ unit_id: unitId }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Use result.status directly as returned by API (true = added, false = removed)
+        const finalStatus = result.status;
+        setUnits((prevUnits) =>
+          prevUnits.map((unit) =>
+            unit.id === unitId ? { ...unit, is_favourite: finalStatus } : unit,
+          ),
+        );
+        setSearchResults((prevResults) =>
+          prevResults.map((unit) =>
+            unit.id === unitId ? { ...unit, is_favourite: finalStatus } : unit,
+          ),
+        );
+        toast.success(result.message, toastOptions);
+      } else {
+        // Rollback
+        setUnits((prevUnits) =>
+          prevUnits.map((unit) =>
+            unit.id === unitId
+              ? { ...unit, is_favourite: !newFavoriteStatus }
+              : unit,
+          ),
+        );
+        setSearchResults((prevResults) =>
+          prevResults.map((unit) =>
+            unit.id === unitId
+              ? { ...unit, is_favourite: !newFavoriteStatus }
+              : unit,
+          ),
+        );
+        toast.error(result.message || "حدث خطأ، حاول مرة أخرى", toastOptions);
+      }
+    } catch (error) {
+      // Rollback
+      setUnits((prevUnits) =>
+        prevUnits.map((unit) =>
+          unit.id === unitId
+            ? { ...unit, is_favourite: !newFavoriteStatus }
+            : unit,
+        ),
+      );
+      setSearchResults((prevResults) =>
+        prevResults.map((unit) =>
+          unit.id === unitId
+            ? { ...unit, is_favourite: !newFavoriteStatus }
+            : unit,
+        ),
+      );
+      toast.error("خطأ في الاتصال بالسيرفر", toastOptions);
     }
   };
 
@@ -327,8 +450,17 @@ export default function Home() {
         params.append("unit_type_id", filters.unit_type_id);
       if (filters.city_id) params.append("city_id", filters.city_id);
 
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const response = await fetch(
         `https://propix8.com/api/units?${params.toString()}`,
+        { headers },
       );
       const result = await response.json();
       setSearchResults(result.data || []);
@@ -624,7 +756,34 @@ export default function Home() {
                             {parseFloat(item.price).toLocaleString()} ج.م
                           </p>
                         </div>
-                        <ChevronLeft className="text-gray-300" size={16} />
+                        <div className="flex flex-col items-center gap-2">
+                          <ChevronLeft className="text-gray-300" size={16} />
+                          {token && (
+                            <button
+                              onClick={(e) => toggleFavorite(item.id, e)}
+                              className={`p-1.5 rounded-full transition-all ${
+                                item.is_favourite === true ||
+                                item.is_favourite === 1 ||
+                                item.is_favourite === "1" ||
+                                item.is_favourite === "true"
+                                  ? "text-yellow-500"
+                                  : "text-gray-300 hover:text-yellow-500"
+                              }`}
+                            >
+                              <Star
+                                size={14}
+                                fill={
+                                  item.is_favourite === true ||
+                                  item.is_favourite === 1 ||
+                                  item.is_favourite === "1" ||
+                                  item.is_favourite === "true"
+                                    ? "currentColor"
+                                    : "none"
+                                }
+                              />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -982,6 +1141,32 @@ export default function Home() {
                           لا توجد صورة لهذا العقار
                         </span>
                       </div>
+                    )}
+
+                    {token && (
+                      <button
+                        onClick={(e) => toggleFavorite(unit.id, e)}
+                        className={`absolute top-4 left-4 w-8 h-8 backdrop-blur rounded-full flex items-center justify-center transition-colors z-10 ${
+                          unit.is_favourite === true ||
+                          unit.is_favourite === 1 ||
+                          unit.is_favourite === "1" ||
+                          unit.is_favourite === "true"
+                            ? "bg-yellow-50 text-yellow-500 shadow-sm"
+                            : "bg-white/80 text-gray-400 hover:text-yellow-500"
+                        }`}
+                      >
+                        <Star
+                          size={16}
+                          fill={
+                            unit.is_favourite === true ||
+                            unit.is_favourite === 1 ||
+                            unit.is_favourite === "1" ||
+                            unit.is_favourite === "true"
+                              ? "currentColor"
+                              : "none"
+                          }
+                        />
+                      </button>
                     )}
                   </div>
                   <div className="p-6 text-right">

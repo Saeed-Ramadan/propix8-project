@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -9,7 +9,48 @@ import logo from "../assets/logo/main-logo.png";
 export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem("siteSettings");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch("https://propix8.com/api/settings");
+        const result = await response.json();
+        if (result.status) {
+          setSettings(result.data);
+          localStorage.setItem("siteSettings", JSON.stringify(result.data));
+        }
+      } catch (error) {
+        // console.error("Error fetching settings:", error);
+      }
+    };
+    if (!settings) fetchSettings();
+  }, [settings]);
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    if (value === "") {
+      setError("");
+    } else if (!validateEmail(value)) {
+      setError("يرجى إدخال بريد إلكتروني صحيح");
+    } else {
+      setError("");
+    }
+  };
+
+  const isFormValid = email && validateEmail(email) && !error;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,7 +120,7 @@ export default function ForgotPassword() {
           <img
             src={signupImg}
             alt="Real Estate"
-            className="w-full h-full object-cover rounded-[2rem] shadow-sm"
+            className="w-full h-full object-cover rounded-[0.5rem] shadow-sm"
           />
           <div className="absolute inset-0 flex items-start justify-center pt-12">
             <img src={logo} alt="Logo" className="w-44 drop-shadow-md" />
@@ -97,20 +138,35 @@ export default function ForgotPassword() {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <input
-              type="email"
-              required
-              placeholder="بريدك الإلكتروني"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white border-none px-4 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-left"
-              dir="ltr"
-            />
+            <div>
+              <input
+                type="email"
+                required
+                placeholder="بريدك الإلكتروني"
+                value={email}
+                onChange={handleEmailChange}
+                className={`w-full bg-white border-2 px-4 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-left transition-all ${
+                  error
+                    ? "border-red-500 ring-1 ring-red-500"
+                    : "border-transparent"
+                }`}
+                dir="ltr"
+              />
+              {error && (
+                <p className="text-red-500 text-[10px] font-bold mt-1 mr-1 animate-pulse text-right">
+                  {error}
+                </p>
+              )}
+            </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-[#3E5879] text-white py-4 rounded-xl font-bold text-xl hover:bg-[#2d415a] transition-all shadow-lg flex justify-center items-center"
+              disabled={loading || !isFormValid}
+              className={`w-full py-4 rounded-xl font-bold text-xl transition-all shadow-lg flex justify-center items-center ${
+                loading || !isFormValid
+                  ? "bg-gray-400 cursor-not-allowed opacity-70"
+                  : "bg-[#3E5879] text-white hover:bg-[#2d415a]"
+              }`}
             >
               {loading ? (
                 <Loader2 className="animate-spin" />

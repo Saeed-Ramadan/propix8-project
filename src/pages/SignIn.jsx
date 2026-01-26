@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EyeOff, Eye, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -18,10 +18,79 @@ export default function SignIn() {
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const hasLetter = /[a-zA-Z]/.test(password);
+    return hasLetter;
+  };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // Real-time validation
+    if (name === "email") {
+      if (value === "") {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      } else if (!validateEmail(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          email: "يرجى إدخال بريد إلكتروني صحيح",
+        }));
+      } else {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      }
+    }
+
+    if (name === "password") {
+      if (value === "") {
+        setErrors((prev) => ({ ...prev, password: "" }));
+      } else if (!validatePassword(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          password: "يجب أن تحتوي كلمة المرور على حرف واحد على الأقل",
+        }));
+      } else {
+        setErrors((prev) => ({ ...prev, password: "" }));
+      }
+    }
   };
+
+  const isFormValid =
+    validateEmail(formData.email) &&
+    validatePassword(formData.password) &&
+    !errors.email &&
+    !errors.password;
+
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem("siteSettings");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch("https://propix8.com/api/settings");
+        const result = await response.json();
+        if (result.status) {
+          setSettings(result.data);
+          localStorage.setItem("siteSettings", JSON.stringify(result.data));
+        }
+      } catch (error) {
+        // console.error("Error fetching settings:", error);
+      }
+    };
+    if (!settings) fetchSettings();
+  }, [settings]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,11 +149,11 @@ export default function SignIn() {
           <img
             src={signupImg}
             alt="Real Estate"
-            className="w-full h-full object-cover rounded-[2.5rem] shadow-sm"
+            className="w-full h-full object-cover rounded-[0.5rem] shadow-sm"
           />
           <div className="absolute inset-0 flex items-start justify-center pt-12">
             <img
-              src={logo}
+              src={settings?.site_logo || logo}
               alt="Logo"
               className="w-44 h-auto drop-shadow-md block"
               style={{ minHeight: "50px" }} // احتياطاً لو الـ svg مضغوط
@@ -106,7 +175,7 @@ export default function SignIn() {
               تسجيل الدخول
             </h2>
             <p className="text-gray-500 font-bold">
-              مرحباً بك مجدداً في برو بيكس
+              مرحباً بك مجدداً في {settings?.site_name || "برو بيكس"}
             </p>
           </div>
 
@@ -119,9 +188,18 @@ export default function SignIn() {
                 required
                 placeholder="بريدك الإلكتروني"
                 onChange={handleChange}
-                className="w-full bg-white border-none px-4 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-right"
+                className={`w-full bg-white border-2 px-4 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-right transition-all ${
+                  errors.email
+                    ? "border-red-500 ring-1 ring-red-500"
+                    : "border-transparent"
+                }`}
                 dir="rtl"
               />
+              {errors.email && (
+                <p className="text-red-500 text-xs font-bold mt-1 mr-1 animate-pulse">
+                  {errors.email}
+                </p>
+              )}
             </div>
 
             {/* كلمة المرور */}
@@ -132,16 +210,25 @@ export default function SignIn() {
                 required
                 placeholder="كلمة المرور"
                 onChange={handleChange}
-                className="w-full bg-white border-none px-4 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-right"
+                className={`w-full bg-white border-2 px-4 py-4 rounded-xl shadow-sm focus:ring-2 focus:ring-[#3E5879] outline-none font-inter text-right transition-all ${
+                  errors.password
+                    ? "border-red-500 ring-1 ring-red-500"
+                    : "border-transparent"
+                }`}
                 dir="rtl"
               />
               <button
                 type="button"
                 onClick={() => setShowPass(!showPass)}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#3E5879]"
+                className="absolute left-4 top-5 text-gray-400 hover:text-[#3E5879]"
               >
                 {showPass ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
+              {errors.password && (
+                <p className="text-red-500 text-xs font-bold mt-1 mr-1 animate-pulse">
+                  {errors.password}
+                </p>
+              )}
             </div>
 
             {/* نسيت كلمة السر */}
@@ -157,8 +244,12 @@ export default function SignIn() {
             {/* زر الدخول */}
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-[#3E5879] text-white py-4 rounded-xl font-bold text-xl hover:bg-[#2d415a] transition-all shadow-lg flex justify-center items-center gap-2"
+              disabled={loading || !isFormValid}
+              className={`w-full py-4 rounded-xl font-bold text-xl transition-all shadow-lg flex justify-center items-center gap-2 ${
+                loading || !isFormValid
+                  ? "bg-gray-400 cursor-not-allowed opacity-70"
+                  : "bg-[#3E5879] text-white hover:bg-[#2d415a] active:scale-95"
+              }`}
             >
               {loading ? <Loader2 className="animate-spin" /> : "تسجيل الدخول"}
             </button>
