@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { EyeOff, Eye, Loader2, Lock } from "lucide-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 import signupImg from "../assets/main/signup.png";
 import logo from "../assets/logo/main-logo.png";
 
@@ -47,13 +47,16 @@ export default function ResetPassword() {
       const result = await response.json();
 
       if (response.ok) {
-        toast.success("✅ تم تغيير كلمة المرور بنجاح!");
+        toast.success("تم تغيير كلمة المرور بنجاح!", toastOptions);
         setTimeout(() => navigate("/signin"), 2000);
       } else {
-        toast.error(result.message || "فشل التحديث، ربما انتهت صلاحية الرابط");
+        toast.error(
+          result.message || "فشل التحديث، ربما انتهت صلاحية الرابط",
+          toastOptions,
+        );
       }
     } catch {
-      toast.error("حدث خطأ في الاتصال بالسيرفر");
+      toast.error("حدث خطأ في الاتصال بالسيرفر", toastOptions);
     } finally {
       setLoading(false);
     }
@@ -64,8 +67,6 @@ export default function ResetPassword() {
       className="h-screen w-full flex bg-[#ECEFF3] font-cairo overflow-hidden"
       dir="rtl"
     >
-      <ToastContainer />
-
       <div className="hidden lg:block lg:w-1/2 h-full p-4">
         <div className="relative h-full w-full">
           <img

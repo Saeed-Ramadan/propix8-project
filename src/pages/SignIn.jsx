@@ -5,8 +5,8 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
 import signupImg from "../assets/main/signup.png";
 import logo from "../assets/logo/main-logo.png";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export default function SignIn() {
       const result = await response.json();
 
       if (response.ok && result.data) {
-        toast.success("تم تسجيل الدخول بنجاح!");
+        toast.success("تم تسجيل الدخول بنجاح!", toastOptions);
         login(result.data.access_token, result.data.user);
 
         const from = location.state?.from || "/";
@@ -53,11 +53,12 @@ export default function SignIn() {
       } else {
         toast.error(
           result.message || "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+          toastOptions,
         );
       }
     } catch (error) {
-      console.error("📡 Network Error:", error);
-      toast.error("حدث خطأ في الاتصال بالسيرفر");
+      // console.error("📡 Network Error:", error);
+      toast.error("حدث خطأ في الاتصال بالسيرفر", toastOptions);
     } finally {
       setLoading(false);
     }
@@ -68,18 +69,6 @@ export default function SignIn() {
       className="h-screen w-full flex bg-[#ECEFF3] font-cairo overflow-hidden"
       dir="rtl"
     >
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={true}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-
       {/* القسم الأيمن: الصورة واللوجو */}
       <motion.div
         initial={{ opacity: 0, x: 50 }}

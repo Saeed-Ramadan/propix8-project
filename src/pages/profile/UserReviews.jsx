@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth.js";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { toastOptions } from "../../utils/toastConfig.js";
 
 function UserReviews() {
   const { token, userData } = useAuth();
@@ -60,7 +60,7 @@ function UserReviews() {
           setPagination(result.pagination);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        // console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
@@ -89,17 +89,17 @@ function UserReviews() {
       const result = await response.json();
 
       if (response.ok || result.status) {
-        toast.success("تم الحذف بنجاح");
+        toast.success("تم الحذف بنجاح", toastOptions);
         if (type === "properties") {
           setReviews((prev) => prev.filter((item) => item.id !== id));
         } else {
           setTestimonials((prev) => prev.filter((item) => item.id !== id));
         }
       } else {
-        toast.error(result.message || "فشل عملية الحذف");
+        toast.error(result.message || "فشل عملية الحذف", toastOptions);
       }
     } catch (error) {
-      toast.error("حدث خطأ في الاتصال بالسيرفر");
+      toast.error("حدث خطأ في الاتصال بالسيرفر", toastOptions);
     }
   };
 
@@ -182,7 +182,7 @@ function UserReviews() {
       const result = await response.json();
 
       if (response.ok || result.status) {
-        toast.success("تم التحديث بنجاح");
+        toast.success("تم التحديث بنجاح", toastOptions);
         if (activeTab === "properties") {
           setReviews((prev) =>
             prev.map((rev) =>
@@ -198,10 +198,10 @@ function UserReviews() {
         }
         setIsEditModalOpen(false);
       } else {
-        toast.error(result.message || "فشل التحديث");
+        toast.error(result.message || "فشل التحديث", toastOptions);
       }
     } catch (error) {
-      toast.error("خطأ في الشبكة");
+      toast.error("خطأ في الشبكة", toastOptions);
     } finally {
       setSubmitting(false);
     }
@@ -217,8 +217,6 @@ function UserReviews() {
       className="bg-white rounded-[0.5rem] p-6 md:p-10 shadow-sm border border-gray-100 font-cairo"
       dir="rtl"
     >
-      <ToastContainer position="top-right" autoClose={3000} rtl={true} />
-
       <h2 className="text-xl font-black text-[#3E5879] mb-8 text-right border-r-4 border-[#3E5879] pr-3">
         الآراء والتقييمات
       </h2>

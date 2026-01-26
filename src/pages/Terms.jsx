@@ -49,7 +49,7 @@ function Terms() {
           }
         }
       } catch (error) {
-        console.error("Error fetching terms:", error);
+        // console.error("Error fetching terms:", error);
       } finally {
         setLoading(false);
       }

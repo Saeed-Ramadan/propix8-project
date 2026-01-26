@@ -37,7 +37,7 @@ function DevelopersUnits() {
           setLoading(false);
         })
         .catch((err) => {
-          console.error("Error fetching developer data:", err);
+          // console.error("Error fetching developer data:", err);
           setLoading(false);
         });
     }

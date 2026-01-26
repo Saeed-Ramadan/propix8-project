@@ -3,8 +3,8 @@ import { useAuth } from "../../hooks/useAuth.js";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, X, Eye, EyeOff, Lock, Camera } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { toastOptions } from "../../utils/toastConfig.js";
 
 export default function ProfileInfo() {
   const { token, userData, updateUser, refreshUser } = useAuth();
@@ -55,7 +55,7 @@ export default function ProfileInfo() {
       const result = await response.json();
       if (result.status) setCities(result.data);
     } catch (error) {
-      console.error("Cities Error:", error);
+      // console.error("Cities Error:", error);
     }
   };
 
@@ -71,7 +71,10 @@ export default function ProfileInfo() {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     if (!formData.current_password) {
-      return toast.warning("يرجى إدخال كلمة المرور الحالية لحفظ التعديلات");
+      return toast.warning(
+        "يرجى إدخال كلمة المرور الحالية لحفظ التعديلات",
+        toastOptions,
+      );
     }
 
     setSubmitting(true);
@@ -104,17 +107,17 @@ export default function ProfileInfo() {
 
       const result = await response.json();
       if (result.status) {
-        toast.success("تم تحديث البيانات بنجاح");
+        toast.success("تم تحديث البيانات بنجاح", toastOptions);
 
         updateUser(result.data);
 
         setIsEditModalOpen(false);
         refreshUser(); // تحديث البيانات من السيرفر لضمان المزامنة الكاملة
       } else {
-        toast.error(result.message || "حدث خطأ أثناء التحديث");
+        toast.error(result.message || "حدث خطأ أثناء التحديث", toastOptions);
       }
     } catch {
-      toast.error("فشل الاتصال بالسيرفر");
+      toast.error("فشل الاتصال بالسيرفر", toastOptions);
     } finally {
       setSubmitting(false);
     }
@@ -136,8 +139,6 @@ export default function ProfileInfo() {
       className="bg-[#F8F9FA] min-h-[600px] p-4 md:p-8 font-cairo"
       dir="rtl"
     >
-      <ToastContainer position="top-right" autoClose={3000} />
-
       <div className="max-w-4xl mx-auto bg-white rounded-[0.5rem] p-6 md:p-10 shadow-sm border border-gray-100 -mt-8 ">
         <h2 className="text-xl font-black text-[#3E5879] mb-8 text-right border-r-4 border-[#3E5879] pr-3">
           الحساب الشخصي

@@ -14,8 +14,8 @@ import {
   Trash2,
   AlertTriangle,
 } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { toastOptions } from "../../utils/toastConfig.js";
 
 export default function UserServiceBookings() {
   const { token } = useAuth();
@@ -57,8 +57,8 @@ export default function UserServiceBookings() {
         setBookings(result.data || []);
       }
     } catch (error) {
-      console.error("Error fetching bookings:", error);
-      toast.error("فشل تحميل الطلبات");
+      // console.error("Error fetching bookings:", error);
+      toast.error("فشل تحميل الطلبات", toastOptions);
     } finally {
       setLoading(false);
     }
@@ -82,15 +82,15 @@ export default function UserServiceBookings() {
       );
       const result = await response.json();
       if (result.status || response.ok) {
-        toast.success("تم تحديث الطلب بنجاح");
+        toast.success("تم تحديث الطلب بنجاح", toastOptions);
         setEditModal(null);
         fetchBookings();
       } else {
-        toast.error(result.message || "فشل تحديث الطلب");
+        toast.error(result.message || "فشل تحديث الطلب", toastOptions);
       }
     } catch (error) {
-      console.error("Error updating booking:", error);
-      toast.error("فشل تحديث الطلب");
+      // console.error("Error updating booking:", error);
+      toast.error("فشل تحديث الطلب", toastOptions);
     } finally {
       setSubmitting(false);
     }
@@ -113,16 +113,16 @@ export default function UserServiceBookings() {
       const result = await response.json();
 
       if (response.ok && result.status) {
-        toast.success("تم حذف الطلب بنجاح");
+        toast.success("تم حذف الطلب بنجاح", toastOptions);
         setDeleteModal(null);
         fetchBookings();
       } else {
         // Show specific error message from API
-        toast.error(result.message || "فشل حذف الطلب");
+        toast.error(result.message || "فشل حذف الطلب", toastOptions);
       }
     } catch (error) {
-      console.error("Error deleting booking:", error);
-      toast.error("فشل حذف الطلب");
+      // console.error("Error deleting booking:", error);
+      toast.error("فشل حذف الطلب", toastOptions);
     }
   };
 
@@ -172,8 +172,6 @@ export default function UserServiceBookings() {
       className="bg-[#F8F9FA] min-h-screen p-4 md:p-8 font-cairo"
       dir="rtl"
     >
-      <ToastContainer position="top-right" autoClose={3000} rtl />
-
       <div className="max-w-6xl -mt-6 mx-auto">
         <h2 className="text-2xl font-black text-[#3E5879] mb-8 text-right border-r-4 border-[#3E5879] pr-3">
           طلبات حجز الخدمات

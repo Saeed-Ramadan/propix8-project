@@ -28,7 +28,7 @@ export default function AboutUs() {
           }
         }
       } catch (error) {
-        console.error("Error fetching page data:", error);
+        // console.error("Error fetching page data:", error);
       } finally {
         setLoadingPage(false);
       }
@@ -48,7 +48,7 @@ export default function AboutUs() {
           if (result.data.length > 0) setOpenFaq(result.data[0].id);
         }
       } catch (error) {
-        console.error("Error fetching FAQs:", error);
+        // console.error("Error fetching FAQs:", error);
       } finally {
         setLoadingFaqs(false);
       }
@@ -88,7 +88,7 @@ export default function AboutUs() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="rounded-[2.5rem] overflow-hidden shadow-xl h-[350px] md:h-[500px]"
+          className="rounded-[0.5rem] overflow-hidden shadow-xl h-[350px] md:h-[500px]"
         >
           <img
             src={
@@ -128,7 +128,7 @@ export default function AboutUs() {
         >
           <img
             src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=800"
-            className="w-full h-auto rounded-[2.5rem] shadow-lg"
+            className="w-full h-auto rounded-[0.5rem] shadow-lg"
             alt="Real Estate"
           />
         </motion.div>
@@ -142,9 +142,9 @@ export default function AboutUs() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-[#f0f4f8] rounded-[3rem] p-10 md:p-16 text-center"
+              className="bg-[#f0f4f8] rounded-[0.5rem] p-10 md:p-16 text-center"
             >
-              <span className="bg-[#3E5879] text-white px-8 py-2 rounded-full font-bold text-sm mb-6 inline-block">
+              <span className="bg-[#3E5879] text-white px-8 py-2 rounded-[0.5rem] font-bold text-sm mb-6 inline-block">
                 فريق العمل
               </span>
               <h3 className="text-xl md:text-2xl font-black text-gray-800 mb-12">

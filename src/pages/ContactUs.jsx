@@ -42,7 +42,7 @@ export default function ContactUs() {
           setSettings(result.data);
         }
       } catch (error) {
-        console.error("Error fetching settings:", error);
+        // console.error("Error fetching settings:", error);
       }
     };
     fetchSettings();
@@ -126,7 +126,7 @@ export default function ContactUs() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative h-[350px] md:h-[450px] w-full rounded-[1rem] overflow-hidden shadow-sm border border-gray-100"
+          className="relative h-[350px] md:h-[450px] w-full rounded-[0.5rem] overflow-hidden shadow-sm border border-gray-100"
         >
           <img
             src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200"

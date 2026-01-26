@@ -29,7 +29,7 @@ export default function Footer() {
           localStorage.setItem("siteSettings", JSON.stringify(result.data));
         }
       } catch (error) {
-        console.error("Error fetching settings:", error);
+        // console.error("Error fetching settings:", error);
       } finally {
         setLoading(false);
       }

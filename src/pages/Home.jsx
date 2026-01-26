@@ -30,7 +30,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 export default function Home() {
   const navigate = useNavigate();
   const { token, userData, ensureAuth } = useAuth();
@@ -39,6 +38,11 @@ export default function Home() {
 
   // --- States ---
   const [units, setUnits] = useState([]);
+  const [unitsLoading, setUnitsLoading] = useState(false);
+  const [unitsPagination, setUnitsPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+  });
   const [unitTypes, setUnitTypes] = useState([]);
   const [cities, setCities] = useState([]);
   const [compounds, setCompounds] = useState([]);
@@ -147,13 +151,44 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [developers]);
 
+  const fetchUnitsByType = async (typeId, page = 1) => {
+    try {
+      setUnitsLoading(true);
+      const url =
+        typeId === "all"
+          ? `https://propix8.com/api/units?page=${page}`
+          : `https://propix8.com/api/units?unit_type_id=${typeId}&page=${page}`;
+      const res = await fetch(url);
+      const result = await res.json();
+      setUnits(result.data || []);
+      if (result.pagination) {
+        setUnitsPagination({
+          current_page: result.pagination.current_page,
+          last_page: result.pagination.last_page,
+        });
+      }
+    } catch (error) {
+      // console.error("Error fetching units:", error);
+    } finally {
+      setUnitsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUnitsByType(activeTab, unitsPagination.current_page);
+  }, [activeTab, unitsPagination.current_page]);
+
+  // Reset page when tab changes
+  useEffect(() => {
+    setUnitsPagination((prev) => ({ ...prev, current_page: 1 }));
+  }, [activeTab]);
+
   const fetchHomeData = async () => {
     try {
       setLoading(true);
       const [
         unitTypesRes,
         citiesRes,
-        unitsRes,
         statsRes,
         pagesRes,
         faqsRes,
@@ -164,7 +199,6 @@ export default function Home() {
       ] = await Promise.all([
         fetch("https://propix8.com/api/unit-types"),
         fetch("https://propix8.com/api/cities"),
-        fetch("https://propix8.com/api/units"),
         fetch("https://propix8.com/api/stats"),
         fetch("https://propix8.com/api/pages"),
         fetch("https://propix8.com/api/faqs"),
@@ -176,7 +210,6 @@ export default function Home() {
 
       const unitTypesData = await unitTypesRes.json();
       const citiesData = await citiesRes.json();
-      const unitsData = await unitsRes.json();
       const statsData = await statsRes.json();
       const pagesData = await pagesRes.json();
       const faqsData = await faqsRes.json();
@@ -187,7 +220,6 @@ export default function Home() {
 
       setUnitTypes(unitTypesData.data || []);
       setCities(citiesData.data || []);
-      setUnits(unitsData.data || []);
       setStats(statsData.data || []);
       setFaqs(faqsData.data || []);
       setCompounds(compoundsData.data || []);
@@ -209,7 +241,7 @@ export default function Home() {
       setAboutData(about);
       fetchTestimonials(1);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      // console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
@@ -227,7 +259,7 @@ export default function Home() {
         setTestionalPagination(result.pagination);
       }
     } catch (error) {
-      console.error("Error fetching testimonials:", error);
+      // console.error("Error fetching testimonials:", error);
     } finally {
       setTestimonialsLoading(false);
     }
@@ -308,9 +340,17 @@ export default function Home() {
         });
       }
     } catch (err) {
-      console.error("Search error:", err);
+      // console.error("Search error:", err);
     } finally {
       setSearchLoading(false);
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    setUnitsPagination((prev) => ({ ...prev, current_page: newPage }));
+    const unitsSection = document.getElementById("units-list-section");
+    if (unitsSection) {
+      unitsSection.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -330,10 +370,7 @@ export default function Home() {
     }
   };
 
-  const filteredUnits =
-    activeTab === "all"
-      ? units.slice(0, 6)
-      : units.filter((u) => u.unit_type?.id === activeTab).slice(0, 6);
+  const filteredUnits = units.slice(0, 6);
 
   if (loading) {
     return (
@@ -883,7 +920,7 @@ export default function Home() {
       </section>
 
       {/* UNITS LIST SECTION */}
-      <section className="py-24 bg-white">
+      <section id="units-list-section" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <Motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -995,6 +1032,64 @@ export default function Home() {
               </div>
             )}
           </div>
+
+          {/* Pagination Controls */}
+          {units.length > 0 && unitsPagination.last_page > 1 && (
+            <div className="flex justify-center items-center gap-2 pt-16">
+              <button
+                disabled={unitsPagination.current_page === 1}
+                onClick={() =>
+                  handlePageChange(unitsPagination.current_page - 1)
+                }
+                className={`w-10 h-10 flex items-center justify-center rounded-[0.5rem] bg-white border border-gray-100 text-gray-400 transition-all ${unitsPagination.current_page === 1 ? "opacity-30 cursor-not-allowed" : "hover:bg-[#3E5879] hover:text-white shadow-sm"}`}
+              >
+                <ChevronRight size={20} />
+              </button>
+
+              <div className="flex items-center gap-1">
+                {[...Array(unitsPagination.last_page)].map((_, i) => {
+                  const pageNum = i + 1;
+                  if (
+                    pageNum === 1 ||
+                    pageNum === unitsPagination.last_page ||
+                    Math.abs(pageNum - unitsPagination.current_page) <= 1
+                  ) {
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`w-10 h-10 rounded-[0.5rem] text-sm font-black transition-all ${unitsPagination.current_page === pageNum ? "bg-[#3E5879] text-white shadow-lg scale-110" : "bg-white text-gray-400 border border-gray-50 hover:bg-gray-50"}`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  }
+                  if (
+                    pageNum === 2 ||
+                    pageNum === unitsPagination.last_page - 1
+                  )
+                    return (
+                      <span key={pageNum} className="px-1 text-gray-300">
+                        ...
+                      </span>
+                    );
+                  return null;
+                })}
+              </div>
+
+              <button
+                disabled={
+                  unitsPagination.current_page === unitsPagination.last_page
+                }
+                onClick={() =>
+                  handlePageChange(unitsPagination.current_page + 1)
+                }
+                className={`w-10 h-10 flex items-center justify-center rounded-[0.5rem] bg-white border border-gray-100 text-gray-400 transition-all ${unitsPagination.current_page === unitsPagination.last_page ? "opacity-30 cursor-not-allowed" : "hover:bg-[#3E5879] hover:text-white shadow-sm"}`}
+              >
+                <ChevronLeft size={20} />
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

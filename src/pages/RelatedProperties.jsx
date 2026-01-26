@@ -27,7 +27,7 @@ export default function RelatedProperties() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Error fetching related units:", err);
+        // console.error("Error fetching related units:", err);
         setLoading(false);
       });
   }, [id]);

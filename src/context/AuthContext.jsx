@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 import AuthContext from "./AuthContext.js";
 
 // BroadcastChannel for cross‑tab token sync
@@ -148,12 +149,7 @@ export const AuthProvider = ({ children }) => {
   // Helper to ensure authentication
   const ensureAuth = (callback) => {
     if (!token) {
-      toast.error("يجب تسجيل الدخول أولاً للمتابعة", {
-        position: "top-center",
-        autoClose: 3000,
-        theme: "colored",
-        style: { fontFamily: "Cairo" },
-      });
+      toast.error("يجب تسجيل الدخول أولاً للمتابعة", toastOptions);
       navigate("/signin", { state: { from: window.location.pathname } });
       return false;
     }

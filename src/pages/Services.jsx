@@ -21,8 +21,8 @@ import {
   X,
   CheckCircle2,
 } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 import { motion, AnimatePresence } from "framer-motion";
 import ImagePlaceholder from "../components/common/ImagePlaceholder";
 
@@ -122,13 +122,16 @@ export default function Services() {
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
     if (!token) {
-      toast.error("يرجى تسجيل الدخول أولاً");
+      toast.error("يرجى تسجيل الدخول أولاً", toastOptions);
       navigate("/signin", { state: { from: "/services" } });
       return;
     }
 
     if (!bookingFormData.phone || !bookingFormData.address) {
-      toast.error("يرجى ملء البيانات الأساسية (رقم الهاتف والعنوان)");
+      toast.error(
+        "يرجى ملء البيانات الأساسية (رقم الهاتف والعنوان)",
+        toastOptions,
+      );
       return;
     }
 
@@ -154,14 +157,17 @@ export default function Services() {
 
       const result = await response.json();
       if (result.status) {
-        toast.success("تم إرسال طلبك بنجاح! وسنتواصل معك قريباً.");
+        toast.success(
+          "تم إرسال طلبك بنجاح! وسنتواصل معك قريباً.",
+          toastOptions,
+        );
         setIsBookingModalOpen(false);
         setBookingFormData({ phone: "", address: "", message: "" });
       } else {
-        toast.error(result.message || "فشل إرسال الطلب");
+        toast.error(result.message || "فشل إرسال الطلب", toastOptions);
       }
     } catch (err) {
-      toast.error("حدث خطأ في الاتصال بالسيرفر");
+      toast.error("حدث خطأ في الاتصال بالسيرفر", toastOptions);
     } finally {
       setIsSubmitting(false);
     }
@@ -190,7 +196,7 @@ export default function Services() {
           transition={{ duration: 0.8 }}
           className="order-2 lg:order-1"
         >
-          <div className="inline-block bg-[#3E5879]/10 text-[#3E5879] px-6 py-2 rounded-full text-sm font-black mb-6">
+          <div className="inline-block bg-[#3E5879]/10 text-[#3E5879] px-6 py-2 rounded-[0.5rem] text-sm font-black mb-6">
             لماذا تختارنا؟
           </div>
           <h2 className="text-3xl md:text-4xl font-black text-[#3E5879] mb-8 leading-tight">
@@ -214,15 +220,13 @@ export default function Services() {
               className="w-full rounded-[3rem] shadow-2xl border-[12px] border-white relative z-10"
               alt="Services Intro"
             />
-            <div className="absolute -bottom-6 -right-6 w-64 h-64 bg-[#3E5879]/5 rounded-full -z-0"></div>
+            <div className="absolute -bottom-6 -right-6 w-64 h-64 bg-[#3E5879]/5 rounded-[0.5rem] -z-0"></div>
           </div>
         </motion.div>
       </section>
 
       {/* 2.5 New Section: Animated Service Sliders */}
       <section className="max-w-7xl mx-auto px-6 mt-24">
-        <ToastContainer position="top-right" autoClose={3000} />
-
         {/* --- الخدمات المنزلية --- */}
         <div className="mb-24">
           <div className="flex justify-between items-center mb-10">
@@ -235,13 +239,13 @@ export default function Services() {
             <div className="flex gap-2">
               <button
                 onClick={() => scroll("right", homeRef)}
-                className="p-3 rounded-2xl bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
+                className="p-3 rounded-[0.5rem] bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
               >
                 <ChevronRight size={20} />
               </button>
               <button
                 onClick={() => scroll("left", homeRef)}
-                className="p-3 rounded-2xl bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
+                className="p-3 rounded-[0.5rem] bg-gray-100 hover:bg-[#3E5879] hover:text-white transition-all shadow-sm"
               >
                 <ChevronLeft size={20} />
               </button>
@@ -268,9 +272,9 @@ export default function Services() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="min-w-[280px] md:min-w-[320px] bg-white rounded-3xl border border-gray-100 p-4 shadow-sm hover:shadow-xl transition-all duration-300 snap-start text-center group"
+                  className="min-w-[280px] md:min-w-[320px] bg-white rounded-[0.5rem] border border-gray-100 p-4 shadow-sm hover:shadow-xl transition-all duration-300 snap-start text-center group"
                 >
-                  <div className="h-48 overflow-hidden rounded-2xl mb-5">
+                  <div className="h-48 overflow-hidden rounded-[0.5rem] mb-5">
                     <img
                       src={item.image}
                       alt={item.title}
@@ -282,7 +286,7 @@ export default function Services() {
                   </h3>
                   <button
                     onClick={() => handleOpenBooking(item)}
-                    className="w-full py-3 bg-[#3E5879] text-white rounded-xl font-bold hover:bg-[#2C3E50] transition-colors shadow-md shadow-[#3E5879]/20 flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-[#3E5879] text-white rounded-[0.5rem] font-bold hover:bg-[#2C3E50] transition-colors shadow-md shadow-[#3E5879]/20 flex items-center justify-center gap-2"
                   >
                     <MessageCircle size={18} />
                     أحجز الآن
@@ -338,7 +342,7 @@ export default function Services() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="min-w-[280px] md:min-w-[320px] bg-white rounded-3xl border border-gray-100 p-4 shadow-sm hover:shadow-xl transition-all duration-300 snap-start text-center group"
+                  className="min-w-[280px] md:min-w-[320px] bg-white rounded-[0.5rem] border border-gray-100 p-4 shadow-sm hover:shadow-xl transition-all duration-300 snap-start text-center group"
                 >
                   <div className="h-48 overflow-hidden rounded-2xl mb-5">
                     <img
@@ -352,7 +356,7 @@ export default function Services() {
                   </h3>
                   <button
                     onClick={() => handleOpenBooking(item)}
-                    className="w-full py-3 bg-[#3E5879] text-white rounded-xl font-bold hover:bg-[#2C3E50] transition-colors shadow-md shadow-[#3E5879]/20 flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-[#3E5879] text-white rounded-[0.5rem] font-bold hover:bg-[#2C3E50] transition-colors shadow-md shadow-[#3E5879]/20 flex items-center justify-center gap-2"
                   >
                     <Settings size={18} />
                     أحجز الآن
@@ -367,12 +371,12 @@ export default function Services() {
       {/* 2.6 Booking Modal */}
       <AnimatePresence>
         {isBookingModalOpen && (
-          <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm mt-20">
+          <div className="fixed inset-0 z-[3000] flex items-center justify-center p-2 bg-black/50 backdrop-blur-sm mt-20">
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden"
+              className="bg-white w-full max-w-md rounded-[0.5rem] shadow-2xl overflow-hidden"
             >
               <div className="bg-[#3E5879] p-8 text-white relative">
                 <button
@@ -401,7 +405,7 @@ export default function Services() {
                       required
                       type="tel"
                       placeholder="مثال: 01234567890"
-                      className="w-full bg-gray-50 border-none rounded-2xl p-4 pr-12 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all"
+                      className="w-full bg-gray-50 border-none rounded-[0.5rem] p-2 pr-12 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all"
                       value={bookingFormData.phone}
                       onChange={(e) =>
                         setBookingFormData({
@@ -426,7 +430,7 @@ export default function Services() {
                       required
                       type="text"
                       placeholder="المدينة والشارع ورقم العقار..."
-                      className="w-full bg-gray-50 border-none rounded-2xl p-4 pr-12 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all"
+                      className="w-full bg-gray-50 border-none rounded-[0.5rem] p-2 pr-12 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all"
                       value={bookingFormData.address}
                       onChange={(e) =>
                         setBookingFormData({
@@ -445,7 +449,7 @@ export default function Services() {
                   <textarea
                     rows="3"
                     placeholder="أي تعليمات إضافية ترغب في ذكرها..."
-                    className="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all resize-none"
+                    className="w-full bg-gray-50 border-none rounded-[0.5rem] p-2 focus:ring-2 focus:ring-[#3E5879] outline-none font-bold text-gray-700 transition-all resize-none"
                     value={bookingFormData.message}
                     onChange={(e) =>
                       setBookingFormData({
@@ -459,7 +463,7 @@ export default function Services() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-4 bg-[#3E5879] text-white rounded-2xl font-black text-lg hover:bg-[#2C3E50] transition-all shadow-xl shadow-[#3E5879]/20 disabled:opacity-50 flex items-center justify-center gap-3"
+                  className="w-full py-2 bg-[#3E5879] text-white rounded-[0.5rem] font-black text-lg hover:bg-[#2C3E50] transition-all shadow-xl shadow-[#3E5879]/20 disabled:opacity-50 flex items-center justify-center gap-3"
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin" size={20} />
@@ -498,7 +502,7 @@ export default function Services() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-[#f8fafc] rounded-[2.5rem] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between group hover:bg-white hover:shadow-2xl hover:shadow-[#3E5879]/10 transition-all duration-500 border border-transparent hover:border-gray-100"
+                className="bg-[#f8fafc] rounded-[0.5rem] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between group hover:bg-white hover:shadow-2xl hover:shadow-[#3E5879]/10 transition-all duration-500 border border-transparent hover:border-gray-100"
               >
                 <div className="flex-1 ml-6 text-center md:text-right">
                   <h3 className="text-2xl font-black text-gray-800 mb-4 group-hover:text-[#3E5879] transition-colors">
@@ -508,7 +512,7 @@ export default function Services() {
                     {service.description}
                   </p>
                 </div>
-                <div className="mt-6 md:mt-0 bg-white p-6 rounded-[2rem] shadow-sm border border-gray-50 group-hover:scale-110 transition-transform duration-500">
+                <div className="mt-6 md:mt-0 bg-white p-6 rounded-[0.5rem] shadow-sm border border-gray-50 group-hover:scale-110 transition-transform duration-500">
                   {getServiceIcon(service.id)}
                 </div>
               </motion.div>
@@ -532,13 +536,13 @@ export default function Services() {
           <div className="flex gap-3">
             <button
               onClick={() => scroll("right", scrollRef)}
-              className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:bg-[#3E5879] hover:text-white transition-all active:scale-90"
+              className="p-4 rounded-[0.5rem] bg-white border border-gray-100 shadow-sm hover:bg-[#3E5879] hover:text-white transition-all active:scale-90"
             >
               <ChevronRight size={24} />
             </button>
             <button
               onClick={() => scroll("left", scrollRef)}
-              className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:bg-[#3E5879] hover:text-white transition-all active:scale-90"
+              className="p-4 rounded-[0.5rem] bg-white border border-gray-100 shadow-sm hover:bg-[#3E5879] hover:text-white transition-all active:scale-90"
             >
               <ChevronLeft size={24} />
             </button>
@@ -559,7 +563,7 @@ export default function Services() {
               <div
                 key={item.id}
                 onClick={() => navigate(`/property-details/${item.id}`)}
-                className="min-w-[calc(100%-1rem)] md:min-w-[calc(50%-1.5rem)] lg:min-w-[calc(33.333%-1.5rem)] snap-start bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 cursor-pointer group"
+                className="min-w-[calc(100%-1rem)] md:min-w-[calc(50%-1.5rem)] lg:min-w-[calc(33.333%-1.5rem)] snap-start bg-white rounded-[0.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 cursor-pointer group"
               >
                 <div className="relative h-72 overflow-hidden bg-gray-50">
                   {item.main_image ? (
@@ -611,13 +615,13 @@ export default function Services() {
                         "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
                     }}
                   />
-                  <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl flex items-center gap-2 shadow-sm">
+                  <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-4 py-2 rounded-[0.5rem] flex items-center gap-2 shadow-sm">
                     <MapPin size={14} className="text-[#3E5879]" />
                     <span className="text-[12px] font-black text-gray-700">
                       {item.city?.name || "مصر"}
                     </span>
                   </div>
-                  <div className="absolute bottom-6 right-6 bg-[#3E5879] text-white px-5 py-2 rounded-xl text-xs font-black shadow-lg">
+                  <div className="absolute bottom-6 right-6 bg-[#3E5879] text-white px-5 py-2 rounded-[0.5rem] text-xs font-black shadow-lg">
                     {item.offer_type === "rent" ? "للإيجار" : "للبيع"}
                   </div>
                 </div>

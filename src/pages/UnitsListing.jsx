@@ -17,7 +17,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 import ImagePlaceholder from "../components/common/ImagePlaceholder";
 
 function UnitsListing() {
@@ -68,7 +69,7 @@ function UnitsListing() {
         if (resCompounds.status) setCompounds(resCompounds.data);
         if (resDevelopers.status) setDevelopers(resDevelopers.data);
       } catch (e) {
-        console.error("Error fetching filter data", e);
+        // console.error("Error fetching filter data", e);
       }
     };
     fetchFilterData();
@@ -110,7 +111,7 @@ function UnitsListing() {
           });
         }
       } catch (error) {
-        toast.error("خطأ في جلب البيانات");
+        toast.error("خطأ في جلب البيانات", toastOptions);
       } finally {
         setLoading(false);
       }
@@ -162,7 +163,7 @@ function UnitsListing() {
     e.stopPropagation(); // منع الانتقال لصفحة التفاصيل
 
     if (!token) {
-      toast.error("يجب تسجيل الدخول أولاً");
+      toast.error("يجب تسجيل الدخول أولاً", toastOptions);
       return;
     }
 
@@ -197,14 +198,9 @@ function UnitsListing() {
               : unit,
           ),
         );
-        toast.error(result.message || "حدث خطأ، حاول مرة أخرى");
+        toast.error(result.message || "حدث خطأ، حاول مرة أخرى", toastOptions);
       } else {
-        toast.success(result.message, {
-          position: "top-center",
-          autoClose: 1500,
-          theme: "colored",
-          style: { fontFamily: "Cairo", borderRadius: "15px" },
-        });
+        toast.success(result.message, toastOptions);
       }
     } catch (error) {
       // Rollback في حالة الخطأ
@@ -215,8 +211,8 @@ function UnitsListing() {
             : unit,
         ),
       );
-      console.error("Favorite Toggle Error:", error);
-      toast.error("خطأ في الاتصال بالسيرفر");
+      // console.error("Favorite Toggle Error:", error);
+      toast.error("خطأ في الاتصال بالسيرفر", toastOptions);
     }
   };
 
@@ -225,8 +221,6 @@ function UnitsListing() {
       className="bg-[#FFFFFF] min-h-screen font-cairo text-right pb-10"
       dir="rtl"
     >
-      <ToastContainer position="top-right" autoClose={2000} />
-
       {/* 1. Breadcrumbs */}
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-start gap-2 text-gray-400 text-sm">
         <Link

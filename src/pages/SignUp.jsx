@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { EyeOff, Eye, ChevronDown, Loader2, Upload } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../hooks/useAuth.js";
 import signupImg from "../assets/main/signup.png";
@@ -40,7 +41,7 @@ export default function SignUp() {
           setCities(result.data);
         }
       } catch (error) {
-        console.error("Error fetching cities:", error);
+        // console.error("Error fetching cities:", error);
       }
     };
     fetchCities();
@@ -60,15 +61,15 @@ export default function SignUp() {
 
   const validateForm = () => {
     if (formData.password !== formData.confirmPassword) {
-      toast.error("كلمتا المرور غير متطابقتين!");
+      toast.error("كلمتا المرور غير متطابقتين!", toastOptions);
       return false;
     }
     if (!formData.city_id) {
-      toast.error("يرجى اختيار المدينة");
+      toast.error("يرجى اختيار المدينة", toastOptions);
       return false;
     }
     if (!formData.agreeTerms) {
-      toast.error("يجب الموافقة على الشروط والأحكام أولاً");
+      toast.error("يجب الموافقة على الشروط والأحكام أولاً", toastOptions);
       return false;
     }
     return true;
@@ -102,7 +103,7 @@ export default function SignUp() {
       const result = await response.json();
 
       if (response.ok) {
-        toast.success("تم إنشاء الحساب بنجاح!");
+        toast.success("تم إنشاء الحساب بنجاح!", toastOptions);
         if (result.data?.access_token) {
           login(result.data.access_token, result.data.user);
           setTimeout(() => navigate("/"), 2000);
@@ -110,10 +111,13 @@ export default function SignUp() {
           setTimeout(() => navigate("/signin"), 2000);
         }
       } else {
-        toast.error(result.message || "فشلت العملية، تأكد من البيانات");
+        toast.error(
+          result.message || "فشلت العملية، تأكد من البيانات",
+          toastOptions,
+        );
       }
     } catch (error) {
-      toast.error("حدث خطأ في الاتصال بالسيرفر");
+      toast.error("حدث خطأ في الاتصال بالسيرفر", toastOptions);
     } finally {
       setLoading(false);
     }
@@ -124,7 +128,6 @@ export default function SignUp() {
       className="h-screen w-full flex bg-[#ECEFF3] font-cairo overflow-hidden"
       dir="rtl"
     >
-      <ToastContainer position="top-center" autoClose={3000} />
       {/* القسم الأيمن (الصورة) */}
       <motion.div
         initial={{ opacity: 0, x: 50 }}

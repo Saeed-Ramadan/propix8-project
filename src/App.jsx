@@ -12,6 +12,8 @@ import { Loader2 } from "lucide-react";
 import MainLayout from "./layouts/MainLayout";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { useAuth } from "./hooks/useAuth.js";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Lazy Loading Pages
 const Home = lazy(() => import("./pages/Home"));
@@ -284,6 +286,7 @@ function App() {
     <Router>
       <AuthProvider>
         <AnimatedRoutes />
+        <ToastContainer />
       </AuthProvider>
     </Router>
   );

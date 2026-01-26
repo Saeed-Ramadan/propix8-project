@@ -10,8 +10,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 // استيراد Toastify
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 
 export default function Booking() {
   const { id } = useParams();
@@ -41,7 +41,7 @@ export default function Booking() {
     const { name, value, type, checked } = e.target;
 
     if (name === "time" && formData.date === today && value < currentTime) {
-      toast.warning("يرجى اختيار وقت مستقبلي");
+      toast.warning("يرجى اختيار وقت مستقبلي", toastOptions);
       return;
     }
 
@@ -55,7 +55,7 @@ export default function Booking() {
     e.preventDefault();
 
     if (!formData.agreed) {
-      toast.error("يرجى الموافقة على الشروط والأحكام");
+      toast.error("يرجى الموافقة على الشروط والأحكام", toastOptions);
       return;
     }
 
@@ -89,10 +89,10 @@ export default function Booking() {
         setBookingDetails(result.data);
         setShowSuccessModal(true);
       } else {
-        toast.error(result.message || "فشل في إرسال الطلب");
+        toast.error(result.message || "فشل في إرسال الطلب", toastOptions);
       }
     } catch (error) {
-      toast.error("حدث خطأ في الاتصال بالخادم");
+      toast.error("حدث خطأ في الاتصال بالخادم", toastOptions);
     } finally {
       setSubmitting(false);
     }
@@ -114,8 +114,6 @@ export default function Booking() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 font-cairo" dir="rtl">
-      <ToastContainer position="top-center" rtl={true} autoClose={2000} />
-
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-gray-100">
           <h2 className="text-2xl font-bold text-[#415a77] mb-8 text-center">

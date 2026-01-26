@@ -20,7 +20,8 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 import "react-toastify/dist/ReactToastify.css";
 import ImagePlaceholder from "../components/common/ImagePlaceholder";
 import MapPlaceholder from "../components/common/MapPlaceholder";
@@ -76,7 +77,7 @@ export default function PropertyDetails() {
         setReviewsLoading(false);
       })
       .catch((err) => {
-        console.error("Error fetching reviews:", err);
+        // console.error("Error fetching reviews:", err);
         setReviewsLoading(false);
       });
   };
@@ -114,7 +115,7 @@ export default function PropertyDetails() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Error fetching unit:", err);
+        // console.error("Error fetching unit:", err);
         setLoading(false);
       });
 
@@ -126,7 +127,7 @@ export default function PropertyDetails() {
         setLoadingRelated(false);
       })
       .catch((err) => {
-        console.error("Error fetching related units:", err);
+        // console.error("Error fetching related units:", err);
         setLoadingRelated(false);
       });
 
@@ -157,20 +158,15 @@ export default function PropertyDetails() {
       if (!response.ok || !result.status) {
         // Rollback on failure
         setIsFavorite((prev) => !prev);
-        toast.error(result.message || "حدث خطأ، حاول مرة أخرى");
+        toast.error(result.message || "حدث خطأ، حاول مرة أخرى", toastOptions);
       } else {
-        toast.success(result.message, {
-          position: "top-center",
-          autoClose: 1500,
-          theme: "colored",
-          style: { fontFamily: "Cairo", borderRadius: "15px" },
-        });
+        toast.success(result.message, toastOptions);
       }
     } catch (error) {
       // Rollback on error
       setIsFavorite((prev) => !prev);
-      console.error("Favorite Toggle Error:", error);
-      toast.error("خطأ في الاتصال بالسيرفر");
+      // console.error("Favorite Toggle Error:", error);
+      toast.error("خطأ في الاتصال بالسيرفر", toastOptions);
     }
   };
 
@@ -190,12 +186,7 @@ export default function PropertyDetails() {
       });
       const result = await response.json();
       if (result.status) {
-        toast.success(result.message || "تم إرسال رسالتك بنجاح", {
-          position: "top-center",
-          autoClose: 4000,
-          theme: "colored",
-          style: { fontFamily: "Cairo", borderRadius: "15px" },
-        });
+        toast.success(result.message || "تم إرسال رسالتك بنجاح", toastOptions);
         setIsModalOpen(false);
         setFormData({
           name: "",
@@ -205,10 +196,13 @@ export default function PropertyDetails() {
           message: "",
         });
       } else {
-        toast.error("حدث خطأ أثناء الإرسال، يرجى المحاولة لاحقاً");
+        toast.error(
+          "حدث خطأ أثناء الإرسال، يرجى المحاولة لاحقاً",
+          toastOptions,
+        );
       }
     } catch (error) {
-      toast.error("خطأ في الاتصال بالسيرفر");
+      toast.error("خطأ في الاتصال بالسيرفر", toastOptions);
     } finally {
       setSubmitting(false);
     }
@@ -218,7 +212,7 @@ export default function PropertyDetails() {
     e.preventDefault();
     if (!ensureAuth()) return;
     if (rating === 0) {
-      toast.error("يرجى تحديد التقييم بالنجوم");
+      toast.error("يرجى تحديد التقييم بالنجوم", toastOptions);
       return;
     }
     setSubmittingReview(true);
@@ -234,20 +228,18 @@ export default function PropertyDetails() {
       });
       const result = await response.json();
       if (response.ok || result.status) {
-        toast.success("تم إضافة تقييمك بنجاح، شكراً لك!", {
-          position: "top-center",
-          autoClose: 3000,
-          theme: "colored",
-          style: { fontFamily: "Cairo", borderRadius: "15px" },
-        });
+        toast.success("تم إضافة تقييمك بنجاح، شكراً لك!", toastOptions);
         setRating(0);
         setComment("");
         fetchReviews();
       } else {
-        toast.error(result.message || "حدث خطأ أثناء إرسال التقييم");
+        toast.error(
+          result.message || "حدث خطأ أثناء إرسال التقييم",
+          toastOptions,
+        );
       }
     } catch (error) {
-      toast.error("خطأ في الاتصال بالسيرفر");
+      toast.error("خطأ في الاتصال بالسيرفر", toastOptions);
     } finally {
       setSubmittingReview(false);
     }
@@ -281,8 +273,6 @@ export default function PropertyDetails() {
 
   return (
     <div className="bg-gray-50 min-h-screen font-cairo pb-20" dir="rtl">
-      <ToastContainer />
-
       {/* Contact Modal  */}
       <AnimatePresence>
         {isModalOpen && (

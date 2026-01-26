@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify"; // استيراد Toastify
-import "react-toastify/dist/ReactToastify.css"; // استيراد التنسيقات
+import { toast } from "react-toastify";
+import { toastOptions } from "../utils/toastConfig.js";
 import signupImg from "../assets/main/signup.png";
 import logo from "../assets/logo/main-logo.png";
 
@@ -33,10 +33,7 @@ export default function ForgotPassword() {
         // رسالة نجاح
         toast.success(
           result.message || "تم إرسال رمز استعادة كلمة المرور بنجاح!",
-          {
-            position: "top-right",
-            autoClose: 3000,
-          },
+          toastOptions,
         );
 
         // التحقق من وجود التوكن في الرد
@@ -51,23 +48,22 @@ export default function ForgotPassword() {
           // إذا لم يرسل السيرفر التوكن، نطلب من المستخدم فحص بريده
           toast.info(
             "يرجى فحص بريدك الإلكتروني واتباع الرابط المرسل لاستعادة كلمة المرور.",
-            {
-              autoClose: 5000,
-            },
+            toastOptions,
           );
         }
       } else {
         // رسالة خطأ توضح السبب القادم من السيرفر
         toast.error(
           result.message || "البريد الإلكتروني غير صحيح أو غير مسجل",
-          {
-            position: "top-right",
-          },
+          toastOptions,
         );
       }
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("حدث خطأ في الاتصال بالسيرفر، يرجى المحاولة لاحقاً");
+      // console.error("Error:", error);
+      toast.error(
+        "حدث خطأ في الاتصال بالسيرفر، يرجى المحاولة لاحقاً",
+        toastOptions,
+      );
     } finally {
       setLoading(false);
     }
@@ -78,9 +74,6 @@ export default function ForgotPassword() {
       className="h-screen w-full flex bg-[#ECEFF3] font-cairo overflow-hidden"
       dir="rtl"
     >
-      {/* حاوية التنبيهات */}
-      <ToastContainer />
-
       <div className="hidden lg:block lg:w-1/2 h-full p-4">
         <div className="relative h-full w-full">
           <img

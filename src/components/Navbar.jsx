@@ -43,7 +43,7 @@ export default function Navbar() {
           localStorage.setItem("siteSettings", JSON.stringify(result.data));
         }
       } catch (error) {
-        console.error("Error fetching settings:", error);
+        // console.error("Error fetching settings:", error);
       }
     };
     fetchSettings();
@@ -63,7 +63,7 @@ export default function Navbar() {
             setShowSearchResults(true);
           }
         } catch (error) {
-          console.error("Search error:", error);
+          // console.error("Search error:", error);
         } finally {
           setIsSearching(false);
         }
@@ -110,7 +110,7 @@ export default function Navbar() {
         });
       }
     } catch (error) {
-      console.error("Logout Error:", error);
+      // console.error("Logout Error:", error);
     } finally {
       logout();
     }
