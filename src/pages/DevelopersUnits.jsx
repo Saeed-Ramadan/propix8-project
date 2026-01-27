@@ -272,7 +272,7 @@ function DevelopersUnits() {
               <div className="relative h-64 overflow-hidden bg-gray-50">
                 <img
                   src={unit.unit_type.icon}
-                  className="absolute inset-0 w-full h-full object-cover opacity-15 scale-125 group-hover:scale-150 transition-transform duration-700"
+                  className="absolute inset-0 w-full h-full object-cover  scale-125 group-hover:scale-150 transition-transform duration-700"
                   alt="Pattern"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-40" />

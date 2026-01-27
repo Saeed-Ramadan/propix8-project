@@ -35,6 +35,7 @@ function UnitsListing() {
   const [cities, setCities] = useState([]);
   const [compounds, setCompounds] = useState([]);
   const [developers, setDevelopers] = useState([]);
+  const [unitTypes, setUnitTypes] = useState([]);
 
   const [filters, setFilters] = useState({
     city_id: "",
@@ -44,8 +45,8 @@ function UnitsListing() {
     offer_type: "",
     min_price: "",
     max_price: "",
-    rooms: "",
-    bathrooms: "",
+    rooms: [], // Changed to array for multi-select
+    bathrooms: [], // Changed to array for multi-select
     min_area: "",
     max_area: "",
     build_year: "",
@@ -61,14 +62,17 @@ function UnitsListing() {
   useEffect(() => {
     const fetchFilterData = async () => {
       try {
-        const [resCities, resCompounds, resDevelopers] = await Promise.all([
-          fetch("https://propix8.com/api/cities").then((r) => r.json()),
-          fetch("https://propix8.com/api/compounds").then((r) => r.json()),
-          fetch("https://propix8.com/api/developers").then((r) => r.json()),
-        ]);
+        const [resCities, resCompounds, resDevelopers, resUnitTypes] =
+          await Promise.all([
+            fetch("https://propix8.com/api/cities").then((r) => r.json()),
+            fetch("https://propix8.com/api/compounds").then((r) => r.json()),
+            fetch("https://propix8.com/api/developers").then((r) => r.json()),
+            fetch("https://propix8.com/api/unit-types").then((r) => r.json()),
+          ]);
         if (resCities.status) setCities(resCities.data);
         if (resCompounds.status) setCompounds(resCompounds.data);
         if (resDevelopers.status) setDevelopers(resDevelopers.data);
+        if (resUnitTypes.status) setUnitTypes(resUnitTypes.data);
       } catch (e) {
         // console.error("Error fetching filter data", e);
       }
@@ -78,7 +82,7 @@ function UnitsListing() {
 
   // 2. دالة جلب الوحدات بناءً على الفلاتر والبحث
   const fetchUnits = useCallback(
-    async (page = 1, search = "") => {
+    async (page = 1, search = "", signal) => {
       setLoading(true);
       try {
         const params = new URLSearchParams();
@@ -86,7 +90,13 @@ function UnitsListing() {
         if (search) params.append("q", search);
 
         Object.entries(filters).forEach(([key, value]) => {
-          if (value) params.append(key, value);
+          if (Array.isArray(value)) {
+            if (value.length > 0) {
+              value.forEach((v) => params.append(`${key}[]`, v));
+            }
+          } else if (value !== "" && value !== null && value !== undefined) {
+            params.append(key, value);
+          }
         });
 
         const url = `https://propix8.com/api/units?${params.toString()}`;
@@ -100,7 +110,7 @@ function UnitsListing() {
           headers["Authorization"] = `Bearer ${token}`;
         }
 
-        const response = await fetch(url, { headers });
+        const response = await fetch(url, { headers, signal });
         const result = await response.json();
 
         if (result.status) {
@@ -110,9 +120,27 @@ function UnitsListing() {
             last_page: result.pagination.last_page,
             total: result.pagination.total,
           });
+
+          // إظهار تنبيه إذا لم توجد نتائج بعد تغيير الفلتر
+          if (
+            result.data?.length === 0 &&
+            (Object.values(filters).some(
+              (v) =>
+                (Array.isArray(v) && v.length > 0) ||
+                (!Array.isArray(v) && v !== "" && v !== "id_desc"),
+            ) ||
+              search)
+          ) {
+            toast.info(
+              "لا توجد وحدات تطابق هذه الاختيارات حالياً",
+              toastOptions,
+            );
+          }
         }
       } catch (error) {
-        toast.error("خطأ في جلب البيانات", toastOptions);
+        if (error.name !== "AbortError") {
+          toast.error("خطأ في جلب البيانات", toastOptions);
+        }
       } finally {
         setLoading(false);
       }
@@ -121,8 +149,10 @@ function UnitsListing() {
   );
 
   useEffect(() => {
-    fetchUnits(pagination.current_page, searchQuery);
-  }, [pagination.current_page, fetchUnits]);
+    const controller = new AbortController();
+    fetchUnits(pagination.current_page, searchQuery, controller.signal);
+    return () => controller.abort();
+  }, [pagination.current_page, searchQuery, filters, fetchUnits]);
 
   const handleSearchSubmit = (e) => {
     if (e.key === "Enter") {
@@ -132,7 +162,17 @@ function UnitsListing() {
   };
 
   const updateFilter = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    if (key === "rooms" || key === "bathrooms") {
+      setFilters((prev) => {
+        const current = Array.isArray(prev[key]) ? prev[key] : [];
+        const updated = current.includes(value)
+          ? current.filter((v) => v !== value)
+          : [...current, value];
+        return { ...prev, [key]: updated };
+      });
+    } else {
+      setFilters((prev) => ({ ...prev, [key]: value }));
+    }
     setPagination((prev) => ({ ...prev, current_page: 1 }));
   };
 
@@ -145,8 +185,8 @@ function UnitsListing() {
       offer_type: "",
       min_price: "",
       max_price: "",
-      rooms: "",
-      bathrooms: "",
+      rooms: [],
+      bathrooms: [],
       min_area: "",
       max_area: "",
       build_year: "",
@@ -211,7 +251,7 @@ function UnitsListing() {
         setUnits((prevUnits) =>
           prevUnits.map((unit) =>
             unit.id === unitId
-              ? { ...unit, is_favourite: !newFavoriteStatus }
+              ? { ...unit, is_favourite: !unit.is_favourite }
               : unit,
           ),
         );
@@ -222,7 +262,7 @@ function UnitsListing() {
       setUnits((prevUnits) =>
         prevUnits.map((unit) =>
           unit.id === unitId
-            ? { ...unit, is_favourite: !newFavoriteStatus }
+            ? { ...unit, is_favourite: !unit.is_favourite }
             : unit,
         ),
       );
@@ -412,6 +452,25 @@ function UnitsListing() {
               </select>
             </div>
 
+            {/* فلتر أنواع الوحدات الديناميكي */}
+            <div>
+              <p className="font-black text-[#1F2937] text-[13px] mb-3">
+                نوع الوحدة
+              </p>
+              <select
+                value={filters.unit_type_id}
+                onChange={(e) => updateFilter("unit_type_id", e.target.value)}
+                className="w-full border border-gray-200 rounded-lg p-2 text-[11px] font-bold text-gray-500 outline-none"
+              >
+                <option value="">كل الأنواع</option>
+                {unitTypes.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <hr className="border-gray-100" />
 
             {/* سنة البناء والجراج */}
@@ -467,10 +526,13 @@ function UnitsListing() {
                   {[1, 2, 3, 4, 5].map((n) => (
                     <button
                       key={n}
-                      onClick={() =>
-                        updateFilter(item.key, filters[item.key] == n ? "" : n)
-                      }
-                      className={`w-8 h-8 flex items-center justify-center rounded-full border text-[11px] font-black transition-all ${filters[item.key] == n ? "bg-[#3E5879] text-white border-[#3E5879]" : "bg-white text-[#9CA3AF] border-gray-200 hover:border-gray-400"}`}
+                      onClick={() => updateFilter(item.key, n)}
+                      className={`w-8 h-8 flex items-center justify-center rounded-full border text-[11px] font-black transition-all ${
+                        Array.isArray(filters[item.key]) &&
+                        filters[item.key].includes(n)
+                          ? "bg-[#3E5879] text-white border-[#3E5879]"
+                          : "bg-white text-[#9CA3AF] border-gray-200 hover:border-gray-400"
+                      }`}
                     >
                       {n === 5 ? "+5" : n}
                     </button>
@@ -533,6 +595,110 @@ function UnitsListing() {
 
         {/* 4. Results Section */}
         <main className="flex-1">
+          {/* Active Filters Tags */}
+          {Object.values(filters).some(
+            (v) =>
+              (Array.isArray(v) && v.length > 0) ||
+              (!Array.isArray(v) && v !== "" && v !== "id_desc"),
+          ) && (
+            <div className="flex flex-wrap gap-2 mb-6">
+              <span className="text-[11px] font-black text-gray-400 mt-1.5 ml-1">
+                الفلاتر النشطة:
+              </span>
+              {filters.city_id && (
+                <span className="bg-gray-50 text-[#3E5879] px-3 py-1 rounded-full text-[10px] font-black border border-gray-100 flex items-center gap-1">
+                  {cities.find((c) => c.id == filters.city_id)?.name}
+                  <button
+                    onClick={() => updateFilter("city_id", "")}
+                    className="hover:text-red-500"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.compound_id && (
+                <span className="bg-gray-50 text-[#3E5879] px-3 py-1 rounded-full text-[10px] font-black border border-gray-100 flex items-center gap-1">
+                  {compounds.find((c) => c.id == filters.compound_id)?.name}
+                  <button
+                    onClick={() => updateFilter("compound_id", "")}
+                    className="hover:text-red-500"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.unit_type_id && (
+                <span className="bg-gray-50 text-[#3E5879] px-3 py-1 rounded-full text-[10px] font-black border border-gray-100 flex items-center gap-1">
+                  {unitTypes.find((t) => t.id == filters.unit_type_id)?.name}
+                  <button
+                    onClick={() => updateFilter("unit_type_id", "")}
+                    className="hover:text-red-500"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.rooms.length > 0 &&
+                filters.rooms.map((r) => (
+                  <span
+                    key={r}
+                    className="bg-gray-50 text-[#3E5879] px-3 py-1 rounded-full text-[10px] font-black border border-gray-100 flex items-center gap-1"
+                  >
+                    {r} غرف
+                    <button
+                      onClick={() => updateFilter("rooms", r)}
+                      className="hover:text-red-500"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              {filters.bathrooms.length > 0 &&
+                filters.bathrooms.map((b) => (
+                  <span
+                    key={b}
+                    className="bg-gray-50 text-[#3E5879] px-3 py-1 rounded-full text-[10px] font-black border border-gray-100 flex items-center gap-1"
+                  >
+                    {b} حمام
+                    <button
+                      onClick={() => updateFilter("bathrooms", b)}
+                      className="hover:text-red-500"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              {filters.min_price && (
+                <span className="bg-gray-50 text-[#3E5879] px-3 py-1 rounded-full text-[10px] font-black border border-gray-100 flex items-center gap-1">
+                  من {formatPrice(filters.min_price)} ج.م
+                  <button
+                    onClick={() => updateFilter("min_price", "")}
+                    className="hover:text-red-500"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.offer_type && (
+                <span className="bg-[#3E5879] text-white px-3 py-1 rounded-full text-[10px] font-black shadow-sm flex items-center gap-1">
+                  {filters.offer_type === "sale" ? "للبيع" : "للإيجار"}
+                  <button
+                    onClick={() => updateFilter("offer_type", "")}
+                    className="text-white hover:text-red-200"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              <button
+                onClick={resetFilters}
+                className="text-[10px] font-black text-red-500 hover:underline px-2"
+              >
+                مسح الكل
+              </button>
+            </div>
+          )}
+
           {loading && units.length === 0 ? (
             <div className="flex justify-center py-20">
               <Loader2 className="animate-spin text-[#3E5879]" size={40} />
