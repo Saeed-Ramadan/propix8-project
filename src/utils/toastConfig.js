@@ -6,6 +6,7 @@ export const toastOptions = {
   pauseOnHover: true,
   draggable: true,
   theme: "colored",
+  rtl: true,
   style: {
     fontFamily: "Cairo",
     borderRadius: "15px",

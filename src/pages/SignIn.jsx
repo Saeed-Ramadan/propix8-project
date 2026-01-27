@@ -120,10 +120,16 @@ export default function SignIn() {
           navigate(from, { replace: true });
         }, 1500);
       } else {
-        toast.error(
-          result.message || "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-          toastOptions,
-        );
+        if (result.errors) {
+          Object.values(result.errors).forEach((err) => {
+            toast.error(err[0], toastOptions);
+          });
+        } else {
+          toast.error(
+            result.message || "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+            toastOptions,
+          );
+        }
       }
     } catch (error) {
       // console.error("📡 Network Error:", error);

@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { toastOptions } from "../utils/toastConfig.js";
-import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../hooks/useAuth.js";
 import signupImg from "../assets/main/signup.png";
 import logo from "../assets/logo/main-logo.png";
@@ -19,7 +18,7 @@ export default function SignUp() {
     phone: "",
     password: "",
     confirmPassword: "",
-    userType: "seller", // تم التثبيت على seller دائماً
+    userType: "buyer",
     address: "",
     city_id: "",
     agreeTerms: false,
@@ -207,10 +206,16 @@ export default function SignUp() {
           setTimeout(() => navigate("/signin"), 2000);
         }
       } else {
-        toast.error(
-          result.message || "فشلت العملية، تأكد من البيانات",
-          toastOptions,
-        );
+        if (result.errors) {
+          Object.values(result.errors).forEach((err) => {
+            toast.error(err[0], toastOptions);
+          });
+        } else {
+          toast.error(
+            result.message || "فشلت العملية، تأكد من البيانات",
+            toastOptions,
+          );
+        }
       }
     } catch (error) {
       toast.error("حدث خطأ في الاتصال بالسيرفر", toastOptions);
