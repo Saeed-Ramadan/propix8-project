@@ -29,7 +29,7 @@ function CompoundsUnits() {
 
   // حالات الـ Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const unitsPerPage = 9;
+  const [pagination, setPagination] = useState(null);
 
   useEffect(() => {
     const fetchCompound = async () => {
@@ -42,11 +42,12 @@ function CompoundsUnits() {
           headers["Authorization"] = `Bearer ${token}`;
         }
         const response = await axios.get(
-          `https://propix8.com/api/compounds/${id}`,
+          `https://propix8.com/api/compounds/${id}?page=${currentPage}`,
           { headers },
         );
         if (response.data.status) {
           setCompoundData(response.data.data);
+          setPagination(response.data.pagination);
         } else if (response.data.status === false) {
           navigate("/notfound", { replace: true });
         }
@@ -58,7 +59,7 @@ function CompoundsUnits() {
       }
     };
     fetchCompound();
-  }, [id]);
+  }, [id, currentPage]);
 
   const toggleFavorite = async (unitId, e) => {
     e.stopPropagation();
@@ -161,15 +162,6 @@ function CompoundsUnits() {
 
   if (!compoundData) return null;
 
-  // حسابات الـ Pagination
-  const indexOfLastUnit = currentPage * unitsPerPage;
-  const indexOfFirstUnit = indexOfLastUnit - unitsPerPage;
-  const currentUnits = compoundData.units.slice(
-    indexOfFirstUnit,
-    indexOfLastUnit,
-  );
-  const totalPages = Math.ceil(compoundData.units.length / unitsPerPage);
-
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
     const element = document.getElementById("units-section");
@@ -236,13 +228,14 @@ function CompoundsUnits() {
             </p>
           </div>
           <div className="bg-[#3E5879] text-white px-8 py-3 rounded-[1rem] text-lg font-black shadow-lg shadow-[#3E5879]/30">
-            {compoundData.units.length} وحدة معروضة
+            {pagination ? pagination.total : compoundData.units.length} وحدة
+            معروضة
           </div>
         </div>
 
         {/* Units Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {currentUnits.map((unit, index) => (
+          {compoundData.units.map((unit, index) => (
             <motion.div
               key={unit.id}
               initial={{ opacity: 0, y: 20 }}
@@ -349,7 +342,7 @@ function CompoundsUnits() {
         </div>
 
         {/* Pagination Controls */}
-        {totalPages > 1 && (
+        {pagination && pagination.last_page > 1 && (
           <div className="flex justify-center items-center mt-20 gap-4">
             <button
               onClick={() => paginate(currentPage - 1)}
@@ -359,7 +352,7 @@ function CompoundsUnits() {
               <ChevronRight size={28} />
             </button>
 
-            {[...Array(totalPages)].map((_, index) => (
+            {[...Array(pagination.last_page)].map((_, index) => (
               <button
                 key={index + 1}
                 onClick={() => paginate(index + 1)}
@@ -375,7 +368,7 @@ function CompoundsUnits() {
 
             <button
               onClick={() => paginate(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === pagination.last_page}
               className="w-14 h-14 rounded-[1.5rem] border-2 bg-white text-[#3E5879] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#3E5879] hover:text-white transition-all shadow-lg flex items-center justify-center"
             >
               <ChevronLeft size={28} />

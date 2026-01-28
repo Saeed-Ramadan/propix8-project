@@ -199,13 +199,15 @@ export default function SignUp() {
 
       if (response.ok) {
         toast.success("تم إنشاء الحساب بنجاح!", toastOptions);
-        if (result.data?.access_token) {
-          login(result.data.access_token, result.data.user);
-          setTimeout(() => navigate("/"), 2000);
-        } else {
-          setTimeout(() => navigate("/signin"), 2000);
-        }
+        const from = result.data?.access_token ? "/" : "/signin";
+        setTimeout(() => {
+          if (result.data?.access_token) {
+            login(result.data.access_token, result.data.user);
+          }
+          navigate(from);
+        }, 2000);
       } else {
+        setLoading(false);
         if (result.errors) {
           Object.values(result.errors).forEach((err) => {
             toast.error(err[0], toastOptions);
@@ -218,9 +220,8 @@ export default function SignUp() {
         }
       }
     } catch (error) {
-      toast.error("حدث خطأ في الاتصال بالسيرفر", toastOptions);
-    } finally {
       setLoading(false);
+      toast.error("حدث خطأ في الاتصال بالسيرفر", toastOptions);
     }
   };
 

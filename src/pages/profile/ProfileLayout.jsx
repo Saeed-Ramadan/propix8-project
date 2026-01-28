@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.js";
 import { motion } from "framer-motion";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function ProfileLayout() {
@@ -122,15 +122,6 @@ export default function ProfileLayout() {
       className="min-h-screen bg-[#F8F9FA] py-8 md:py-12 px-4 font-cairo"
       dir="rtl"
     >
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        rtl={true}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6">
         {/* Sidebar */}
         <motion.aside

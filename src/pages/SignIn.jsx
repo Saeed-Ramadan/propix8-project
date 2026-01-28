@@ -113,13 +113,14 @@ export default function SignIn() {
 
       if (response.ok && result.data) {
         toast.success("تم تسجيل الدخول بنجاح!", toastOptions);
-        login(result.data.access_token, result.data.user);
 
         const from = location.state?.from || "/";
         setTimeout(() => {
+          login(result.data.access_token, result.data.user);
           navigate(from, { replace: true });
         }, 1500);
       } else {
+        setLoading(false);
         if (result.errors) {
           Object.values(result.errors).forEach((err) => {
             toast.error(err[0], toastOptions);
@@ -132,10 +133,9 @@ export default function SignIn() {
         }
       }
     } catch (error) {
+      setLoading(false);
       // console.error("📡 Network Error:", error);
       toast.error("حدث خطأ في الاتصال بالسيرفر", toastOptions);
-    } finally {
-      setLoading(false);
     }
   };
 

@@ -3,7 +3,7 @@ import { Star, MapPin, BedDouble, Bath, Square, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // استيراد الهوك الخاص بالتنقل
 import { useAuth } from "../../hooks/useAuth.js";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function UserFavorites() {
@@ -119,7 +119,7 @@ function UserFavorites() {
       className="bg-white rounded-[0.5rem] p-6 md:p-10 shadow-sm border border-gray-100 font-cairo"
       dir="rtl"
     >
-      <ToastContainer position="top-right" autoClose={2000} rtl={true} />
+
 
       <h2 className="text-xl font-black text-[#3E5879] mb-8 text-right border-r-4 border-[#3E5879] pr-3">
         العقارات المفضلة

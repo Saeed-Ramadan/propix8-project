@@ -29,7 +29,7 @@ import {
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 export default function Home() {
   const toastOptions = {
@@ -514,8 +514,6 @@ export default function Home() {
 
   return (
     <div className="w-full bg-[#f8f9fa] font-cairo overflow-x-hidden" dir="rtl">
-      <ToastContainer rtl={true} />
-
       {/* HERO SECTION */}
       <section className="relative h-[75vh] min-h-[500px] w-full flex items-center justify-center overflow-x-hidden">
         {/* SLIDER BACKGROUND */}

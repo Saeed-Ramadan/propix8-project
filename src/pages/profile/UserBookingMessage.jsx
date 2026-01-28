@@ -14,7 +14,7 @@ import {
   FileText,
   MessageSquare,
 } from "lucide-react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -225,8 +225,6 @@ function UserBookingMessage() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 font-cairo" dir="rtl">
-      <ToastContainer position="top-center" rtl />
-
       <div className="space-y-6">
         {bookings.length > 0 ? (
           bookings.map((booking) => {

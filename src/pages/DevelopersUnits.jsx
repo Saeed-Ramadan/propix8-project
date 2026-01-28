@@ -27,6 +27,8 @@ function DevelopersUnits() {
   const [developer, setDeveloper] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState(null);
 
   useEffect(() => {
     // التأكد من وجود ID قبل طلب البيانات
@@ -40,10 +42,13 @@ function DevelopersUnits() {
         headers["Authorization"] = `Bearer ${token}`;
       }
       axios
-        .get(`https://propix8.com/api/developers/${id}`, { headers })
+        .get(`https://propix8.com/api/developers/${id}?page=${currentPage}`, {
+          headers,
+        })
         .then((response) => {
           if (response.data.status) {
             setDeveloper(response.data.data);
+            setPagination(response.data.pagination);
           } else if (response.data.status === false) {
             navigate("/notfound", { replace: true });
           }
@@ -55,7 +60,7 @@ function DevelopersUnits() {
           navigate("/notfound", { replace: true });
         });
     }
-  }, [id]); // إعادة الطلب عند تغيير الـ ID في الـ URL
+  }, [id, currentPage]); // إعادة الطلب عند تغيير الـ ID أو رقم الصفحة
 
   const toggleFavorite = async (unitId, e) => {
     e.stopPropagation();
@@ -143,6 +148,11 @@ function DevelopersUnits() {
     }
   };
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 300, behavior: "smooth" });
+  };
+
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-white">
@@ -208,7 +218,10 @@ function DevelopersUnits() {
                     size={22}
                     className="text-blue-300 flex-shrink-0"
                   />
-                  <span>{developer.units.length} وحدة متاحة</span>
+                  <span>
+                    {pagination ? pagination.total : developer.units.length}{" "}
+                    وحدة متاحة
+                  </span>
                 </div>
               </div>
             </div>
@@ -271,9 +284,12 @@ function DevelopersUnits() {
             >
               <div className="relative h-64 overflow-hidden bg-gray-50">
                 <img
-                  src={unit.unit_type.icon}
-                  className="absolute inset-0 w-full h-full object-cover  scale-125 group-hover:scale-150 transition-transform duration-700"
-                  alt="Pattern"
+                  src={
+                    unit.main_image ||
+                    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop"
+                  }
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                  alt={unit.title}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-40" />
                 <div
@@ -364,6 +380,41 @@ function DevelopersUnits() {
             </motion.div>
           ))}
         </div>
+
+        {/* Pagination Controls */}
+        {pagination && pagination.last_page > 1 && (
+          <div className="flex justify-center items-center mt-20 gap-4">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="w-12 h-12 rounded-xl border bg-white text-[#3E5879] flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-all shadow-sm"
+            >
+              <ArrowLeft size={20} className="transform rotate-180" dir="ltr" />
+            </button>
+
+            {[...Array(pagination.last_page)].map((_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => handlePageChange(index + 1)}
+                className={`w-12 h-12 rounded-xl font-bold transition-all ${
+                  currentPage === index + 1
+                    ? "bg-[#3E5879] text-white shadow-lg scale-110"
+                    : "bg-white text-gray-600 border hover:border-[#3E5879]"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === pagination.last_page}
+              className="w-12 h-12 rounded-xl border bg-white text-[#3E5879] flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-all shadow-sm"
+            >
+              <ArrowLeft size={20} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

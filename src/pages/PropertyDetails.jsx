@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
 import {
@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import { toastOptions } from "../utils/toastConfig.js";
 import ImagePlaceholder from "../components/common/ImagePlaceholder";
 import MapPlaceholder from "../components/common/MapPlaceholder";
+import Hls from "hls.js";
 
 export default function PropertyDetails() {
   const { id } = useParams();
@@ -35,6 +36,8 @@ export default function PropertyDetails() {
   const [loading, setLoading] = useState(true);
   const [loadingRelated, setLoadingRelated] = useState(true);
   const [activeImage, setActiveImage] = useState(null);
+  const [activeVideo, setActiveVideo] = useState(null);
+  const videoRef = useRef(null);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
 
   // حالة الـ Popup والنموذج
@@ -173,6 +176,14 @@ export default function PropertyDetails() {
           setUnit(data);
           const images = data.media?.filter((m) => m.type === "image") || [];
           if (images.length > 0) setActiveImage(images[0].file_path);
+
+          const videos = data.media?.filter((m) => m.type === "video") || [];
+          if (videos.length > 0) {
+            // Prioritize HLS video if available, otherwise take the first one
+            const primaryVideo =
+              videos.find((v) => v.hls_path && v.hls_path !== "") || videos[0];
+            setActiveVideo(primaryVideo);
+          }
         } else {
           navigate("/notfound", { replace: true });
         }
@@ -205,9 +216,53 @@ export default function PropertyDetails() {
         // console.error("Error fetching related units:", err);
         setLoadingRelated(false);
       });
-
     fetchReviews();
   }, [id]);
+
+  // Initialize HLS.js for video playback
+  useEffect(() => {
+    if (!activeVideo || !videoRef.current) return;
+
+    const video = videoRef.current;
+
+    // If HLS path exists, use hls.js
+    if (activeVideo.hls_path && activeVideo.hls_path !== "") {
+      if (Hls.isSupported()) {
+        const hls = new Hls({
+          enableWorker: true,
+          lowLatencyMode: true,
+          backBufferLength: 90,
+        });
+
+        hls.loadSource(activeVideo.hls_path);
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          console.log("HLS manifest loaded successfully");
+        });
+
+        hls.on(Hls.Events.ERROR, (event, data) => {
+          console.error("HLS error:", data);
+          if (data.fatal) {
+            if (activeVideo.file_path) {
+              // Fallback to MP4
+              setActiveVideo((prev) => ({ ...prev, hls_path: "" }));
+            }
+          }
+        });
+
+        return () => {
+          hls.destroy();
+        };
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        // Native HLS support (Safari)
+        video.src = activeVideo.hls_path;
+      }
+    } else if (activeVideo.file_path) {
+      // MP4 fallback
+      video.src = activeVideo.file_path;
+    }
+  }, [activeVideo]);
 
   const toggleFavorite = async (unitId = null, e = null) => {
     if (e) e.stopPropagation();
@@ -405,7 +460,7 @@ export default function PropertyDetails() {
     images.length > 0
       ? images
       : ["https://via.placeholder.com/800x600?text=No+Image+Available"];
-  const unitVideo = unit.media?.find((m) => m.type === "video");
+  const unitVideos = unit.media?.filter((m) => m.type === "video") || [];
 
   return (
     <div className="bg-gray-50 min-h-screen font-cairo pb-20" dir="rtl">
@@ -1006,15 +1061,67 @@ export default function PropertyDetails() {
             <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
               جولة داخل العقار
             </h3>
-            {unitVideo ? (
-              <div className="rounded-[2.5rem] overflow-hidden aspect-video bg-black shadow-2xl border-8 border-white">
-                <video
-                  controls
-                  className="w-full h-full object-contain"
-                  poster={displayImages[0]}
-                >
-                  <source src={unitVideo.file_path} type="video/mp4" />
-                </video>
+            {unitVideos.length > 0 && activeVideo ? (
+              <div className="space-y-6">
+                {/* المشغل الرئيسي الكبير */}
+                <div className="rounded-[2.5rem] overflow-hidden aspect-video bg-black shadow-2xl border-8 border-white group relative">
+                  <video
+                    ref={videoRef}
+                    controls
+                    playsInline
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                    controlsList="nodownload"
+                  >
+                    {!activeVideo.hls_path && (
+                      <source src={activeVideo.file_path} type="video/mp4" />
+                    )}
+                    المتصفح لا يدعم تشغيل الفيديو
+                  </video>
+                </div>
+
+                {/* الفيديوهات الأخرى (مصغرات) */}
+                {unitVideos.length > 1 && (
+                  <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                    {unitVideos.map((video, index) => {
+                      const isActive = activeVideo.id === video.id;
+                      return (
+                        <div
+                          key={video.id || index}
+                          onClick={() => setActiveVideo(video)}
+                          className={`flex-none w-45 aspect-video rounded-2xl overflow-hidden cursor-pointer relative border-4 transition-all duration-300 group ${
+                            isActive
+                              ? "border-[#3E5879] scale-105 shadow-lg"
+                              : "border-transparent opacity-70 hover:opacity-100"
+                          }`}
+                        >
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all z-10">
+                            <div
+                              className={`p-2 rounded-full ${isActive ? "bg-[#3E5879]" : "bg-white/20"} text-white`}
+                            >
+                              <Play size={20} fill="currentColor" />
+                            </div>
+                          </div>
+                          {/* استخدام صورة العقار كخلفية للمصغر ليكون شكله أجمل */}
+                          <img
+                            src={displayImages[0]}
+                            className="w-full h-full object-cover blur-[1px] opacity-50"
+                            alt={`Video ${index + 1}`}
+                          />
+                          <div className="absolute bottom-2 right-2 text-[10px] text-white font-bold bg-[#3E5879]/80 px-2 py-0.5 rounded z-10">
+                            فيديو {index + 1}{" "}
+                            {video.hls_path && video.hls_path !== ""
+                              ? "(HLS)"
+                              : ""}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="relative rounded-[2.5rem] overflow-hidden aspect-video bg-gray-100 flex items-center justify-center border-4 border-dashed border-gray-200">
@@ -1032,7 +1139,7 @@ export default function PropertyDetails() {
             <h3 className="text-xl font-bold text-[#3E5879] mb-8 border-r-4 border-[#3E5879] pr-3 uppercase tracking-wide">
               موقع العقار
             </h3>
-            <div className="rounded-[2.5rem] overflow-hidden h-[400px] bg-gray-100 border-4 border-white shadow-lg relative">
+            <div className="rounded-[2.5rem] overflow-hidden h-100 bg-gray-100 border-4 border-white shadow-lg relative">
               {unit.latitude && unit.longitude ? (
                 <iframe
                   width="100%"
